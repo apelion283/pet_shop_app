@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "413973698882",
+    "project_id": "pet-shop-4739c",
+    "storage_bucket": "pet-shop-4739c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413973698882:android:dd54a3b4f66aa13d79d0db",
+        "android_client_info": {
+          "package_name": "com.example.flutter_pet_shop_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": ""
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
