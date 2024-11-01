@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
+import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/widgets/custom_text_field.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/widgets/password_text_field.dart';
 
@@ -16,10 +18,24 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   bool isPasswordVisible = false;
-  TextEditingController emailController = TextEditingController();
+  late TextEditingController _emailController;
   String? emailErrorText;
-  TextEditingController passwordController = TextEditingController();
+  late TextEditingController _passwordController;
   String? passwordErrorText;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +44,7 @@ class _SignInPageState extends State<SignInPage> {
           title: Text("Login"),
           centerTitle: true,
         ),
-        body: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+        body: BlocConsumer<AuthCubit, AuthState>(builder: (context, state) {
           return Column(
             children: [
               Padding(
@@ -37,26 +53,26 @@ class _SignInPageState extends State<SignInPage> {
                     children: [
                       CustomTextField(
                         hintText: "Enter email address",
-                        controller: emailController,
+                        controller: _emailController,
                         prefixIcon: Icons.email_outlined,
                         errorText: emailErrorText,
                         onTextChanged: (text) {
                           setState(() {
                             emailErrorText = null;
-                            emailController.text = text;
+                            _emailController.text = text;
                           });
                         },
                       ),
                       SizedBox(height: 32),
                       PasswordTextField(
                         hintText: "Enter password",
-                        controller: passwordController,
+                        controller: _passwordController,
                         errorText: passwordErrorText,
                         isPasswordVisible: isPasswordVisible,
                         onPasswordChanged: (password) {
                           setState(() {
                             passwordErrorText = null;
-                            passwordController.text = password;
+                            _passwordController.text = password;
                           });
                         },
                         onPasswordVisibleChanged: (isVisible) => setState(() {
@@ -98,24 +114,29 @@ class _SignInPageState extends State<SignInPage> {
                             ),
                           ),
                           onPressed: () {
-                            if (emailController.text.isEmpty) {
+                            if (_emailController.text.isEmpty) {
                               setState(() {
                                 emailErrorText = "Email is required";
                               });
                               return;
                             }
-                            if (!emailController.text.contains("@")) {
+                            if (!_emailController.text.contains("@")) {
                               setState(() {
                                 emailErrorText = "Please enter a valid email";
                               });
                               return;
                             }
-                            if (passwordController.text.isEmpty) {
+                            if (_passwordController.text.isEmpty) {
                               setState(() {
                                 passwordErrorText = "Password is required";
                               });
                               return;
                             }
+                            context
+                                .read<AuthCubit>()
+                                .signInWithEmailAndPassword(
+                                    email: _emailController.text,
+                                    password: _passwordController.text);
                           },
                           child: Text(
                             "Login",
@@ -153,6 +174,31 @@ class _SignInPageState extends State<SignInPage> {
                   ))
             ],
           );
+        }, listener: (context, state) {
+          if (state.error == null) {
+            if (state.authState == AuthenticationState.authenticated) {
+              setState(() {
+                _emailController.text = "";
+                _passwordController.text = "";
+              });
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(notifySnackBar("Sign in successfully", () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              }));
+              Navigator.popUntil(context, (route) => route.isFirst);
+            }
+          } else {
+            setState(() {
+              switch (state.error?.code) {
+                case "invalid-credential":
+                  emailErrorText = "Please check your email again";
+                  passwordErrorText = "Please check your password again";
+                  break;
+                default:
+                  break;
+              }
+            });
+          }
         }));
   }
 }

@@ -9,14 +9,16 @@ import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthState());
 
-  final authUsecase =
+  final _authUsecase =
       AuthUsecase(AuthRepositoryImpl(FirebaseAuthServiceImpl()));
 
   Future<void> getCurrentUserInformation() async {
     try {
-      final result = await authUsecase.getCurrentUserInformation();
-      result.fold((l) => emit(state.copyWith(error: l)),
-          (r) => emit(state.copyWith(user: r)));
+      final result = await _authUsecase.getCurrentUserInformation();
+      result.fold(
+          (l) => emit(state.copyWith(error: l)),
+          (r) => emit(state.copyWith(
+              user: r, state: AuthenticationState.authenticated)));
     } catch (e) {
       emit(state.copyWith(error: Failure(e.toString())));
     }
@@ -27,7 +29,7 @@ class AuthCubit extends Cubit<AuthState> {
       required String password,
       required String name}) async {
     try {
-      final result = await authUsecase.signUp(
+      final result = await _authUsecase.signUp(
           email: email, password: password, name: name);
       result.fold(
           (l) => emit(state.copyWith(error: l)),
@@ -41,7 +43,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signInWithEmailAndPassword(
       {required String email, required String password}) async {
     try {
-      final result = await authUsecase.signInWithEmailAndPassword(
+      final result = await _authUsecase.signInWithEmailAndPassword(
           email: email, password: password);
       result.fold(
           (l) => emit(state.copyWith(error: l)),
@@ -54,10 +56,14 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> signOut() async {
     try {
-      await authUsecase.signOut();
+      await _authUsecase.signOut();
       emit(state.copyWith(state: AuthenticationState.unAuthenticated));
     } catch (e) {
       emit(state.copyWith(error: Failure(e.toString())));
     }
+  }
+
+  Future<bool> forgotPassword(String email) async {
+    return await _authUsecase.sendResetPasswordEmail(email);
   }
 }

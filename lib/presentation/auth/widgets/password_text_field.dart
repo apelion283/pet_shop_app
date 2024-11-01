@@ -67,6 +67,14 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
               color: AppColor.gray,
               fontSize: 20,
               fontWeight: FontWeight.normal),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Colors.transparent, width: 0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Colors.transparent, width: 0),
+          ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide(color: Colors.transparent, width: 0),

@@ -21,7 +21,6 @@ class ProfilePage extends StatelessWidget {
               centerTitle: true,
             ),
             body: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-              print(state.authState);
               return Padding(
                 padding:
                     EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 16),
@@ -43,7 +42,7 @@ class ProfilePage extends StatelessWidget {
                           leadingIcon: Icons.logout_outlined,
                           title: "Sign Out",
                           onCardClick: () {
-                            // Navigator.pushNamed(context, RouteName.signIn);
+                            context.read<AuthCubit>().signOut();
                           })
                     else if (state.authState ==
                         AuthenticationState.unAuthenticated)

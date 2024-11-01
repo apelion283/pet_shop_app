@@ -5,6 +5,7 @@ import 'package:flutter_pet_shop_app/domain/entities/user_entity.dart';
 
 abstract class AuthRepository {
   Future<Either<Failure, UserEntity>> getCurrentUserInformation();
+  Future<bool> sendResetPasswordEmail(String email);
   Future<Either<Failure, UserEntity>> signUp(
       {required String email, required String password, required String name});
   Future<Either<Failure, UserEntity>> signInWithEmailAndPassword(
@@ -32,7 +33,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final result = await firebaseAuthService.signInWithEmailAndPassword(
           email: email, password: password);
-      return Right(result);
+      return result.fold((l) => Left(l), (r) => Right(r));
     } on Exception catch (e) {
       return Left(Failure(e.toString()));
     }
@@ -58,6 +59,20 @@ class AuthRepositoryImpl implements AuthRepository {
       return result.fold((l) => Left(l), (r) => Right(r));
     } on Exception catch (e) {
       return Left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<bool> sendResetPasswordEmail(String email) async {
+    try {
+      final result = await firebaseAuthService.sendResetPasswordEmail(email);
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 }

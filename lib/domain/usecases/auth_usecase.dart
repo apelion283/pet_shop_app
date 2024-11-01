@@ -28,4 +28,8 @@ class AuthUsecase {
     return await authRepositoryImpl.signInWithEmailAndPassword(
         email: email, password: password);
   }
+
+  Future<bool> sendResetPasswordEmail(String email) async {
+    return await authRepositoryImpl.sendResetPasswordEmail(email);
+  }
 }
