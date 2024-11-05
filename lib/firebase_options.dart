@@ -50,7 +50,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyClll0Y_mK7HwGYiYLwU4lta0SEohEHNBs',
+    apiKey: 'YOUR_ANDROID_API_KEY',
     appId: '1:413973698882:android:dd54a3b4f66aa13d79d0db',
     messagingSenderId: '413973698882',
     projectId: 'pet-shop-4739c',
@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDbqEdAEFEhM4j6gaZqIFVpGW-TOo_R-c4',
+    apiKey: 'YOUR_IOS_API_KEY',
     appId: '1:413973698882:ios:820af67b1e3a34e479d0db',
     messagingSenderId: '413973698882',
     projectId: 'pet-shop-4739c',
