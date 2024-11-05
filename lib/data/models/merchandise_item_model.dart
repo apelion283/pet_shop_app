@@ -3,7 +3,7 @@ import 'package:flutter_pet_shop_app/core/enum/merchandise_type.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 
 class MerchandiseItemModel extends MerchandiseItem {
-  MerchandiseItemModel(
+  const MerchandiseItemModel(
       {required String id,
       required super.name,
       required super.description,

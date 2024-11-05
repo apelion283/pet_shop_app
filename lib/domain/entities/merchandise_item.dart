@@ -23,13 +23,13 @@ class MerchandiseItem extends Equatable {
       required this.manufactorId,
       required this.brandId});
 
-  factory MerchandiseItem.fromJson(Map<String, dynamic> json) {
+  factory MerchandiseItem.fromJson(Map<dynamic, dynamic> json) {
     return MerchandiseItem(
         id: "",
         name: json['name'],
         description: json['description'],
         weight: json['weight'],
-        price: ['price'] as double,
+        price: json['price'] as double,
         imageUrl: json['imageUrl'],
         manufactorId: json['manufactorId'],
         brandId: json['brandId']);
