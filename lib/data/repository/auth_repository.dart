@@ -21,7 +21,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity>> getCurrentUserInformation() async {
     try {
       final result = await firebaseAuthService.getCurrentUserInformation();
-      return Right(result);
+      return result.fold((l) => Left(l), (r) => Right(r));
     } catch (e) {
       return Left(Failure(e.toString()));
     }

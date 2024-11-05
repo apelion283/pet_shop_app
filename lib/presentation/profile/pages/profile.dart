@@ -4,6 +4,7 @@ import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
+import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/profile/widgets/profile_card.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -42,6 +43,7 @@ class ProfilePage extends StatelessWidget {
                           leadingIcon: Icons.logout_outlined,
                           title: "Sign Out",
                           onCardClick: () {
+                            context.read<CartCubit>().clearCart();
                             context.read<AuthCubit>().signOut();
                           })
                     else if (state.authState ==

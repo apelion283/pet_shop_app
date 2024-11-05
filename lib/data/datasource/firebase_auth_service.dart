@@ -12,7 +12,7 @@ abstract class FirebaseAuthService {
   Future<Either<Failure, UserModel>> signInWithEmailAndPassword(
       {required String email, required String password});
 
-  Future<UserModel> getCurrentUserInformation();
+  Future<Either<Failure, UserModel>> getCurrentUserInformation();
 
   Future<bool> sendResetPasswordEmail(String email);
 
@@ -32,16 +32,20 @@ class FirebaseAuthServiceImpl implements FirebaseAuthService {
       final result = await auth?.createUserWithEmailAndPassword(
           email: email, password: password);
       await result?.user?.updateDisplayName(name);
-      return Right(UserModel.fromFirebaseUser(result!.user));
+      return Right(UserModel.fromFirebaseUser(result?.user));
     } on FirebaseAuthException catch (e) {
       return Left(Failure(e.message, e.code));
     }
   }
 
   @override
-  Future<UserModel> getCurrentUserInformation() async {
-    final user = auth?.currentUser;
-    return UserModel.fromFirebaseUser(user);
+  Future<Either<Failure, UserModel>> getCurrentUserInformation() async {
+    try {
+      final user = auth?.currentUser;
+      return Right(UserModel.fromFirebaseUser(user));
+    } on FirebaseAuthException catch (e) {
+      return Left(Failure(e.code, e.message));
+    }
   }
 
   @override

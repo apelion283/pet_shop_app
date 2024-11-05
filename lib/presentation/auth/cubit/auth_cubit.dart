@@ -18,7 +18,10 @@ class AuthCubit extends Cubit<AuthState> {
       result.fold(
           (l) => emit(state.copyWith(error: l)),
           (r) => emit(state.copyWith(
-              user: r, state: AuthenticationState.authenticated)));
+              user: r,
+              state: r.name.isNotEmpty
+                  ? AuthenticationState.authenticated
+                  : AuthenticationState.unAuthenticated)));
     } catch (e) {
       emit(state.copyWith(error: Failure(e.toString())));
     }
@@ -57,7 +60,8 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signOut() async {
     try {
       await _authUsecase.signOut();
-      emit(state.copyWith(state: AuthenticationState.unAuthenticated));
+      emit(state.copyWith(
+          user: null, state: AuthenticationState.unAuthenticated));
     } catch (e) {
       emit(state.copyWith(error: Failure(e.toString())));
     }
