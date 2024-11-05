@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
+import 'package:flutter_pet_shop_app/core/config/route_name.dart';
+import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
+import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
+import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
+import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
+import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
+import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/merchandise_detail/cubit/merchandise_detail_cubit.dart';
@@ -11,8 +19,6 @@ import 'package:flutter_pet_shop_app/presentation/merchandise_detail/widgets/cli
 import 'package:flutter_pet_shop_app/presentation/widgets/add_button.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/remove_button.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class MerchandiseItemDetailPage extends StatefulWidget {
   const MerchandiseItemDetailPage({super.key});
@@ -24,7 +30,6 @@ class MerchandiseItemDetailPage extends StatefulWidget {
 
 class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
   final TextEditingController _quantityController = TextEditingController();
-  final _cartBox = Hive.box('cartBox');
 
   @override
   void initState() {
@@ -68,29 +73,27 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                 fontWeight: FontWeight.w500,
                                 fontSize: 18),
                           ),
-                          IconButton(
-                              onPressed: () {},
-                              icon: BlocBuilder<CartCubit, CartState>(
-                                  builder: (context, state) {
-                                return state.cartList != null
-                                    ? state.cartList!.isNotEmpty
-                                        ? Badge(
-                                            label: Text(state.cartList!.length
-                                                .toString()),
-                                            child: Icon(
-                                              Icons.shopping_cart_outlined,
-                                              color: AppColor.white,
-                                            ),
-                                          )
-                                        : Icon(
-                                            Icons.shopping_cart_outlined,
-                                            color: AppColor.white,
-                                          )
-                                    : Icon(
-                                        Icons.shopping_cart_outlined,
-                                        color: AppColor.white,
-                                      );
-                              }))
+                          IconButton(onPressed: () {
+                            CommonPageController.controller.jumpToPage(
+                                ScreenInBottomBarOfMainScreen.cart.index);
+                            Navigator.of(context)
+                                .popUntil((route) => route.isFirst);
+                          }, icon: BlocBuilder<CartCubit, CartState>(
+                              builder: (context, state) {
+                            return state.cartList.isNotEmpty
+                                ? Badge(
+                                    label:
+                                        Text(state.cartList.length.toString()),
+                                    child: Icon(
+                                      Icons.shopping_cart_outlined,
+                                      color: AppColor.white,
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.shopping_cart_outlined,
+                                    color: AppColor.white,
+                                  );
+                          }))
                         ])),
                 body: CustomScrollView(
                   slivers: <Widget>[
@@ -141,7 +144,10 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                                   fontWeight: FontWeight.w500),
                                             ),
                                             Text(
-                                              "\$${state.item?.price.toDouble()}",
+                                              MoneyFormatHelper
+                                                  .formatVNCurrency(
+                                                      (state.item?.price ?? 0) *
+                                                          CurrencyRate.vnd),
                                               style: TextStyle(
                                                   color: AppColor.green,
                                                   fontSize: 15,
@@ -253,34 +259,47 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                           )
                         ],
                       ),
-                      ElevatedButton(
-                          onPressed: () {
-                            context.read<CartCubit>().addProduct(state.item,
-                                int.parse(_quantityController.text));
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                notifySnackBar("Add item to cart successfully",
-                                    () {
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
-                            }));
-                          },
-                          style: ElevatedButton.styleFrom(
-                              iconColor: AppColor.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              backgroundColor: AppColor.green),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(width: 1),
-                              Text(
-                                "Add to cart",
-                                style: TextStyle(color: AppColor.white),
-                              ),
-                              Icon(Icons.add_shopping_cart_outlined)
-                            ],
-                          )),
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, authState) {
+                          return ElevatedButton(
+                              onPressed: () {
+                                if (authState.authState ==
+                                    AuthenticationState.authenticated) {
+                                  context.read<CartCubit>().addProduct(
+                                      state.item,
+                                      int.parse(_quantityController.text));
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      notifySnackBar(
+                                          "Add item to cart successfully", () {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                  }));
+                                } else {
+                                  Navigator.pushNamed(
+                                      context, RouteName.signIn);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  iconColor: AppColor.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                  backgroundColor: AppColor.green),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(width: 1),
+                                  Text(
+                                    "Add to cart",
+                                    style: TextStyle(color: AppColor.white),
+                                  ),
+                                  Icon(Icons.add_shopping_cart_outlined)
+                                ],
+                              ));
+                        },
+                      )
                     ],
                   ),
                 ))));

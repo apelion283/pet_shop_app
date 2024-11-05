@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
+import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 
@@ -50,7 +52,8 @@ Widget horizontalMerchandiseItem(
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      "\$${item.price.toString()}",
+                      MoneyFormatHelper.formatVNCurrency(
+                          item.price * CurrencyRate.vnd),
                       style: TextStyle(
                           color: Colors.red, fontWeight: FontWeight.w400),
                       overflow: TextOverflow.ellipsis,
@@ -68,7 +71,7 @@ Widget horizontalMerchandiseItem(
                   decoration: BoxDecoration(
                       color: AppColor.green, shape: BoxShape.circle),
                   child: IconButton(
-                      onPressed: onCartButtonClick(),
+                      onPressed: () => onCartButtonClick(),
                       icon: Icon(
                         Icons.add_shopping_cart_rounded,
                         color: AppColor.white,

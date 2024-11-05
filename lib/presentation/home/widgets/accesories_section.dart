@@ -6,9 +6,9 @@ import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/card_header.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/vertical_merchandise_item.dart';
 
-class AccesoriesSection extends StatelessWidget {
+class AccessoriesSection extends StatelessWidget {
   final List<MerchandiseItem>? accessoryList;
-  const AccesoriesSection({super.key, required this.accessoryList});
+  const AccessoriesSection({super.key, required this.accessoryList});
 
   @override
   Widget build(BuildContext context) {

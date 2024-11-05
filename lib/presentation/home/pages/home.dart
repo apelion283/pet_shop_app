@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
@@ -20,7 +21,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-      final String userName = state.user?.name ?? "anonymous";
+      final String userName =
+          state.authState == AuthenticationState.authenticated
+              ? state.user!.name
+              : "anonymous";
       return BlocProvider(
           create: (context) => HomeCubit()..getInitData(),
           child:
@@ -58,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               myPetSectionWidget(),
                               SizedBox(height: 16),
-                              AccesoriesSection(
+                              AccessoriesSection(
                                   accessoryList: homeState.accessoryList),
                               SizedBox(
                                 height: 16,

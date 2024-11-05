@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
+import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 
@@ -29,7 +31,8 @@ Widget verticalMerchandiseItem(
                       color: AppColor.green, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  "\$${item.price.toString()}",
+                  MoneyFormatHelper.formatVNCurrency(
+                      item.price * CurrencyRate.vnd),
                   overflow: TextOverflow.ellipsis,
                   style:
                       TextStyle(color: Colors.red, fontWeight: FontWeight.w400),

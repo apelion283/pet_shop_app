@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
+import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
@@ -59,12 +61,12 @@ class _CartItemState extends State<CartItem> {
                       children: [
                         BlocBuilder<CartCubit, CartState>(
                             builder: (context, state) {
-                          int indexOfItem = state.cartList != null
-                              ? state.cartList!.indexWhere((element) =>
-                                  element.$2.id == widget.cartItem.$2.id)
-                              : -1;
+                          int indexOfItem = state.cartList.indexWhere(
+                              (element) =>
+                                  element.$2.id == widget.cartItem.$2.id);
+
                           return Text(
-                            "\$${widget.cartItem.$2.price} x ${indexOfItem != -1 ? state.cartList![indexOfItem].$1 : _quantityController.text}",
+                            "${MoneyFormatHelper.formatVNCurrency(widget.cartItem.$2.price * CurrencyRate.vnd)} x ${indexOfItem != -1 ? state.cartList[indexOfItem].$1 : _quantityController.text}",
                             style: TextStyle(
                                 color: AppColor.green,
                                 fontSize: 15,

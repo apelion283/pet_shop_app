@@ -8,6 +8,7 @@ import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/card_header.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/horizontal_merchandise_item.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 
 class FoodsSection extends StatefulWidget {
   final List<MerchandiseItem>? foodList;
@@ -68,9 +69,8 @@ class _FoodsSectionState extends State<FoodsSection> {
                                                         ""));
                                       },
                                       onCartButtonClick: () {
-                                        context.read<CartCubit>().addProduct(
-                                            widget.foodList![firstItemIndex],
-                                            1);
+                                        addProduct(
+                                            widget.foodList![firstItemIndex]);
                                       }),
                                   if (firstItemIndex + 1 <
                                       widget.foodList!.length)
@@ -90,10 +90,10 @@ class _FoodsSectionState extends State<FoodsSection> {
                                                           ""));
                                         },
                                         onCartButtonClick: () {
-                                          context.read<CartCubit>().addProduct(
-                                              widget.foodList![
-                                                  firstItemIndex + 1],
-                                              1);
+                                          addProduct(
+                                            widget
+                                                .foodList![firstItemIndex + 1],
+                                          );
                                         })
                                   else
                                     Container()
@@ -121,5 +121,14 @@ class _FoodsSectionState extends State<FoodsSection> {
                   )
           ],
         ));
+  }
+
+  void addProduct(MerchandiseItem item) {
+    context.read<CartCubit>().addProduct(item, 1);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context)
+        .showSnackBar(notifySnackBar("Add item to cart successfully", () {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    }));
   }
 }

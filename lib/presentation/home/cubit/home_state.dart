@@ -2,15 +2,15 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 
 class HomeState extends Equatable {
-  final List<MerchandiseItem>? foodList;
+  final List<MerchandiseItem> foodList;
   final String? foodListError;
-  final List<MerchandiseItem>? accessoryList;
+  final List<MerchandiseItem> accessoryList;
   final String? accessoryListError;
 
   const HomeState(
-      {this.foodList,
+      {this.foodList = const [],
       this.foodListError,
-      this.accessoryList,
+      this.accessoryList = const [],
       this.accessoryListError});
 
   HomeState copyWith(
