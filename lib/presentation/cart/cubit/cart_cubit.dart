@@ -1,42 +1,55 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_pet_shop_app/core/error/failure.dart';
+import 'package:flutter_pet_shop_app/data/datasource/firebase_data_source.dart';
+import 'package:flutter_pet_shop_app/data/repository/merchandise_repository.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
+import 'package:flutter_pet_shop_app/domain/usecases/merchandise_usecase.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
+import 'package:hive/hive.dart';
 
 class CartCubit extends Cubit<CartState> {
   CartCubit() : super(CartState());
 
-  void loadDataFromLocal() {}
+  final MerchandiseUsecase _usecase =
+      MerchandiseUsecase(MerchandiseRepositoryImpl(FirebaseDataSourceImpl()));
+
+  void loadDataFromLocal() {
+    var cartBox = Hive.box('cartBox');
+    List<(int, MerchandiseItem)> cartList = [];
+    if (cartBox.isOpen) {
+      for (var item in cartBox.values) {
+        cartList.add(
+            (item["quantity"] as int, MerchandiseItem.fromJson(item["item"])));
+      }
+      emit(state.copyWith(cartList));
+    }
+  }
+
+  void clearCart() {
+    emit(state.copyWith([]));
+  }
 
   void addProduct(MerchandiseItem? item, int quantity) {
     if (item != null) {
-      if (state.cartList != null) {
-        var updateCartList = state.cartList;
-        int indexOfItem =
-            updateCartList!.indexWhere((element) => element.$2.id == item.id);
-        if (indexOfItem > -1) {
-          updateCartList[indexOfItem] = (
-            updateCartList[indexOfItem].$1 + quantity,
-            updateCartList[indexOfItem].$2
-          );
-          emit(state.copyWith(updateCartList));
-        } else {
-          updateCartList.add((quantity, item));
-          emit(state.copyWith(updateCartList));
-        }
+      var updateCartList = [...state.cartList];
+      int indexOfItem =
+          updateCartList.indexWhere((element) => element.$2.id == item.id);
+      if (indexOfItem > -1) {
+        updateCartList[indexOfItem] = (
+          updateCartList[indexOfItem].$1 + quantity,
+          updateCartList[indexOfItem].$2
+        );
+        emit(state.copyWith(updateCartList));
       } else {
-        var newCartList = state.cartList;
-        newCartList = [];
-        newCartList.add((quantity, item));
-        emit(state.copyWith(newCartList));
+        updateCartList.add((quantity, item));
+        emit(state.copyWith(updateCartList));
       }
     }
   }
 
-  void checkoutCart() async {}
-
   void increaseQuantityOfItem(String? itemId) {
     var updateCartList = state.cartList;
-    if (updateCartList != null && itemId != null) {
+    if (itemId != null) {
       int indexOfItem =
           updateCartList.indexWhere((element) => element.$2.id == itemId);
       if (indexOfItem > -1) {
@@ -51,7 +64,7 @@ class CartCubit extends Cubit<CartState> {
 
   void decreaseQuantityOfItem(String? itemId) {
     var updateCartList = state.cartList;
-    if (updateCartList != null && itemId != null) {
+    if (itemId != null) {
       int indexOfItem =
           updateCartList.indexWhere((element) => element.$2.id == itemId);
       if (indexOfItem > -1) {
@@ -70,15 +83,11 @@ class CartCubit extends Cubit<CartState> {
 
   void updateCart((int, MerchandiseItem) cartItem) {
     var updateCartList = state.cartList;
-    if (updateCartList != null) {
-      int indexOfItem = updateCartList
-          .indexWhere((element) => element.$2.id == cartItem.$2.id);
-      if (indexOfItem > -1) {
-        updateCartList[indexOfItem] = (cartItem.$1, cartItem.$2);
-        emit(state.copyWith(updateCartList));
-      } else {
-        addProduct(cartItem.$2, cartItem.$1);
-      }
+    int indexOfItem =
+        updateCartList.indexWhere((element) => element.$2.id == cartItem.$2.id);
+    if (indexOfItem > -1) {
+      updateCartList[indexOfItem] = (cartItem.$1, cartItem.$2);
+      emit(state.copyWith(updateCartList));
     } else {
       addProduct(cartItem.$2, cartItem.$1);
     }
@@ -86,19 +95,22 @@ class CartCubit extends Cubit<CartState> {
 
   void deleteItemFromCart(String itemId) {
     var updateCartList = state.cartList;
-    if (updateCartList != null) {
-      int indexOfItem =
-          updateCartList.indexWhere((element) => element.$2.id == itemId);
-      // for (var item in updateCartList) {
-      //   print("before: quantity: ${item.$1} -- id: ${item.$2.id}");
-      // }
-      if (indexOfItem > -1) {
-        updateCartList.removeAt(indexOfItem);
-        // for (var item in updateCartList) {
-        //   print("after: quantity: ${item.$1} -- id: ${item.$2.id}");
-        // }
-        emit(state.copyWith(updateCartList));
-      }
+    int indexOfItem =
+        updateCartList.indexWhere((element) => element.$2.id == itemId);
+    if (indexOfItem > -1) {
+      updateCartList.removeAt(indexOfItem);
+      emit(state.copyWith(updateCartList));
+    }
+  }
+
+  Future<Failure?> checkOut(
+      List<(int, MerchandiseItem)> checkOutList, String? orderMessage) async {
+    final result = await _usecase.checkOut(checkOutList, orderMessage);
+    if (result == null) {
+      clearCart();
+      return null;
+    } else {
+      return result;
     }
   }
 }

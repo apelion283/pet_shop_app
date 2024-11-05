@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
+import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
@@ -17,6 +19,14 @@ class BillDetailBottomModalSheet extends StatefulWidget {
 
 class _BillDetailBottomModalSheetState
     extends State<BillDetailBottomModalSheet> {
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -38,6 +48,10 @@ class _BillDetailBottomModalSheetState
             child: Padding(
               padding: EdgeInsets.all(0),
               child: TextField(
+                controller: _messageController,
+                onChanged: (value) {
+                  _messageController.text = value;
+                },
                 decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -46,7 +60,7 @@ class _BillDetailBottomModalSheetState
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(width: 1, color: Colors.black)),
-                    hintText: "Leave us your messge",
+                    hintText: "Leave us your message",
                     hintStyle: TextStyle(color: AppColor.gray)),
                 cursorColor: AppColor.gray,
               ),
@@ -56,17 +70,12 @@ class _BillDetailBottomModalSheetState
             height: 16,
           ),
           BlocBuilder<CartCubit, CartState>(builder: (context, state) {
-            double total = 0;
-            if (state.cartList != null) {
-              for (var item in state.cartList!) {
-                total += item.$1 * item.$2.price;
-              }
-            }
             return Column(
               children: [
                 ExpenseRow(
                     rowName: "SubTotal",
-                    rowValue: "$total",
+                    rowValue: MoneyFormatHelper.formatVNCurrency(
+                        state.getTotal() * CurrencyRate.vnd),
                     rowTextStyle:
                         TextStyle(fontSize: 15, fontWeight: FontWeight.w400)),
                 SizedBox(
@@ -74,7 +83,8 @@ class _BillDetailBottomModalSheetState
                 ),
                 ExpenseRow(
                     rowName: "Shipping charges",
-                    rowValue: "100",
+                    rowValue: MoneyFormatHelper.formatVNCurrency(
+                        100 * CurrencyRate.vnd),
                     rowTextStyle:
                         TextStyle(fontSize: 15, fontWeight: FontWeight.w400)),
                 SizedBox(
@@ -82,7 +92,8 @@ class _BillDetailBottomModalSheetState
                 ),
                 ExpenseRow(
                     rowName: "Total",
-                    rowValue: "${total + 100}",
+                    rowValue: MoneyFormatHelper.formatVNCurrency(
+                        (state.getTotal() + 100) * CurrencyRate.vnd),
                     rowTextStyle:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
                 SizedBox(
@@ -92,7 +103,7 @@ class _BillDetailBottomModalSheetState
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onCheckoutButtonClick();
+                      widget.onCheckoutButtonClick(_messageController.text);
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: AppColor.green,

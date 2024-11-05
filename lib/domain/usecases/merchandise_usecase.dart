@@ -23,4 +23,9 @@ class MerchandiseUsecase {
         await merchandiseRepositoryImpl.getMerchandiseItemDataById(itemId);
     return result.fold((l) => Left(l), (r) => Right(r));
   }
+
+  Future<Failure?> checkOut(
+      List<(int, MerchandiseItem)> checkOutList, String? orderMessage) async {
+    return await merchandiseRepositoryImpl.checkOut(checkOutList, orderMessage);
+  }
 }
