@@ -7,19 +7,18 @@ class PasswordTextField extends StatefulWidget {
   final bool isPasswordVisible;
   final Function(String) onPasswordChanged;
   final Function(bool) onPasswordVisibleChanged;
-  final String? errorText;
   final TextInputAction? textInputAction;
+  final FormFieldValidator validator;
 
-  const PasswordTextField({
-    super.key,
-    required this.controller,
-    required this.hintText,
-    required this.isPasswordVisible,
-    required this.onPasswordChanged,
-    required this.onPasswordVisibleChanged,
-    this.errorText,
-    this.textInputAction = TextInputAction.next,
-  });
+  const PasswordTextField(
+      {super.key,
+      required this.controller,
+      required this.hintText,
+      required this.isPasswordVisible,
+      required this.onPasswordChanged,
+      required this.onPasswordVisibleChanged,
+      this.textInputAction = TextInputAction.next,
+      required this.validator});
 
   @override
   State<PasswordTextField> createState() => _PasswordTextFieldState();
@@ -28,15 +27,14 @@ class PasswordTextField extends StatefulWidget {
 class _PasswordTextFieldState extends State<PasswordTextField> {
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       textInputAction: widget.textInputAction,
-      controller: widget.controller,
       onChanged: (text) {
         widget.onPasswordChanged(text);
       },
-      obscureText: !widget.isPasswordVisible,
+      validator: widget.validator,
+      obscureText: widget.isPasswordVisible,
       decoration: InputDecoration(
-          errorText: widget.errorText,
           errorStyle: TextStyle(color: Colors.red),
           prefixIcon: Icon(
             Icons.lock_outline_rounded,
@@ -56,8 +54,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
                         ),
                   onPressed: () {
                     setState(() {
-                      widget
-                          .onPasswordVisibleChanged(!widget.isPasswordVisible);
+                      widget.onPasswordVisibleChanged(widget.isPasswordVisible);
                     });
                   },
                 );
