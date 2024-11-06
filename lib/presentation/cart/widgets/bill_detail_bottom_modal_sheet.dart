@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
@@ -40,9 +41,9 @@ class _BillDetailBottomModalSheetState
                 Navigator.of(context).pop();
               },
               child: Text(
-                "Hide Detail",
+                'hide_detail',
                 style: TextStyle(color: AppColor.green),
-              )),
+              ).tr()),
           SizedBox(
             width: double.infinity,
             child: Padding(
@@ -60,7 +61,7 @@ class _BillDetailBottomModalSheetState
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(width: 1, color: Colors.black)),
-                    hintText: "Leave us your message",
+                    hintText: context.tr('leave_us_message'),
                     hintStyle: TextStyle(color: AppColor.gray)),
                 cursorColor: AppColor.gray,
               ),
@@ -73,7 +74,7 @@ class _BillDetailBottomModalSheetState
             return Column(
               children: [
                 ExpenseRow(
-                    rowName: "SubTotal",
+                    rowName: 'sub_total',
                     rowValue: MoneyFormatHelper.formatVNCurrency(
                         state.getTotal() * CurrencyRate.vnd),
                     rowTextStyle:
@@ -82,7 +83,7 @@ class _BillDetailBottomModalSheetState
                   height: 8,
                 ),
                 ExpenseRow(
-                    rowName: "Shipping charges",
+                    rowName: 'shipping_charges',
                     rowValue: MoneyFormatHelper.formatVNCurrency(
                         100 * CurrencyRate.vnd),
                     rowTextStyle:
@@ -91,7 +92,7 @@ class _BillDetailBottomModalSheetState
                   height: 16,
                 ),
                 ExpenseRow(
-                    rowName: "Total",
+                    rowName: 'total',
                     rowValue: MoneyFormatHelper.formatVNCurrency(
                         (state.getTotal() + 100) * CurrencyRate.vnd),
                     rowTextStyle:
@@ -111,9 +112,9 @@ class _BillDetailBottomModalSheetState
                             borderRadius:
                                 BorderRadius.all(Radius.circular(6)))),
                     child: Text(
-                      "Check Out",
+                      'check_out',
                       style: TextStyle(color: AppColor.white),
-                    ),
+                    ).tr(args: ['']),
                   ),
                 )
               ],

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 
@@ -21,7 +22,7 @@ class ProfileCard extends StatelessWidget {
         title: Text(
           title,
           style: TextStyle(color: AppColor.white),
-        ),
+        ).tr(),
         trailing: Icon(Icons.arrow_forward_ios, color: AppColor.white),
         onTap: () {
           onCardClick();

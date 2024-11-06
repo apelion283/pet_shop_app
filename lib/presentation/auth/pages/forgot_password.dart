@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,7 +40,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       builder: (context, state) {
         return Scaffold(
             appBar: AppBar(
-              title: Text("Forgot Password"),
+              title: Text('forgot_password').tr(),
               centerTitle: true,
             ),
             body: Padding(
@@ -51,14 +52,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomTextField(
-                        hintText: "Enter your email",
+                        hintText: context.tr('enter_your_email'),
                         controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Email is required";
+                            return context.tr('email_is_required');
                           } else if (!EmailValidator.validate(
                               value, false, true)) {
-                            return "Please enter a valid email!";
+                            return context.tr('enter_valid_email');
                           } else {
                             return null;
                           }
@@ -96,8 +97,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                     // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         notifySnackBar(
-                                            "A reset password link sent to your email",
-                                            () {
+                                            'reset_password_link_sent', () {
                                       ScaffoldMessenger.of(context)
                                           .hideCurrentSnackBar();
                                     }));
@@ -114,8 +114,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                         .hideCurrentSnackBar();
                                     // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                        notifySnackBar(
-                                            "Some thing went wrong, try again later",
+                                        notifySnackBar('something_went_wrong',
                                             () {
                                       ScaffoldMessenger.of(context)
                                           .hideCurrentSnackBar();
@@ -129,12 +128,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               }
                             },
                             child: Text(
-                              "Send me reset password link",
+                              'send_me_reset_password_link',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500),
-                            ),
+                            ).tr(),
                           ))
                     ],
                   ),

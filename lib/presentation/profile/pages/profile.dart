@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
@@ -16,9 +17,9 @@ class ProfilePage extends StatelessWidget {
         child: Scaffold(
             appBar: AppBar(
               title: const Text(
-                "Profile",
+                'profile',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
+              ).tr(),
               centerTitle: true,
             ),
             body: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
@@ -30,7 +31,7 @@ class ProfilePage extends StatelessWidget {
                     SizedBox(height: 16),
                     ProfileCard(
                         leadingIcon: Icons.person_outline_outlined,
-                        title: "Edit Profile",
+                        title: 'edit_profile',
                         onCardClick: () {
                           if (state.authState ==
                               AuthenticationState.unAuthenticated) {
@@ -41,7 +42,7 @@ class ProfilePage extends StatelessWidget {
                     if (state.authState == AuthenticationState.authenticated)
                       ProfileCard(
                           leadingIcon: Icons.logout_outlined,
-                          title: "Sign Out",
+                          title: 'sign_out',
                           onCardClick: () {
                             context.read<CartCubit>().clearCart();
                             context.read<AuthCubit>().signOut();
@@ -50,7 +51,7 @@ class ProfilePage extends StatelessWidget {
                         AuthenticationState.unAuthenticated)
                       ProfileCard(
                           leadingIcon: Icons.logout_outlined,
-                          title: "Sign In",
+                          title: 'sign_in',
                           onCardClick: () {
                             Navigator.pushNamed(context, RouteName.signIn);
                           })

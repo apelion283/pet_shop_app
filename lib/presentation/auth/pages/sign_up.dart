@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,21 +53,21 @@ class _SignUpPageState extends State<SignUpPage> {
               case "email-already-in-use":
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 ScaffoldMessenger.of(context)
-                    .showSnackBar(notifySnackBar("Email already in use!", () {
+                    .showSnackBar(notifySnackBar('email_already_in_use', () {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 }));
                 break;
               case "invalid-email":
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                    notifySnackBar("Please use another email", () {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(notifySnackBar('use_another_email', () {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 }));
                 break;
               case "weak-password":
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                    notifySnackBar("Please enter a stronger password", () {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(notifySnackBar('enter_stronger_password', () {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 }));
                 break;
@@ -82,7 +83,7 @@ class _SignUpPageState extends State<SignUpPage> {
             _confirmPasswordController.text = "";
           });
           ScaffoldMessenger.of(context)
-              .showSnackBar(notifySnackBar("Sign up successfully", () {
+              .showSnackBar(notifySnackBar('sign_up_successfully', () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }));
           CommonPageController.controller
@@ -93,7 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text("Sign Up"),
+            title: Text('sign_up').tr(),
             centerTitle: true,
           ),
           body: Padding(
@@ -105,14 +106,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     : AutovalidateMode.disabled,
                 child: Column(children: [
                   CustomTextField(
-                    hintText: "Your Email Address",
+                    hintText: 'enter_your_email',
                     controller: _emailController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Email is required";
+                        return context.tr('email_is_required');
                       } else if (!EmailValidator.validate(
                           _emailController.text, false, true)) {
-                        return "Please enter a valid email";
+                        return context.tr('enter_valid_email');
                       } else {
                         return null;
                       }
@@ -126,11 +127,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 32),
                   CustomTextField(
-                    hintText: "Your Name",
+                    hintText: 'enter_your_name',
                     controller: _nameController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Name is required";
+                        return 'name_is_required';
                       } else {
                         return null;
                       }
@@ -144,12 +145,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 32),
                   PasswordTextField(
-                    hintText: "Your New Password",
+                    hintText: 'enter_new_password',
                     controller: _passwordController,
                     isPasswordVisible: _isNewPasswordVisible,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "This field is required";
+                        return 'password_is_required';
                       } else {
                         return null;
                       }
@@ -167,14 +168,14 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 32),
                   PasswordTextField(
-                    hintText: "Confirm Password",
+                    hintText: 'confirm_password',
                     textInputAction: TextInputAction.done,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "This field is required";
+                        return 'confirm_password_is_required';
                       } else if (_confirmPasswordController.text !=
                           _passwordController.text) {
-                        return "The password does not match";
+                        return 'password_does_not_match';
                       } else {
                         return null;
                       }
@@ -213,36 +214,37 @@ class _SignUpPageState extends State<SignUpPage> {
                               name: _nameController.text);
                         }
                       },
-                      child: Text("Sign Up",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500)),
+                      child: Text('sign_up',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500))
+                          .tr(),
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Already have an account?",
+                        'already_have_an_account',
                         style: TextStyle(
                           color: AppColor.gray,
                           fontSize: 15,
                           fontWeight: FontWeight.normal,
                         ),
-                      ),
+                      ).tr(),
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          "Sign In",
+                          'sign_in',
                           style: TextStyle(
                             color: AppColor.green,
                             fontSize: 15,
                             fontWeight: FontWeight.normal,
                           ),
-                        ),
+                        ).tr(),
                       )
                     ],
                   )

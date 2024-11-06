@@ -12,7 +12,7 @@ Widget myPetSectionWidget() {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            cardHeader("assets/icons/ic_pets.svg", "Our Pets"),
+            cardHeader("assets/icons/ic_pets.svg", 'our_pet'),
             SizedBox(
               height: 8,
             ),

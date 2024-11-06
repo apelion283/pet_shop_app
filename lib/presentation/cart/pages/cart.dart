@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
@@ -25,9 +26,9 @@ class _CartPageState extends State<CartPage> {
           child: Scaffold(
               appBar: AppBar(
                 title: const Text(
-                  'Your Cart',
+                  'your_cart',
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
+                ).tr(),
                 centerTitle: true,
               ),
               body: Column(
@@ -42,8 +43,9 @@ class _CartPageState extends State<CartPage> {
                                   children: state.cartList.isEmpty
                                       ? [
                                           Center(
-                                              child: Text(
-                                                  "There is nothing here. Let's add an item "))
+                                              child:
+                                                  Text('there_is_nothing_here')
+                                                      .tr())
                                         ]
                                       : List.generate(state.cartList.length,
                                           (index) {
@@ -67,7 +69,8 @@ class _CartPageState extends State<CartPage> {
                                                         },
                                                         icon: Icons
                                                             .delete_forever_outlined,
-                                                        label: "Delete",
+                                                        label: context
+                                                            .tr('delete'),
                                                         backgroundColor:
                                                             AppColor.red,
                                                         foregroundColor:
@@ -122,19 +125,19 @@ class _CartPageState extends State<CartPage> {
                                                     state.cartList, value);
                                             if (result == null) {
                                               showSnackBar(
-                                                  "Your Order Complete Successfully");
+                                                  'order_successfully');
                                             } else {
                                               showSnackBar(
-                                                  "Some thing went wrong, try again later!");
+                                                  'something_went_wrong');
                                             }
                                           },
                                         );
                                       });
                                 },
                                 child: Text(
-                                  "View Detail",
+                                  'view_detail',
                                   style: TextStyle(color: AppColor.green),
-                                ),
+                                ).tr(),
                               ),
                               SizedBox(
                                 width: double.infinity,
@@ -144,11 +147,9 @@ class _CartPageState extends State<CartPage> {
                                         .read<CartCubit>()
                                         .checkOut(state.cartList, null);
                                     if (result == null) {
-                                      showSnackBar(
-                                          "Your Order Complete Successfully");
+                                      showSnackBar('order_successfully');
                                     } else {
-                                      showSnackBar(
-                                          "Some thing went wrong, try again later!");
+                                      showSnackBar('something_went_wrong');
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -157,9 +158,13 @@ class _CartPageState extends State<CartPage> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(6)))),
                                   child: Text(
-                                    "Check Out ${MoneyFormatHelper.formatVNCurrency((state.getTotal() + 100) * CurrencyRate.vnd)}",
+                                    'check_out',
                                     style: TextStyle(color: AppColor.white),
-                                  ),
+                                  ).tr(args: [
+                                    MoneyFormatHelper.formatVNCurrency(
+                                        (state.getTotal() + 100) *
+                                            CurrencyRate.vnd)
+                                  ]),
                                 ),
                               )
                             ],
@@ -172,7 +177,8 @@ class _CartPageState extends State<CartPage> {
 
   void showSnackBar(String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(notifySnackBar(message, () {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(notifySnackBar(context.tr(message), () {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
     }));
   }

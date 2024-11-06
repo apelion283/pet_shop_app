@@ -1,10 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
+import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
+import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
+import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/card_header.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/horizontal_merchandise_item.dart';
@@ -33,7 +37,7 @@ class _FoodsSectionState extends State<FoodsSection> {
           children: [
             Padding(
               padding: EdgeInsets.all(16),
-              child: cardHeader("assets/icons/ic_pet_foods.svg", "Pet Food"),
+              child: cardHeader("assets/icons/ic_pet_foods.svg", 'pet_food'),
             ),
             (widget.foodList?.isNotEmpty ?? false)
                 ? SizedBox(
@@ -54,29 +58,11 @@ class _FoodsSectionState extends State<FoodsSection> {
                               itemBuilder: (BuildContext context, int itemIndex,
                                   int pageViewIndex) {
                                 final firstItemIndex = itemIndex * 2;
-                                return Column(children: [
-                                  horizontalMerchandiseItem(
-                                      item: widget.foodList![firstItemIndex],
-                                      onItemClick: () {
-                                        Navigator.pushNamed(context,
-                                            RouteName.merchandiseDetail,
-                                            arguments:
-                                                MerchandiseItemPageArguments(
-                                                    widget
-                                                            .foodList![
-                                                                firstItemIndex]
-                                                            .id ??
-                                                        ""));
-                                      },
-                                      onCartButtonClick: () {
-                                        addProduct(
-                                            widget.foodList![firstItemIndex]);
-                                      }),
-                                  if (firstItemIndex + 1 <
-                                      widget.foodList!.length)
+                                return BlocBuilder<AuthCubit, AuthState>(
+                                    builder: (context, authState) {
+                                  return Column(children: [
                                     horizontalMerchandiseItem(
-                                        item: widget
-                                            .foodList![firstItemIndex + 1],
+                                        item: widget.foodList![firstItemIndex],
                                         onItemClick: () {
                                           Navigator.pushNamed(context,
                                               RouteName.merchandiseDetail,
@@ -84,20 +70,56 @@ class _FoodsSectionState extends State<FoodsSection> {
                                                   MerchandiseItemPageArguments(
                                                       widget
                                                               .foodList![
-                                                                  firstItemIndex +
-                                                                      1]
+                                                                  firstItemIndex]
                                                               .id ??
                                                           ""));
                                         },
                                         onCartButtonClick: () {
-                                          addProduct(
-                                            widget
-                                                .foodList![firstItemIndex + 1],
-                                          );
-                                        })
-                                  else
-                                    Container()
-                                ]);
+                                          if (authState.authState ==
+                                              AuthenticationState
+                                                  .authenticated) {
+                                            addProduct(
+                                              widget.foodList![firstItemIndex],
+                                            );
+                                          } else {
+                                            Navigator.pushNamed(
+                                                context, RouteName.signIn);
+                                          }
+                                        }),
+                                    if (firstItemIndex + 1 <
+                                        widget.foodList!.length)
+                                      horizontalMerchandiseItem(
+                                          item: widget
+                                              .foodList![firstItemIndex + 1],
+                                          onItemClick: () {
+                                            Navigator.pushNamed(context,
+                                                RouteName.merchandiseDetail,
+                                                arguments:
+                                                    MerchandiseItemPageArguments(
+                                                        widget
+                                                                .foodList![
+                                                                    firstItemIndex +
+                                                                        1]
+                                                                .id ??
+                                                            ""));
+                                          },
+                                          onCartButtonClick: () {
+                                            if (authState.authState ==
+                                                AuthenticationState
+                                                    .authenticated) {
+                                              addProduct(
+                                                widget.foodList![
+                                                    firstItemIndex + 1],
+                                              );
+                                            } else {
+                                              Navigator.pushNamed(
+                                                  context, RouteName.signIn);
+                                            }
+                                          })
+                                    else
+                                      Container()
+                                  ]);
+                                });
                               },
                               carouselController: _buttonCarouselController,
                               options: CarouselOptions(
@@ -116,7 +138,7 @@ class _FoodsSectionState extends State<FoodsSection> {
                 : SizedBox(
                     height: 50,
                     child: Center(
-                      child: Text("There is no data here"),
+                      child: Text('there_is_no_data').tr(),
                     ),
                   )
           ],
@@ -127,7 +149,7 @@ class _FoodsSectionState extends State<FoodsSection> {
     context.read<CartCubit>().addProduct(item, 1);
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context)
-        .showSnackBar(notifySnackBar("Add item to cart successfully", () {
+        .showSnackBar(notifySnackBar('add_item_to_cart_successfully', () {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
     }));
   }

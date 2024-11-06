@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseRow extends StatelessWidget {
@@ -18,7 +19,7 @@ class ExpenseRow extends StatelessWidget {
         Text(
           rowName,
           style: rowTextStyle,
-        ),
+        ).tr(),
         Text(
           "\$$rowValue",
           style: rowTextStyle,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,7 +46,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Login"),
+          title: Text('sign_in').tr(),
           centerTitle: true,
         ),
         body: BlocConsumer<AuthCubit, AuthState>(builder: (context, state) {
@@ -61,14 +62,14 @@ class _SignInPageState extends State<SignInPage> {
                       child: Column(
                         children: [
                           CustomTextField(
-                            hintText: "Enter email address",
+                            hintText: 'enter_your_email',
                             controller: _emailController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "Email is required";
+                                return context.tr('email_is_required');
                               } else if (!EmailValidator.validate(
                                   value, false, true)) {
-                                return "Please enter a valid email";
+                                return context.tr('enter_valid_email');
                               } else {
                                 return null;
                               }
@@ -82,11 +83,11 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                           SizedBox(height: 32),
                           PasswordTextField(
-                            hintText: "Enter password",
+                            hintText: 'enter_your_password',
                             controller: _passwordController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return "Password is required";
+                                return context.tr('password_is_required');
                               } else {
                                 return null;
                               }
@@ -117,12 +118,12 @@ class _SignInPageState extends State<SignInPage> {
                                 },
                                 style: ButtonStyle(),
                                 child: Text(
-                                  "Forgot password?",
+                                  'forgot_password',
                                   style: TextStyle(
                                       color: AppColor.green,
                                       fontSize: 20,
                                       fontWeight: FontWeight.w400),
-                                ),
+                                ).tr(),
                               ),
                             ],
                           ),
@@ -152,12 +153,12 @@ class _SignInPageState extends State<SignInPage> {
                                 }
                               },
                               child: Text(
-                                "Login",
+                                'sign_in',
                                 style: TextStyle(
                                     fontSize: 25,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.black),
-                              ),
+                              ).tr(),
                             ),
                           ),
                           SizedBox(
@@ -165,21 +166,23 @@ class _SignInPageState extends State<SignInPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("Don't have an account?",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColor.gray)),
+                                Text('do_not_have_an_account',
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColor.gray))
+                                    .tr(),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pushNamed(
                                         context, RouteName.signUp);
                                   },
-                                  child: Text("Sign Up",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColor.green)),
+                                  child: Text('sign_up',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColor.green))
+                                      .tr(),
                                 )
                               ],
                             ),
@@ -197,7 +200,7 @@ class _SignInPageState extends State<SignInPage> {
             });
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
             ScaffoldMessenger.of(context)
-                .showSnackBar(notifySnackBar("Sign in successfully", () {
+                .showSnackBar(notifySnackBar('sign_in_successfully', () {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             }));
             CommonPageController.controller
@@ -205,8 +208,8 @@ class _SignInPageState extends State<SignInPage> {
             Navigator.popUntil(context, (route) => route.isFirst);
           } else {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            ScaffoldMessenger.of(context).showSnackBar(
-                notifySnackBar("Please check your credential again!", () {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(notifySnackBar("check_credential_again", () {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             }));
           }

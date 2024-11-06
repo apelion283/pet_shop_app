@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +68,7 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                 color: AppColor.white,
                               )),
                           Text(
-                            state.item?.name ?? "Loading ...",
+                            state.item?.name ?? context.tr('loading'),
                             style: TextStyle(
                                 color: AppColor.white,
                                 fontWeight: FontWeight.w500,
@@ -137,16 +138,23 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              "Brand: ${state.brandName}",
+                                              'brand',
                                               style: TextStyle(
                                                   color: AppColor.blue,
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.w500),
-                                            ),
+                                            ).tr(args: [
+                                              state.brandName != null
+                                                  ? state.brandName!
+                                                  : context.tr('loading')
+                                            ]),
                                             Text(
                                               MoneyFormatHelper
                                                   .formatVNCurrency(
-                                                      (state.item?.price ?? 0) *
+                                                      (state.item?.price == null
+                                                              ? 0
+                                                              : state.item!
+                                                                  .price) *
                                                           CurrencyRate.vnd),
                                               style: TextStyle(
                                                   color: AppColor.green,
@@ -163,7 +171,8 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                   height: 16,
                                 ),
                                 Text(
-                                  state.item?.description ?? "Loading ...",
+                                  state.item?.description ??
+                                      context.tr('loading'),
                                   style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.normal),
@@ -184,12 +193,12 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Quantity: ",
+                            'quantity',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: AppColor.gray),
-                          ),
+                          ).tr(),
                           Row(
                             children: [
                               RemoveButton(onButtonClick: () {
@@ -272,7 +281,7 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                       .hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       notifySnackBar(
-                                          "Add item to cart successfully", () {
+                                          'add_item_to_cart_successfully', () {
                                     ScaffoldMessenger.of(context)
                                         .hideCurrentSnackBar();
                                   }));
@@ -292,9 +301,9 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                 children: [
                                   SizedBox(width: 1),
                                   Text(
-                                    "Add to cart",
+                                    'add_to_cart',
                                     style: TextStyle(color: AppColor.white),
-                                  ),
+                                  ).tr(),
                                   Icon(Icons.add_shopping_cart_outlined)
                                 ],
                               ));

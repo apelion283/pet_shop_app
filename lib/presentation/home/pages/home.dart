@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
@@ -6,7 +7,7 @@ import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/home/cubit/home_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/home/cubit/home_state.dart';
-import 'package:flutter_pet_shop_app/presentation/home/widgets/accesories_section.dart';
+import 'package:flutter_pet_shop_app/presentation/home/widgets/accessories_section.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/foods_section.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/our_pets_section.dart';
 
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
       final String userName =
           state.authState == AuthenticationState.authenticated
               ? state.user!.name
-              : "anonymous";
+              : context.tr('guess');
       return BlocProvider(
           create: (context) => HomeCubit()..getInitData(),
           child:
@@ -38,12 +39,12 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "Hey $userName, ",
+                              'greeting',
                               style: TextStyle(
                                   color: AppColor.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600),
-                            ),
+                            ).tr(args: [userName]),
                             Container(
                               width: 50,
                               height: 50,

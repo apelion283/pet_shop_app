@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
@@ -25,7 +26,7 @@ class AccessoriesSection extends StatelessWidget {
           child: Column(
             children: [
               cardHeader(
-                  "assets/icons/ic_pet_accessories.svg", "Pet Accessories"),
+                  "assets/icons/ic_pet_accessories.svg", 'pet_accessories'),
               SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: accessoryList != null
@@ -45,9 +46,9 @@ class AccessoriesSection extends StatelessWidget {
                           height: 50,
                           child: Center(
                               child: Text(
-                            "There is no data here",
+                            'there_is_no_data',
                             style: TextStyle(fontWeight: FontWeight.w400),
-                          )),
+                          ).tr()),
                         ))
             ],
           ),
