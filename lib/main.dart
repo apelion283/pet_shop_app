@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_pet_shop_app/core/auto_generated/codegen_loader.g.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_manager.dart';
@@ -28,7 +29,13 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('cartBox');
 
-  runApp(const MyApp());
+  runApp(EasyLocalization(
+    supportedLocales: [Locale('en'), Locale('vi', 'VI')],
+    path: 'assets/translations',
+    fallbackLocale: Locale('vi', 'VI'),
+    assetLoader: CodegenLoader(),
+    child: MyApp(),
+  ));
   FlutterNativeSplash.remove();
 }
 
@@ -42,6 +49,9 @@ class MyApp extends StatelessWidget {
         child: BlocProvider(
           create: (context) => CartCubit()..loadDataFromLocal(),
           child: MaterialApp(
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
             debugShowCheckedModeBanner: false,
             theme: ThemeData(fontFamily: 'Fredoka'),
             home: MainPage(),
