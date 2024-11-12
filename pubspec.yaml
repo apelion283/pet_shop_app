@@ -53,6 +53,9 @@ dependencies:
   flutter_native_splash: ^2.4.2
   flutter_launcher_icons: ^0.14.1
   easy_localization: ^3.0.7
+  shimmer: ^3.0.0
+  flutter_easyloading: ^3.0.5
+  scrollable_list_tab_scroller: ^3.1.0
 
 
 dev_dependencies:
