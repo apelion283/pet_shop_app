@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_pet_shop_app/domain/entities/bill_entity.dart';
+import 'package:flutter_pet_shop_app/domain/entities/bill.dart';
 
-class BillModel extends BillEntity {
+class BillModel extends Bill {
   const BillModel(
       {required super.id,
       required super.createdDate,

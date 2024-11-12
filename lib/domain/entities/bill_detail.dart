@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class BillDetailEntity extends Equatable {
+class BillDetail extends Equatable {
   final String id;
   final String merchandiseItemId;
   final String billId;
@@ -8,7 +8,7 @@ class BillDetailEntity extends Equatable {
   final int quantity;
   final double subTotal;
 
-  const BillDetailEntity(
+  const BillDetail(
       {required this.id,
       required this.merchandiseItemId,
       required this.billId,

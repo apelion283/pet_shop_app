@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
 
-class BillEntity extends Equatable {
+class Bill extends Equatable {
   final String id;
   final DateTime createdDate;
   final double totalAmount;
   final String accountId;
   final String? orderMessage;
-  const BillEntity(
+  const Bill(
       {required this.id,
       required this.createdDate,
       required this.totalAmount,
