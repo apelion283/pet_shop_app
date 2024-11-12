@@ -23,7 +23,7 @@ class AuthCubit extends Cubit<AuthState> {
                   ? AuthenticationState.authenticated
                   : AuthenticationState.unAuthenticated)));
     } catch (e) {
-      emit(state.copyWith(error: Failure(e.toString())));
+      emit(state.copyWith(error: Failure(message: e.toString())));
     }
   }
 
@@ -39,7 +39,7 @@ class AuthCubit extends Cubit<AuthState> {
           (r) => emit(state.copyWith(
               user: r, state: AuthenticationState.authenticated)));
     } catch (e) {
-      emit(state.copyWith(error: Failure(e.toString())));
+      emit(state.copyWith(error: Failure(message: e.toString())));
     }
   }
 
@@ -53,7 +53,7 @@ class AuthCubit extends Cubit<AuthState> {
           (r) => emit(state.copyWith(
               user: r, state: AuthenticationState.authenticated)));
     } catch (e) {
-      emit(state.copyWith(error: Failure(e.toString())));
+      emit(state.copyWith(error: Failure(message: e.toString())));
     }
   }
 
@@ -63,7 +63,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(state.copyWith(
           user: null, state: AuthenticationState.unAuthenticated));
     } catch (e) {
-      emit(state.copyWith(error: Failure(e.toString())));
+      emit(state.copyWith(error: Failure(message: e.toString())));
     }
   }
 

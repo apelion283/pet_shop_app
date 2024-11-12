@@ -2,13 +2,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
+import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
+import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
+import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/widgets/bill_detail_bottom_modal_sheet.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/widgets/cart_item.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class CartPage extends StatefulWidget {
@@ -37,61 +40,99 @@ class _CartPageState extends State<CartPage> {
                       flex: 1,
                       child: Padding(
                           padding: EdgeInsets.only(left: 16, right: 16),
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Column(
-                                  children: state.cartList.isEmpty
-                                      ? [
-                                          Center(
-                                              child:
-                                                  Text('there_is_nothing_here')
-                                                      .tr())
-                                        ]
-                                      : List.generate(state.cartList.length,
-                                          (index) {
-                                          return Column(
-                                            children: [
-                                              Slidable(
-                                                endActionPane: ActionPane(
-                                                    motion: ScrollMotion(),
-                                                    extentRatio: 0.3,
-                                                    children: [
-                                                      SlidableAction(
-                                                        onPressed: (context) {
-                                                          context
-                                                              .read<CartCubit>()
-                                                              .deleteItemFromCart(state
+                          child: state.cartList.isEmpty
+                              ? Center(
+                                  child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('there_is_nothing_here').tr(),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColor.green,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8))),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pushNamed(RouteName.explore);
+                                        },
+                                        child: Text(
+                                          'explore_now',
+                                          style:
+                                              TextStyle(color: AppColor.white),
+                                        ).tr())
+                                  ],
+                                ))
+                              : SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: List.generate(
+                                          state.cartList.length, (index) {
+                                        return Column(
+                                          children: [
+                                            Slidable(
+                                              endActionPane: ActionPane(
+                                                  motion: ScrollMotion(),
+                                                  extentRatio: 0.3,
+                                                  children: [
+                                                    SlidableAction(
+                                                      onPressed: (context) {
+                                                        String itemToDeleteId =
+                                                            "";
+                                                        if (state
+                                                                .cartList[index]
+                                                                .$2
+                                                            is MerchandiseItem) {
+                                                          itemToDeleteId = (state
                                                                       .cartList[
                                                                           index]
                                                                       .$2
-                                                                      .id
-                                                                  as String);
-                                                        },
-                                                        icon: Icons
-                                                            .delete_forever_outlined,
-                                                        label: context
-                                                            .tr('delete'),
-                                                        backgroundColor:
-                                                            AppColor.red,
-                                                        foregroundColor:
-                                                            AppColor.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(16),
-                                                      )
-                                                    ]),
-                                                child: Column(children: [
-                                                  CartItem(
-                                                      cartItem: state
-                                                          .cartList[index]),
-                                                ]),
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              )
-                                            ],
-                                          );
-                                        })))))
+                                                                  as MerchandiseItem)
+                                                              .id as String;
+                                                        } else if (state
+                                                            .cartList[index]
+                                                            .$2 is Pet) {
+                                                          itemToDeleteId = (state
+                                                                  .cartList[
+                                                                      index]
+                                                                  .$2 as Pet)
+                                                              .id as String;
+                                                        }
+                                                        context
+                                                            .read<CartCubit>()
+                                                            .deleteItemFromCart(
+                                                              itemToDeleteId,
+                                                            );
+                                                      },
+                                                      icon: Icons
+                                                          .delete_forever_outlined,
+                                                      label:
+                                                          context.tr('delete'),
+                                                      backgroundColor:
+                                                          AppColor.red,
+                                                      foregroundColor:
+                                                          AppColor.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              16),
+                                                    )
+                                                  ]),
+                                              child: Column(children: [
+                                                CartItem(
+                                                    cartItem:
+                                                        state.cartList[index]),
+                                              ]),
+                                            ),
+                                            SizedBox(
+                                              height: 8,
+                                            )
+                                          ],
+                                        );
+                                      })))))
                 ],
               ),
               bottomNavigationBar: state.cartList.isNotEmpty
@@ -119,16 +160,21 @@ class _CartPageState extends State<CartPage> {
                                       builder: (context) {
                                         return BillDetailBottomModalSheet(
                                           onCheckoutButtonClick: (value) async {
+                                            ProgressHUD.show();
                                             final result = await context
                                                 .read<CartCubit>()
                                                 .checkOut(
                                                     state.cartList, value);
                                             if (result == null) {
-                                              showSnackBar(
-                                                  'order_successfully');
+                                              // ignore: use_build_context_synchronously
+                                              ProgressHUD.showSuccess(context
+                                                  .tr('order_successfully'));
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.of(context).pop();
                                             } else {
-                                              showSnackBar(
-                                                  'something_went_wrong');
+                                              // ignore: use_build_context_synchronously
+                                              ProgressHUD.showError(context
+                                                  .tr('something_went_wrong'));
                                             }
                                           },
                                         );
@@ -143,13 +189,18 @@ class _CartPageState extends State<CartPage> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () async {
+                                    ProgressHUD.show();
                                     final result = await context
                                         .read<CartCubit>()
                                         .checkOut(state.cartList, null);
                                     if (result == null) {
-                                      showSnackBar('order_successfully');
+                                      ProgressHUD.showSuccess(
+                                          // ignore: use_build_context_synchronously
+                                          context.tr('order_successfully'));
                                     } else {
-                                      showSnackBar('something_went_wrong');
+                                      ProgressHUD.showError(
+                                          // ignore: use_build_context_synchronously
+                                          context.tr('something_went_wrong'));
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -173,13 +224,5 @@ class _CartPageState extends State<CartPage> {
                       height: 0,
                     )));
     });
-  }
-
-  void showSnackBar(String message) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context)
-        .showSnackBar(notifySnackBar(context.tr(message), () {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    }));
   }
 }

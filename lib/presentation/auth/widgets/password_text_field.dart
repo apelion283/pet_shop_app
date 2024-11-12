@@ -33,6 +33,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       onChanged: (text) {
         widget.onPasswordChanged(text);
       },
+      controller: widget.controller,
       validator: widget.validator,
       obscureText: widget.isPasswordVisible,
       decoration: InputDecoration(

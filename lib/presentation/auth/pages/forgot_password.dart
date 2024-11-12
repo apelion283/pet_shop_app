@@ -7,8 +7,8 @@ import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/widgets/custom_text_field.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -52,7 +52,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomTextField(
-                        hintText: context.tr('enter_your_email'),
+                        hintText: 'enter_your_email',
                         controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -84,23 +84,19 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                AuthCubit()
+                                ProgressHUD.show();
+                                await context
+                                    .read<AuthCubit>()
                                     .forgotPassword(_emailController.text)
                                     .then((result) {
                                   if (result) {
-                                    // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
+                                    ProgressHUD.showSuccess(
+                                        Text('reset_password_link_sent')
+                                            .tr()
+                                            .data!);
 
-                                    // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        notifySnackBar(
-                                            'reset_password_link_sent', () {
-                                      ScaffoldMessenger.of(context)
-                                          .hideCurrentSnackBar();
-                                    }));
                                     CommonPageController.controller.jumpToPage(
                                         ScreenInBottomBarOfMainScreen
                                             .home.index);
@@ -109,17 +105,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                         context,
                                         (route) => route.isFirst);
                                   } else {
-                                    // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
-                                    // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        notifySnackBar('something_went_wrong',
-                                            () {
-                                      ScaffoldMessenger.of(context)
-                                          .hideCurrentSnackBar();
-                                    }));
+                                    ProgressHUD.showError(
+                                        Text('something_went_wrong')
+                                            .tr()
+                                            .data!);
                                   }
+
                                   Navigator.popUntil(
                                       // ignore: use_build_context_synchronously
                                       context,

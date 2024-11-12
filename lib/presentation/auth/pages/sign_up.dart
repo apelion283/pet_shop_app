@@ -7,9 +7,9 @@ import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/widgets/custom_text_field.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/widgets/password_text_field.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -51,25 +51,13 @@ class _SignUpPageState extends State<SignUpPage> {
           setState(() {
             switch (state.error?.code) {
               case "email-already-in-use":
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(notifySnackBar('email_already_in_use', () {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                }));
+                ProgressHUD.showError(context.tr('email_already_in_use'));
                 break;
               case "invalid-email":
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(notifySnackBar('use_another_email', () {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                }));
+                ProgressHUD.showError(context.tr('use_another_email'));
                 break;
               case "weak-password":
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(notifySnackBar('enter_stronger_password', () {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                }));
+                ProgressHUD.showError(context.tr('enter_stronger_password'));
                 break;
               default:
                 break;
@@ -82,10 +70,8 @@ class _SignUpPageState extends State<SignUpPage> {
             _passwordController.text = "";
             _confirmPasswordController.text = "";
           });
-          ScaffoldMessenger.of(context)
-              .showSnackBar(notifySnackBar('sign_up_successfully', () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          }));
+
+          ProgressHUD.showSuccess(context.tr('sign_up_successfully'));
           CommonPageController.controller
               .jumpToPage(ScreenInBottomBarOfMainScreen.home.index);
           Navigator.of(context).popUntil((route) => route.isFirst);
@@ -131,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     controller: _nameController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'name_is_required';
+                        return context.tr('name_is_required');
                       } else {
                         return null;
                       }
@@ -157,7 +143,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                     onPasswordVisibleChanged: (value) {
                       setState(() {
-                        _isNewPasswordVisible = value;
+                        _isNewPasswordVisible = !value;
                       });
                     },
                     onPasswordChanged: (value) {
@@ -172,10 +158,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     textInputAction: TextInputAction.done,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'confirm_password_is_required';
+                        return context.tr('confirm_password_is_required');
                       } else if (_confirmPasswordController.text !=
                           _passwordController.text) {
-                        return 'password_does_not_match';
+                        return context.tr('password_does_not_match');
                       } else {
                         return null;
                       }
@@ -184,7 +170,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     isPasswordVisible: _isConfirmPasswordVisible,
                     onPasswordVisibleChanged: (value) {
                       setState(() {
-                        _isConfirmPasswordVisible = value;
+                        _isConfirmPasswordVisible = !value;
                       });
                     },
                     onPasswordChanged: (value) {
@@ -208,6 +194,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           _isValidate = true;
                         });
                         if (_formKey.currentState!.validate()) {
+                          ProgressHUD.dismiss();
+                          ProgressHUD.show();
                           context.read<AuthCubit>().signUp(
                               email: _emailController.text,
                               password: _passwordController.text,

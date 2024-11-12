@@ -6,10 +6,12 @@ import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
+import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
+import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/widgets/custom_text_field.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/widgets/password_text_field.dart';
 
@@ -23,6 +25,7 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   bool isPasswordVisible = false;
   bool _isValidate = false;
+
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
 
@@ -44,6 +47,10 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as SignInPageArguments;
+    (int, Object)? itemToAddToCart = args.itemToAdd;
+
     return Scaffold(
         appBar: AppBar(
           title: Text('sign_in').tr(),
@@ -137,14 +144,15 @@ class _SignInPageState extends State<SignInPage> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 setState(() {
                                   _isValidate = true;
                                 });
                                 _formKey.currentState?.validate();
                                 if (_formKey.currentState?.validate() ??
                                     false) {
-                                  context
+                                  ProgressHUD.show();
+                                  await context
                                       .read<AuthCubit>()
                                       .signInWithEmailAndPassword(
                                         email: _emailController.text,
@@ -195,23 +203,23 @@ class _SignInPageState extends State<SignInPage> {
           if (state.error == null &&
               state.authState == AuthenticationState.authenticated) {
             setState(() {
-              _emailController.text = "";
               _passwordController.text = "";
+              _emailController.text = "";
             });
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            ScaffoldMessenger.of(context)
-                .showSnackBar(notifySnackBar('sign_in_successfully', () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            }));
-            CommonPageController.controller
-                .jumpToPage(ScreenInBottomBarOfMainScreen.home.index);
+            ProgressHUD.showSuccess(context.tr('sign_in_successfully'));
+            if (itemToAddToCart != null) {
+              CommonPageController.controller
+                  .jumpToPage(ScreenInBottomBarOfMainScreen.cart.index);
+              context
+                  .read<CartCubit>()
+                  .addProduct(itemToAddToCart.$2, itemToAddToCart.$1);
+            } else {
+              CommonPageController.controller
+                  .jumpToPage(ScreenInBottomBarOfMainScreen.home.index);
+            }
             Navigator.popUntil(context, (route) => route.isFirst);
           } else {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            ScaffoldMessenger.of(context)
-                .showSnackBar(notifySnackBar("check_credential_again", () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            }));
+            ProgressHUD.showError(context.tr('check_credential_again'));
           }
         }));
   }
