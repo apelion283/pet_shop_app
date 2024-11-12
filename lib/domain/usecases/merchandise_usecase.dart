@@ -25,7 +25,9 @@ class MerchandiseUsecase {
   }
 
   Future<Failure?> checkOut(
-      List<(int, MerchandiseItem)> checkOutList, String? orderMessage) async {
-    return await merchandiseRepositoryImpl.checkOut(checkOutList, orderMessage);
+      {required List<(int, Object)> checkOutList,
+      String? orderMessage}) async {
+    return await merchandiseRepositoryImpl.checkOut(
+        checkOutList: checkOutList, orderMessage: orderMessage);
   }
 }

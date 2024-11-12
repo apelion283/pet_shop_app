@@ -23,7 +23,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final result = await firebaseAuthService.getCurrentUserInformation();
       return result.fold((l) => Left(l), (r) => Right(r));
     } catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -35,7 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
           email: email, password: password);
       return result.fold((l) => Left(l), (r) => Right(r));
     } on Exception catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -58,7 +58,7 @@ class AuthRepositoryImpl implements AuthRepository {
           email: email, password: password, name: name);
       return result.fold((l) => Left(l), (r) => Right(r));
     } on Exception catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 

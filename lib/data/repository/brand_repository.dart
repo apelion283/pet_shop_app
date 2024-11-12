@@ -15,7 +15,7 @@ class BrandRepositoryImpl implements BrandRepository {
       final result = await dataSourceImpl.getBrandNameByBrandId(brandId);
       return result.fold((l) => Left(l), (r) => Right(r));
     } catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 }
