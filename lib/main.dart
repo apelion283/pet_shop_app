@@ -3,12 +3,15 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_pet_shop_app/core/auto_generated/codegen_loader.g.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_manager.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
+import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
+import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
 import 'package:flutter_pet_shop_app/firebase_options.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
@@ -17,6 +20,7 @@ import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/pages/cart.dart';
 import 'package:flutter_pet_shop_app/presentation/home/pages/home.dart';
 import 'package:flutter_pet_shop_app/presentation/profile/pages/profile.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -28,6 +32,7 @@ void main() async {
   );
   await Hive.initFlutter();
   await Hive.openBox('cartBox');
+  configLoading();
 
   runApp(EasyLocalization(
     supportedLocales: [Locale('en'), Locale('vi', 'VI')],
@@ -53,7 +58,8 @@ class MyApp extends StatelessWidget {
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(fontFamily: 'Fredoka'),
+            theme: ThemeData(fontFamily: 'Fredoka', primarySwatch: Colors.blue),
+            builder: EasyLoading.init(),
             home: MainPage(),
             routes: Routes.routes,
           ),
@@ -105,8 +111,18 @@ class _MainPageState extends State<MainPage> {
         _cartBox.clear();
         if (state.cartList.isNotEmpty) {
           for (var item in state.cartList) {
+            var isMerchandise = item.$2 is MerchandiseItem;
             _cartBox.put(
-                item.$2.id, {"quantity": item.$1, "item": item.$2.toJson()});
+                isMerchandise
+                    ? (item.$2 as MerchandiseItem).id
+                    : (item.$2 as Pet).id,
+                {
+                  "quantity": item.$1,
+                  "item": isMerchandise
+                      ? (item.$2 as MerchandiseItem).toJson()
+                      : (item.$2 as Pet).toJson(),
+                  "isMerchandise": item.$2 is MerchandiseItem
+                });
           }
         }
       },
