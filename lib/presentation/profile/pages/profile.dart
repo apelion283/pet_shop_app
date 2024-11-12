@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
+import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
@@ -53,7 +54,9 @@ class ProfilePage extends StatelessWidget {
                           leadingIcon: Icons.logout_outlined,
                           title: 'sign_in',
                           onCardClick: () {
-                            Navigator.pushNamed(context, RouteName.signIn);
+                            Navigator.pushNamed(context, RouteName.signIn,
+                                arguments:
+                                    SignInPageArguments(itemToAdd: null));
                           })
                   ],
                 ),
