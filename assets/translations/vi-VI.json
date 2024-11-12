@@ -49,5 +49,22 @@
     "there_is_nothing_here": "Không có gì ở đây, mua sắm ngay!",
     "delete": "Xóa",
     "hide": "Ẩn",
-    "loading": "Đang tải ..."
+    "loading": "Đang tải ...",
+    "you_can_only_add_one": "Thú cưng chỉ được thêm vào giỏ hàng 1 lần!",
+    "explore": "Khám phá",
+    "sign_in_to_shopping": "Đăng nhập để tiếp tục?",
+    "need_to_sign_in_description": "Bạn cần đăng nhập để thêm hàng vào giỏ, đến trang đăng nhập?",
+    "cancel": "Hủy",
+    "get_with": "Chọn {} với giá {} ngay",
+    "pet_profile": "Hồ sơ của {}",
+    "about_pet": "Giới thiệu về {}",
+    "pet_status": "Thông tin của {}",
+    "gender": "Giới tính:",
+    "male": "Giống Đực",
+    "female": "Giống Cái",
+    "weight": "Cân nặng:",
+    "height": "Chiều cao:",
+    "color": "Màu sắc:",
+    "birthday": "Ngày sinh:",
+    "explore_now": "Khám phá ngay"
 }

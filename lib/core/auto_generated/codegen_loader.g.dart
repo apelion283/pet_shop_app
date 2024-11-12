@@ -65,7 +65,24 @@ class CodegenLoader extends AssetLoader{
   "there_is_nothing_here": "There is nothing here. Let's add an item ",
   "delete": "Delete",
   "hide": "Hide",
-  "loading": "Loading ..."
+  "loading": "Loading ...",
+  "you_can_only_add_one": "You can only add once with pet!",
+  "explore": "Explore",
+  "sign_in_to_shopping": "Sign in to continue?",
+  "need_to_sign_in_description": "You need to sign in to add something to cart, go to sign in?",
+  "cancel": "Cancel",
+  "get_with": "Get {} with {} now",
+  "pet_profile": "{}'s profile",
+  "about_pet": "About {}",
+  "pet_status": "{}'s Status",
+  "gender": "Gender:",
+  "male": "Male",
+  "female": "Female",
+  "weight": "Weight:",
+  "height": "Height:",
+  "color": "Color:",
+  "birthday": "Birthday:",
+  "explore_now": "Explore Now"
 };
 static const Map<String,dynamic> vi_VI = {
   "profile": "Hồ sơ",
@@ -118,7 +135,24 @@ static const Map<String,dynamic> vi_VI = {
   "there_is_nothing_here": "Không có gì ở đây, mua sắm ngay!",
   "delete": "Xóa",
   "hide": "Ẩn",
-  "loading": "Đang tải ..."
+  "loading": "Đang tải ...",
+  "you_can_only_add_one": "Thú cưng chỉ được thêm vào giỏ hàng 1 lần!",
+  "explore": "Khám phá",
+  "sign_in_to_shopping": "Đăng nhập để tiếp tục?",
+  "need_to_sign_in_description": "Bạn cần đăng nhập để thêm hàng vào giỏ, đến trang đăng nhập?",
+  "cancel": "Hủy",
+  "get_with": "Chọn {} với giá {} ngay",
+  "pet_profile": "Hồ sơ của {}",
+  "about_pet": "Giới thiệu về {}",
+  "pet_status": "Thông tin của {}",
+  "gender": "Giới tính:",
+  "male": "Giống Đực",
+  "female": "Giống Cái",
+  "weight": "Cân nặng:",
+  "height": "Chiều cao:",
+  "color": "Màu sắc:",
+  "birthday": "Ngày sinh:",
+  "explore_now": "Khám phá ngay"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "vi_VI": vi_VI};
 }

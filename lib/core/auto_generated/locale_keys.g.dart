@@ -52,5 +52,20 @@ abstract class  LocaleKeys {
   static const delete = 'delete';
   static const hide = 'hide';
   static const loading = 'loading';
+  static const you_can_only_add_one = 'you_can_only_add_one';
+  static const explore = 'explore';
+  static const sign_in_to_shopping = 'sign_in_to_shopping';
+  static const need_to_sign_in_description = 'need_to_sign_in_description';
+  static const cancel = 'cancel';
+  static const get_with = 'get_with';
+  static const pet_profile = 'pet_profile';
+  static const about_pet = 'about_pet';
+  static const pet_status = 'pet_status';
+  static const gender = 'gender';
+  static const weight = 'weight';
+  static const height = 'height';
+  static const color = 'color';
+  static const birthday = 'birthday';
+  static const explore_now = 'explore_now';
 
 }
