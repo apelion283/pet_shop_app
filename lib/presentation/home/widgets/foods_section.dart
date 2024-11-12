@@ -12,7 +12,8 @@ import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/card_header.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/horizontal_merchandise_item.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 
 class FoodsSection extends StatefulWidget {
   final List<MerchandiseItem>? foodList;
@@ -29,15 +30,21 @@ class _FoodsSectionState extends State<FoodsSection> {
   @override
   Widget build(BuildContext context) {
     return Card(
-        elevation: 10,
+        elevation: 2,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(16)),
             side: BorderSide(color: AppColor.gray.withOpacity(0.5))),
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.all(16),
-              child: cardHeader("assets/icons/ic_pet_foods.svg", 'pet_food'),
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 8),
+              child: CardHeader(
+                iconPath: "assets/icons/ic_pet_foods.svg",
+                cardName: 'pet_food',
+                onExploreButtonClick: () {
+                  Navigator.of(context).pushNamed(RouteName.explore);
+                },
+              ),
             ),
             (widget.foodList?.isNotEmpty ?? false)
                 ? SizedBox(
@@ -68,7 +75,7 @@ class _FoodsSectionState extends State<FoodsSection> {
                                               RouteName.merchandiseDetail,
                                               arguments:
                                                   MerchandiseItemPageArguments(
-                                                      widget
+                                                      itemId: widget
                                                               .foodList![
                                                                   firstItemIndex]
                                                               .id ??
@@ -82,8 +89,39 @@ class _FoodsSectionState extends State<FoodsSection> {
                                               widget.foodList![firstItemIndex],
                                             );
                                           } else {
-                                            Navigator.pushNamed(
-                                                context, RouteName.signIn);
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return CustomAlertDialog(
+                                                      icon: Icons
+                                                          .question_mark_outlined,
+                                                      title:
+                                                          'sign_in_to_shopping',
+                                                      message:
+                                                          'need_to_sign_in_description',
+                                                      positiveButtonText:
+                                                          'sign_in',
+                                                      negativeButtonText:
+                                                          'cancel',
+                                                      onPositiveButtonClick:
+                                                          () {
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            RouteName.signIn,
+                                                            arguments:
+                                                                SignInPageArguments(
+                                                                    itemToAdd: (
+                                                                  1,
+                                                                  widget.foodList![
+                                                                      firstItemIndex]
+                                                                )));
+                                                      },
+                                                      onNegativeButtonClick:
+                                                          () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      });
+                                                });
                                           }
                                         }),
                                     if (firstItemIndex + 1 <
@@ -96,7 +134,7 @@ class _FoodsSectionState extends State<FoodsSection> {
                                                 RouteName.merchandiseDetail,
                                                 arguments:
                                                     MerchandiseItemPageArguments(
-                                                        widget
+                                                        itemId: widget
                                                                 .foodList![
                                                                     firstItemIndex +
                                                                         1]
@@ -112,8 +150,40 @@ class _FoodsSectionState extends State<FoodsSection> {
                                                     firstItemIndex + 1],
                                               );
                                             } else {
-                                              Navigator.pushNamed(
-                                                  context, RouteName.signIn);
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return CustomAlertDialog(
+                                                        icon: Icons
+                                                            .question_mark_outlined,
+                                                        title:
+                                                            'sign_in_to_shopping',
+                                                        message:
+                                                            'need_to_sign_in_description',
+                                                        positiveButtonText:
+                                                            'sign_in',
+                                                        negativeButtonText:
+                                                            'cancel',
+                                                        onPositiveButtonClick:
+                                                            () {
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              RouteName.signIn,
+                                                              arguments:
+                                                                  SignInPageArguments(
+                                                                      itemToAdd: (
+                                                                    1,
+                                                                    widget.foodList![
+                                                                        firstItemIndex +
+                                                                            1]
+                                                                  )));
+                                                        },
+                                                        onNegativeButtonClick:
+                                                            () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        });
+                                                  });
                                             }
                                           })
                                     else
@@ -146,11 +216,8 @@ class _FoodsSectionState extends State<FoodsSection> {
   }
 
   void addProduct(MerchandiseItem item) {
+    ProgressHUD.show();
     context.read<CartCubit>().addProduct(item, 1);
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context)
-        .showSnackBar(notifySnackBar('add_item_to_cart_successfully', () {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    }));
+    ProgressHUD.showSuccess(context.tr('add_item_to_cart_successfully'));
   }
 }

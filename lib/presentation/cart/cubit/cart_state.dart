@@ -1,13 +1,22 @@
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
+import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
 
 class CartState {
-  final List<(int, MerchandiseItem)> cartList;
+  final List<(int, Object)> cartList;
   const CartState({this.cartList = const []});
 
-  CartState copyWith(List<(int, MerchandiseItem)>? list) {
+  CartState copyWith(List<(int, Object)>? list) {
     return CartState(cartList: list ?? cartList);
   }
 
-  double getTotal() =>
-      cartList.fold(0, (sum, item) => sum += item.$1 * item.$2.price);
+  double getTotal() {
+    return cartList.fold(0, (sum, item) {
+      if (item.$2 is MerchandiseItem) {
+        sum += item.$1 * (item.$2 as MerchandiseItem).price;
+      } else if (item.$2 is Pet) {
+        sum += item.$1 * (item.$2 as Pet).price;
+      }
+      return sum;
+    });
+  }
 }

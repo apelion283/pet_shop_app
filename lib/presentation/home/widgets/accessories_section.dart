@@ -20,13 +20,18 @@ class AccessoriesSection extends StatelessWidget {
               width: 1,
             ),
             borderRadius: BorderRadius.circular(16)),
-        elevation: 5,
+        elevation: 2,
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 8),
           child: Column(
             children: [
-              cardHeader(
-                  "assets/icons/ic_pet_accessories.svg", 'pet_accessories'),
+              CardHeader(
+                iconPath: "assets/icons/ic_pet_accessories.svg",
+                cardName: 'pet_accessories',
+                onExploreButtonClick: () {
+                  Navigator.of(context).pushNamed(RouteName.explore);
+                },
+              ),
               SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: accessoryList != null
@@ -39,7 +44,8 @@ class AccessoriesSection extends StatelessWidget {
                                 Navigator.pushNamed(
                                     context, RouteName.merchandiseDetail,
                                     arguments: MerchandiseItemPageArguments(
-                                        accessoryList![index].id ?? ""));
+                                        itemId:
+                                            accessoryList![index].id ?? ""));
                               });
                         }))
                       : SizedBox(

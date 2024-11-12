@@ -1,65 +1,106 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
+import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
+import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/card_header.dart';
 
-Widget myPetSectionWidget() {
-  return Card(
-      elevation: 10,
-      shape: RoundedRectangleBorder(
-          side: BorderSide(color: AppColor.gray.withOpacity(0.5)),
-          borderRadius: BorderRadius.all(Radius.circular(16))),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            cardHeader("assets/icons/ic_pets.svg", 'our_pet'),
-            SizedBox(
-              height: 8,
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(10, (index) {
-                  return Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                color: AppColor.green,
-                                borderRadius: BorderRadius.circular(16)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: -2.0,
-                                    blurRadius: 4.0,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Image.asset(
-                                "assets/images/bella.png",
-                                width: 90,
-                                height: 90,
-                              ),
-                            ),
-                          ),
-                          Text("Bella"),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 8,
-                      )
-                    ],
-                  );
-                }),
+class OurPetsSection extends StatefulWidget {
+  final List<Pet> petList;
+  const OurPetsSection({super.key, required this.petList});
+
+  @override
+  State<OurPetsSection> createState() => _OurPetsSectionState();
+}
+
+class _OurPetsSectionState extends State<OurPetsSection> {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        elevation: 1,
+        shape: RoundedRectangleBorder(
+            side: BorderSide(color: AppColor.gray.withOpacity(0.5)),
+            borderRadius: BorderRadius.all(Radius.circular(16))),
+        child: Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 8),
+          child: Column(
+            children: [
+              CardHeader(
+                iconPath: "assets/icons/ic_pets.svg",
+                cardName: 'our_pet',
+                onExploreButtonClick: () {
+                  Navigator.of(context).pushNamed(RouteName.explore);
+                },
               ),
-            )
-          ],
-        ),
-      ));
+              SizedBox(
+                height: 8,
+              ),
+              widget.petList.isNotEmpty
+                  ? SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(widget.petList.length, (index) {
+                          return Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      RouteName.petProfile,
+                                      arguments: PetProfilePageArguments(
+                                          petId: widget.petList[index].id!));
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: AppColor.green,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.5),
+                                              spreadRadius: -2.0,
+                                              blurRadius: 4.0,
+                                              offset: Offset(0, 3),
+                                            ),
+                                          ],
+                                          borderRadius:
+                                              BorderRadius.circular(16)),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Image.network(
+                                          widget.petList[index].imageUrl,
+                                          width: 90,
+                                          height: 90,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(widget.petList[index].name),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              )
+                            ],
+                          );
+                        }),
+                      ),
+                    )
+                  : SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: Text('there_is_no_data').tr(),
+                      ),
+                    )
+            ],
+          ),
+        ));
+  }
 }
