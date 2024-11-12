@@ -34,7 +34,7 @@ class FirebaseAuthServiceImpl implements FirebaseAuthService {
       await result?.user?.updateDisplayName(name);
       return Right(UserModel.fromFirebaseUser(result?.user));
     } on FirebaseAuthException catch (e) {
-      return Left(Failure(e.message, e.code));
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 
@@ -44,7 +44,7 @@ class FirebaseAuthServiceImpl implements FirebaseAuthService {
       final user = auth?.currentUser;
       return Right(UserModel.fromFirebaseUser(user));
     } on FirebaseAuthException catch (e) {
-      return Left(Failure(e.code, e.message));
+      return Left(Failure(code: e.code, message: e.message));
     }
   }
 
@@ -56,7 +56,7 @@ class FirebaseAuthServiceImpl implements FirebaseAuthService {
           email: email, password: password);
       return Right(UserModel.fromFirebaseUser(result?.user));
     } on FirebaseAuthException catch (e) {
-      return Left(Failure(e.message, e.code));
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 
