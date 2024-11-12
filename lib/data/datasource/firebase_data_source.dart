@@ -3,14 +3,15 @@ import 'package:either_dart/either.dart';
 import 'package:flutter_pet_shop_app/core/enum/merchandise_type.dart';
 import 'package:flutter_pet_shop_app/core/error/failure.dart';
 import 'package:flutter_pet_shop_app/data/datasource/firebase_auth_service.dart';
+import 'package:flutter_pet_shop_app/data/models/animal_type_model.dart';
 import 'package:flutter_pet_shop_app/data/models/bill_detail_model.dart';
 import 'package:flutter_pet_shop_app/data/models/bill_model.dart';
 import 'package:flutter_pet_shop_app/data/models/merchandise_item_model.dart';
+import 'package:flutter_pet_shop_app/data/models/pet_model.dart';
+import 'package:flutter_pet_shop_app/data/models/pet_species_model.dart';
 
 abstract class FirebaseDataSource {
   FirebaseFirestore get database;
-
-  Future<Either<Failure, List<MerchandiseItemModel>>> getAllMerchandise();
   Future<Either<Failure, List<MerchandiseItemModel>>> getAllFoodItems();
   Future<Either<Failure, List<MerchandiseItemModel>>> getAllAccessoryItems();
   Future<Either<Failure, MerchandiseItemModel>> getMerchandiseItemDataById(
@@ -18,7 +19,10 @@ abstract class FirebaseDataSource {
 
   Future<Either<Failure, String>> getBrandNameByBrandId(String brandId);
   Future<Failure?> checkOut(
-      List<BillDetailModel> checkOutList, String? orderMessage);
+      {required List<BillDetailModel> checkOutList, String? orderMessage});
+  Future<Either<Failure, (AnimalTypeModel, PetSpeciesModel, PetModel)>>
+      getPetDataById(String petId);
+  Future<Either<Failure, List<PetModel>>> getAllPets();
 }
 
 class FirebaseDataSourceImpl implements FirebaseDataSource {
@@ -38,7 +42,7 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
               MerchandiseItemModel.fromFirestore(doc, SnapshotOptions()))
           .toList());
     } catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -53,13 +57,8 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
           .map((doc) => MerchandiseItemModel.fromFirestore(doc, null))
           .toList());
     } catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(Failure(message: e.toString()));
     }
-  }
-
-  @override
-  Future<Either<Failure, List<MerchandiseItemModel>>> getAllMerchandise() {
-    throw UnimplementedError();
   }
 
   @override
@@ -70,7 +69,7 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       final result = await merchandiseCollection.doc(itemId).get();
       return Right(MerchandiseItemModel.fromFirestore(result, null));
     } catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -81,13 +80,14 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       final result = await brandCollection.doc(brandId).get();
       return Right(result["name"]);
     } catch (e) {
-      return Left(Failure(e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
   @override
   Future<Failure?> checkOut(
-      List<BillDetailModel> checkOutList, String? orderMessage) async {
+      {required List<BillDetailModel> checkOutList,
+      String? orderMessage}) async {
     try {
       final billsCollection = database.collection("bills");
       String billId = billsCollection.doc().id;
@@ -113,7 +113,47 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       }
       return null;
     } catch (e) {
-      return Failure(e.toString());
+      return Failure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PetModel>>> getAllPets() async {
+    try {
+      final petsCollection = database.collection('pets');
+      final result = await petsCollection.get();
+      final pets =
+          result.docs.map((doc) => PetModel.fromFirestore(doc, null)).toList();
+      return Right(pets);
+    } on FirebaseException catch (e) {
+      return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, (AnimalTypeModel, PetSpeciesModel, PetModel)>>
+      getPetDataById(String petId) async {
+    try {
+      final petsCollection = database.collection('pets');
+      final petResult = await petsCollection.doc(petId).get();
+      final petFromFirebase = PetModel.fromFirestore(petResult, null);
+      final animalTypeCollection = database.collection('animalTypes');
+      final animalTypeResult =
+          await animalTypeCollection.doc(petFromFirebase.animalTypeId).get();
+      final petSpeciesCollection = database.collection('species');
+      final petSpeciesResult =
+          await petSpeciesCollection.doc(petFromFirebase.speciesId).get();
+      return Right((
+        AnimalTypeModel.fromFirestore(
+            snapshot: animalTypeResult, options: null),
+        PetSpeciesModel.fromFirestore(
+            snapshot: petSpeciesResult, options: null),
+        petFromFirebase
+      ));
+
+      // return Right(PetModel.fromFirestore(result, null));
+    } on FirebaseException catch (e) {
+      return Left(Failure(message: e.toString()));
     }
   }
 }
