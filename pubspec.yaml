@@ -56,6 +56,7 @@ dependencies:
   shimmer: ^3.0.0
   flutter_easyloading: ^3.0.5
   scrollable_list_tab_scroller: ^3.1.0
+  add_to_cart_animation: ^2.0.4
 
 
 dev_dependencies:
