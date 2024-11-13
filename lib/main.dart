@@ -58,7 +58,10 @@ class MyApp extends StatelessWidget {
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(fontFamily: 'Fredoka', primarySwatch: Colors.blue),
+            theme: ThemeData(
+              fontFamily: 'Fredoka',
+              primarySwatch: Colors.blue,
+            ),
             builder: EasyLoading.init(),
             home: MainPage(),
             routes: Routes.routes,
@@ -126,43 +129,49 @@ class _MainPageState extends State<MainPage> {
           }
         }
       },
-      child: Scaffold(
-          body: PageView(
-            controller: CommonPageController.controller,
-            children: [
-              const ProfilePage(),
-              const HomePage(),
-              const CartPage(),
-            ],
-            onPageChanged: (value) => onPageChanged(value),
-          ),
-          bottomNavigationBar: CurvedNavigationBar(
-              index: _currentIndex,
-              height: 50,
-              color: AppColor.green.withOpacity(0.85),
-              backgroundColor: AppColor.white,
-              onTap: (index) => setState(() {
-                    onTap(index);
-                    _currentIndex = index;
-                  }),
-              items: [
-                Icon(Icons.person_outline_rounded),
-                Icon(Icons.home_outlined),
-                BlocBuilder<CartCubit, CartState>(
-                  builder: (context, state) {
-                    return state.cartList.isNotEmpty
-                        ? Badge(
-                            label: Text(state.cartList.length.toString()),
-                            child: Icon(
-                              Icons.shopping_cart_outlined,
-                            ),
-                          )
-                        : Icon(
-                            Icons.shopping_cart_outlined,
-                          );
-                  },
-                )
-              ])),
+      child: Container(
+        color: AppColor.green,
+        child: SafeArea(
+            top: true,
+            child: Scaffold(
+                extendBody: true,
+                body: PageView(
+                  controller: CommonPageController.controller,
+                  children: [
+                    const ProfilePage(),
+                    const HomePage(),
+                    const CartPage(),
+                  ],
+                  onPageChanged: (value) => onPageChanged(value),
+                ),
+                bottomNavigationBar: CurvedNavigationBar(
+                    index: _currentIndex,
+                    height: 50,
+                    color: AppColor.green,
+                    backgroundColor: Colors.transparent,
+                    onTap: (index) => setState(() {
+                          onTap(index);
+                          _currentIndex = index;
+                        }),
+                    items: [
+                      Icon(Icons.person_outline_rounded),
+                      Icon(Icons.home_outlined),
+                      BlocBuilder<CartCubit, CartState>(
+                        builder: (context, state) {
+                          return state.cartList.isNotEmpty
+                              ? Badge(
+                                  label: Text(state.cartList.length.toString()),
+                                  child: Icon(
+                                    Icons.shopping_cart_outlined,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.shopping_cart_outlined,
+                                );
+                        },
+                      )
+                    ]))),
+      ),
     );
   }
 }

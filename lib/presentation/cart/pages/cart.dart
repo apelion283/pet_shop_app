@@ -11,6 +11,7 @@ import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/widgets/bill_detail_bottom_modal_sheet.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/widgets/cart_item.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -26,6 +27,7 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<CartCubit, CartState>(builder: (context, state) {
       return SafeArea(
+          bottom: false,
           child: Scaffold(
               appBar: AppBar(
                 title: const Text(
@@ -102,11 +104,36 @@ class _CartPageState extends State<CartPage> {
                                                                   .$2 as Pet)
                                                               .id as String;
                                                         }
-                                                        context
-                                                            .read<CartCubit>()
-                                                            .deleteItemFromCart(
-                                                              itemToDeleteId,
-                                                            );
+                                                        showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return CustomAlertDialog(
+                                                                  icon: Icons
+                                                                      .question_mark_outlined,
+                                                                  title:
+                                                                      'about_to_delete',
+                                                                  message:
+                                                                      'are_you_sure_to_delete',
+                                                                  positiveButtonText:
+                                                                      'delete',
+                                                                  negativeButtonText:
+                                                                      'cancel',
+                                                                  onPositiveButtonClick:
+                                                                      () {
+                                                                    context
+                                                                        .read<
+                                                                            CartCubit>()
+                                                                        .deleteItemFromCart(
+                                                                          itemToDeleteId,
+                                                                        );
+                                                                  },
+                                                                  onNegativeButtonClick:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  });
+                                                            });
                                                       },
                                                       icon: Icons
                                                           .delete_forever_outlined,
