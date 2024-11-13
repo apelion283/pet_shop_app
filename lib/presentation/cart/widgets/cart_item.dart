@@ -22,12 +22,11 @@ class CartItem extends StatefulWidget {
 
 class _CartItemState extends State<CartItem> {
   final TextEditingController _quantityController = TextEditingController();
-  bool _isMerchandise = true;
 
   @override
   void initState() {
     super.initState();
-    _isMerchandise = widget.cartItem.$2 is MerchandiseItem;
+
     _quantityController.text = widget.cartItem.$1.toString();
   }
 
@@ -39,6 +38,7 @@ class _CartItemState extends State<CartItem> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isMerchandise = widget.cartItem.$2 is MerchandiseItem;
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -70,7 +70,7 @@ class _CartItemState extends State<CartItem> {
                           int indexOfItem = context
                               .read<CartCubit>()
                               .getIndexOfItem(
-                                  itemId: widget.cartItem.$2 is MerchandiseItem
+                                  itemId: _isMerchandise
                                       ? (widget.cartItem.$2 as MerchandiseItem)
                                           .id
                                       : (widget.cartItem.$2 as Pet).id);
