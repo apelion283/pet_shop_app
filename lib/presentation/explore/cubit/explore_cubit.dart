@@ -27,10 +27,7 @@ class ExploreCubit extends Cubit<ExploreState> {
 
   void getAllFoodItems() async {
     final result = await _merchandiseUsecase.getAllFoodItems();
-    result.fold(
-        (l) => () {},
-        (r) => emit(state.copyWith(
-            foodList: r..sort((a, b) => a.name.compareTo(b.name)))));
+    result.fold((l) => () {}, (r) => emit(state.copyWith(foodList: r)));
   }
 
   void getAllAccessoryItems() async {
