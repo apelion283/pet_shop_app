@@ -9,13 +9,15 @@ import 'package:flutter_pet_shop_app/presentation/widgets/color_box_from_color_h
 
 class ExploreItem extends StatelessWidget {
   final Object item;
+  final GlobalKey widgetKey;
   final Function onItemClick;
   final Function onAddToCartButtonClick;
   const ExploreItem(
       {super.key,
       required this.item,
       required this.onItemClick,
-      required this.onAddToCartButtonClick});
+      required this.onAddToCartButtonClick,
+      required this.widgetKey});
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +33,20 @@ class ExploreItem extends StatelessWidget {
               padding: EdgeInsets.all(16),
               child: Column(
                 children: [
-                  Image.network(
-                    isMerchandise
-                        ? (item as MerchandiseItem).imageUrl
-                        : (item as Pet).imageUrl,
-                    width: 90,
-                    height: 95,
-                    fit: BoxFit.cover,
+                  Container(
+                    key: widgetKey,
+                    child: Hero(
+                        tag: isMerchandise
+                            ? (item as MerchandiseItem).id!
+                            : (item as Pet).id!,
+                        child: Image.network(
+                          isMerchandise
+                              ? (item as MerchandiseItem).imageUrl
+                              : (item as Pet).imageUrl,
+                          width: 90,
+                          height: 95,
+                          fit: BoxFit.cover,
+                        )),
                   ),
                   Text(
                     MoneyFormatHelper.formatVNCurrency((isMerchandise
