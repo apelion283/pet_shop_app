@@ -25,7 +25,7 @@ class CustomAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Icon(
             icon,
@@ -66,6 +66,7 @@ class CustomAlertDialog extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8))),
                   onPressed: () {
+                    Navigator.of(context).pop();
                     onPositiveButtonClick();
                   },
                   child: Text(
