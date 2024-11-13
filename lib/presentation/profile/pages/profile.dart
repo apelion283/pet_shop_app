@@ -2,12 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
-import 'package:flutter_pet_shop_app/core/constants/auth_state_enum.dart';
+import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/profile/widgets/profile_card.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -15,6 +16,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+        bottom: false,
         child: Scaffold(
             appBar: AppBar(
               title: const Text(
@@ -45,8 +47,23 @@ class ProfilePage extends StatelessWidget {
                           leadingIcon: Icons.logout_outlined,
                           title: 'sign_out',
                           onCardClick: () {
-                            context.read<CartCubit>().clearCart();
-                            context.read<AuthCubit>().signOut();
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return CustomAlertDialog(
+                                      icon: Icons.question_mark_outlined,
+                                      title: 'about_to_sign_out',
+                                      message: 'are_you_sure_to_sign_out',
+                                      positiveButtonText: 'sign_out',
+                                      negativeButtonText: 'cancel',
+                                      onPositiveButtonClick: () {
+                                        context.read<CartCubit>().clearCart();
+                                        context.read<AuthCubit>().signOut();
+                                      },
+                                      onNegativeButtonClick: () {
+                                        Navigator.of(context).pop();
+                                      });
+                                });
                           })
                     else if (state.authState ==
                         AuthenticationState.unAuthenticated)
