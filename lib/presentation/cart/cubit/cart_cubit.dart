@@ -128,9 +128,7 @@ class CartCubit extends Cubit<CartState> {
   }
 
   bool isPetExistInCart(Pet pet) {
-    return state.cartList
-            .indexWhere((element) => (element.$2 as Pet).id == pet.id) !=
-        -1;
+    return getIndexOfItem(itemId: pet.id) != -1;
   }
 
   int getIndexOfItem({required itemId}) {
