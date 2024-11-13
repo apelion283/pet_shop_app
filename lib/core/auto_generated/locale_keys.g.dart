@@ -67,5 +67,9 @@ abstract class  LocaleKeys {
   static const color = 'color';
   static const birthday = 'birthday';
   static const explore_now = 'explore_now';
+  static const about_to_sign_out = 'about_to_sign_out';
+  static const are_you_sure_to_sign_out = 'are_you_sure_to_sign_out';
+  static const about_to_delete = 'about_to_delete';
+  static const are_you_sure_to_delete = 'are_you_sure_to_delete';
 
 }

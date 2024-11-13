@@ -66,5 +66,9 @@
     "height": "Height:",
     "color": "Color:",
     "birthday": "Birthday:",
-    "explore_now": "Explore Now"
+    "explore_now": "Explore Now",
+    "about_to_sign_out": "About to sign out?",
+    "are_you_sure_to_sign_out": "Are you sure about to Sign Out?",
+    "about_to_delete": "About to delete?",
+    "are_you_sure_to_delete": "Are you sure about to delete this item from cart?"
 }

@@ -82,7 +82,11 @@ class CodegenLoader extends AssetLoader{
   "height": "Height:",
   "color": "Color:",
   "birthday": "Birthday:",
-  "explore_now": "Explore Now"
+  "explore_now": "Explore Now",
+  "about_to_sign_out": "About to sign out?",
+  "are_you_sure_to_sign_out": "Are you sure about to Sign Out?",
+  "about_to_delete": "About to delete?",
+  "are_you_sure_to_delete": "Are you sure about to delete this item from cart?"
 };
 static const Map<String,dynamic> vi_VI = {
   "profile": "Hồ sơ",
@@ -152,7 +156,11 @@ static const Map<String,dynamic> vi_VI = {
   "height": "Chiều cao:",
   "color": "Màu sắc:",
   "birthday": "Ngày sinh:",
-  "explore_now": "Khám phá ngay"
+  "explore_now": "Khám phá ngay",
+  "about_to_sign_out": "Bạn muốn đăng xuất?",
+  "are_you_sure_to_sign_out": "Bạn có chắc muốn đăng xuất không?",
+  "about_to_delete": "Xóa món hàng?",
+  "are_you_sure_to_delete": "Bạn có chắc muốn xóa món hàng khỏi giỏ không?"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "vi_VI": vi_VI};
 }

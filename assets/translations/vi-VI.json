@@ -66,5 +66,9 @@
     "height": "Chiều cao:",
     "color": "Màu sắc:",
     "birthday": "Ngày sinh:",
-    "explore_now": "Khám phá ngay"
+    "explore_now": "Khám phá ngay",
+    "about_to_sign_out": "Bạn muốn đăng xuất?",
+    "are_you_sure_to_sign_out": "Bạn có chắc muốn đăng xuất không?",
+    "about_to_delete": "Xóa món hàng?",
+    "are_you_sure_to_delete": "Bạn có chắc muốn xóa món hàng khỏi giỏ không?"
 }
