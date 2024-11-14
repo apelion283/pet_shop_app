@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
@@ -74,7 +75,10 @@ class ProfilePage extends StatelessWidget {
                             Navigator.pushNamed(context, RouteName.signIn,
                                 arguments:
                                     SignInPageArguments(itemToAdd: null));
-                          })
+                          }),
+                    SizedBox(
+                      height: AppConfig.mainBottomNavigationBarHeight,
+                    )
                   ],
                 ),
               );

@@ -110,133 +110,149 @@ class _ExplorePageState extends State<ExplorePage> {
                       context.tr('pet_accessories'): state.accessoryList,
                       context.tr('pet_food'): state.foodList
                     };
-                    return ScrollableListTabScroller(
-                      itemCount: data.length,
-                      tabBuilder:
-                          (BuildContext context, int index, bool active) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            data.keys.elementAt(index),
-                            style: !active
-                                ? null
-                                : TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green),
-                          ),
-                        );
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return Column(
-                          children: [
-                            Text(
-                              data.keys.elementAt(index),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20),
-                            ),
-                            _isShimmer
-                                ? Shimmer.fromColors(
-                                    baseColor: AppColor.green.withOpacity(0.4),
-                                    highlightColor: AppColor.gray,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                            child: Container(
-                                          decoration: BoxDecoration(
-                                            color: AppColor.gray,
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          margin:
-                                              EdgeInsets.only(top: 8, left: 16),
-                                          height: 200,
-                                        )),
-                                        SizedBox(
-                                          width: 16,
-                                        ),
-                                        Expanded(
-                                            child: Container(
-                                          margin: EdgeInsets.only(
-                                              top: 8, right: 16),
-                                          decoration: BoxDecoration(
-                                            color: AppColor.gray,
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          height: 200,
-                                        ))
-                                      ],
-                                    ))
-                                : Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                data.values
-                                                    .elementAt(index)
-                                                    .length;
-                                            i += 2)
-                                          Row(children: [
+                    return RefreshIndicator(
+                        color: AppColor.green,
+                        onRefresh: () async {
+                          context.read<ExploreCubit>().initData();
+                        },
+                        child: ScrollableListTabScroller(
+                          itemCount: data.length,
+                          tabBuilder:
+                              (BuildContext context, int index, bool active) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                data.keys.elementAt(index),
+                                style: !active
+                                    ? null
+                                    : TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green),
+                              ),
+                            );
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return Column(
+                              children: [
+                                Text(
+                                  data.keys.elementAt(index),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                _isShimmer
+                                    ? Shimmer.fromColors(
+                                        baseColor:
+                                            AppColor.green.withOpacity(0.4),
+                                        highlightColor: AppColor.gray,
+                                        child: Row(
+                                          children: [
                                             Expanded(
-                                                flex: 1,
-                                                child: ExploreItem(
-                                                  widgetKey: _getKeyForItem(data
-                                                      .values
-                                                      .elementAt(index)[i]),
-                                                  item: data.values
-                                                      .elementAt(index)[i],
-                                                  onAddToCartButtonClick: () {
-                                                    addProduct(data.values
-                                                        .elementAt(index)[i]);
-                                                  },
-                                                  onItemClick: () {
-                                                    checkAndNavigateToItemDetailPage(
-                                                        data.values.elementAt(
-                                                            index)[i]);
-                                                  },
-                                                )),
-                                            i + 1 <
+                                                child: Container(
+                                              decoration: BoxDecoration(
+                                                color: AppColor.gray,
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                              margin: EdgeInsets.only(
+                                                  top: 8, left: 16),
+                                              height: 200,
+                                            )),
+                                            SizedBox(
+                                              width: 16,
+                                            ),
+                                            Expanded(
+                                                child: Container(
+                                              margin: EdgeInsets.only(
+                                                  top: 8, right: 16),
+                                              decoration: BoxDecoration(
+                                                color: AppColor.gray,
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                              ),
+                                              height: 200,
+                                            ))
+                                          ],
+                                        ))
+                                    : Padding(
+                                        padding: EdgeInsets.all(16),
+                                        child: Column(
+                                          children: [
+                                            for (int i = 0;
+                                                i <
                                                     data.values
                                                         .elementAt(index)
-                                                        .length
-                                                ? Expanded(
+                                                        .length;
+                                                i += 2)
+                                              Row(children: [
+                                                Expanded(
                                                     flex: 1,
                                                     child: ExploreItem(
                                                       widgetKey: _getKeyForItem(
                                                           data.values.elementAt(
-                                                              index)[i + 1]),
+                                                              index)[i]),
                                                       item: data.values
-                                                          .elementAt(
-                                                              index)[i + 1],
+                                                          .elementAt(index)[i],
                                                       onAddToCartButtonClick:
                                                           () {
                                                         addProduct(data.values
                                                             .elementAt(
-                                                                index)[i + 1]);
+                                                                index)[i]);
                                                       },
                                                       onItemClick: () {
                                                         checkAndNavigateToItemDetailPage(
                                                             data
+                                                                .values
+                                                                .elementAt(
+                                                                    index)[i]);
+                                                      },
+                                                    )),
+                                                i + 1 <
+                                                        data.values
+                                                            .elementAt(index)
+                                                            .length
+                                                    ? Expanded(
+                                                        flex: 1,
+                                                        child: ExploreItem(
+                                                          widgetKey:
+                                                              _getKeyForItem(data
+                                                                  .values
+                                                                  .elementAt(
+                                                                      index)[i +
+                                                                  1]),
+                                                          item: data.values
+                                                              .elementAt(
+                                                                  index)[i + 1],
+                                                          onAddToCartButtonClick:
+                                                              () {
+                                                            addProduct(data
                                                                     .values
                                                                     .elementAt(
                                                                         index)[
                                                                 i + 1]);
-                                                      },
-                                                    ),
-                                                  )
-                                                : Expanded(
-                                                    flex: 1,
-                                                    child: SizedBox(),
-                                                  )
-                                          ])
-                                      ],
-                                    ),
-                                  )
-                          ],
-                        );
-                      },
-                    );
+                                                          },
+                                                          onItemClick: () {
+                                                            checkAndNavigateToItemDetailPage(
+                                                                data
+                                                                    .values
+                                                                    .elementAt(
+                                                                        index)[i +
+                                                                    1]);
+                                                          },
+                                                        ),
+                                                      )
+                                                    : Expanded(
+                                                        flex: 1,
+                                                        child: SizedBox(),
+                                                      )
+                                              ])
+                                          ],
+                                        ),
+                                      )
+                              ],
+                            );
+                          },
+                        ));
                   },
                   listener: (context, state) {
                     if (state.accessoryList.isNotEmpty &&

@@ -16,17 +16,28 @@ class CartCubit extends Cubit<CartState> {
 
   void loadDataFromLocal() {
     var cartBox = Hive.box('cartBox');
-    List<(int, Object)> cartList = [];
+
     if (cartBox.isOpen && cartBox.isNotEmpty) {
-      for (var item in cartBox.values) {
-        cartList.add((
-          item["quantity"] as int,
-          item["isMerchandise"]
-              ? MerchandiseItem.fromJson(item["item"])
-              : Pet.fromJson(item["item"])
-        ));
+      if (state.cartList.isEmpty) {
+        for (var item in cartBox.values) {
+          addProduct(
+              item["isMerchandise"]
+                  ? MerchandiseItem.fromJson(item["item"])
+                  : Pet.fromJson(item["item"]),
+              item["quantity"] as int);
+        }
+      } else {
+        List<(int, Object)> cartList = [];
+        for (var item in cartBox.values) {
+          cartList.add((
+            item["quantity"] as int,
+            item["isMerchandise"]
+                ? MerchandiseItem.fromJson(item["item"])
+                : Pet.fromJson(item["item"])
+          ));
+        }
+        emit(state.copyWith(cartList));
       }
-      emit(state.copyWith(cartList));
     }
   }
 
