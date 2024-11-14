@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_pet_shop_app/core/auto_generated/codegen_loader.g.dart';
+import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_manager.dart';
@@ -132,7 +133,8 @@ class _MainPageState extends State<MainPage> {
       child: Container(
         color: AppColor.green,
         child: SafeArea(
-            top: true,
+            top: false,
+            bottom: false,
             child: Scaffold(
                 extendBody: true,
                 body: PageView(
@@ -146,7 +148,7 @@ class _MainPageState extends State<MainPage> {
                 ),
                 bottomNavigationBar: CurvedNavigationBar(
                     index: _currentIndex,
-                    height: 50,
+                    height: AppConfig.mainBottomNavigationBarHeight,
                     color: AppColor.green,
                     backgroundColor: Colors.transparent,
                     onTap: (index) => setState(() {
