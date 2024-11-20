@@ -86,7 +86,11 @@ class CodegenLoader extends AssetLoader{
   "about_to_sign_out": "About to sign out?",
   "are_you_sure_to_sign_out": "Are you sure about to Sign Out?",
   "about_to_delete": "About to delete?",
-  "are_you_sure_to_delete": "Are you sure about to delete this item from cart?"
+  "are_you_sure_to_delete": "Are you sure about to delete this item from cart?",
+  "share": "Share",
+  "let_check_this_product": "Let's check this product: {}",
+  "let_check_this_cute_pet": "Let's check this cute pet: {}",
+  "explore_more_fantastic_products": "Explore more fantastic products: {}"
 };
 static const Map<String,dynamic> vi_VI = {
   "profile": "Hồ sơ",
@@ -145,7 +149,7 @@ static const Map<String,dynamic> vi_VI = {
   "sign_in_to_shopping": "Đăng nhập để tiếp tục?",
   "need_to_sign_in_description": "Bạn cần đăng nhập để thêm hàng vào giỏ, đến trang đăng nhập?",
   "cancel": "Hủy",
-  "get_with": "Chọn {} với giá {} ngay",
+  "get_with": "Chọn {} với {} ngay",
   "pet_profile": "Hồ sơ của {}",
   "about_pet": "Giới thiệu về {}",
   "pet_status": "Thông tin của {}",
@@ -160,7 +164,11 @@ static const Map<String,dynamic> vi_VI = {
   "about_to_sign_out": "Bạn muốn đăng xuất?",
   "are_you_sure_to_sign_out": "Bạn có chắc muốn đăng xuất không?",
   "about_to_delete": "Xóa món hàng?",
-  "are_you_sure_to_delete": "Bạn có chắc muốn xóa món hàng khỏi giỏ không?"
+  "are_you_sure_to_delete": "Bạn có chắc muốn xóa món hàng khỏi giỏ không?",
+  "share": "Chia sẻ",
+  "let_check_this_product": "Xem ngay sản phẩm yêu thích của tôi: {}",
+  "let_check_this_cute_pet": "Xem ngay bé thú cưng đáng yêu này nè: {}",
+  "explore_more_fantastic_products": "Khám phá những sản phẩm tuyệt vời ngay: {}"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "vi_VI": vi_VI};
 }

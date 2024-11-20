@@ -70,5 +70,9 @@
     "about_to_sign_out": "About to sign out?",
     "are_you_sure_to_sign_out": "Are you sure about to Sign Out?",
     "about_to_delete": "About to delete?",
-    "are_you_sure_to_delete": "Are you sure about to delete this item from cart?"
+    "are_you_sure_to_delete": "Are you sure about to delete this item from cart?",
+    "share": "Share",
+    "let_check_this_product": "Let's check this product: {}",
+    "let_check_this_cute_pet": "Let's check this cute pet: {}",
+    "explore_more_fantastic_products": "Explore more fantastic products: {}"
 }

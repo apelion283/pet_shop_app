@@ -71,5 +71,9 @@ abstract class  LocaleKeys {
   static const are_you_sure_to_sign_out = 'are_you_sure_to_sign_out';
   static const about_to_delete = 'about_to_delete';
   static const are_you_sure_to_delete = 'are_you_sure_to_delete';
+  static const share = 'share';
+  static const let_check_this_product = 'let_check_this_product';
+  static const let_check_this_cute_pet = 'let_check_this_cute_pet';
+  static const explore_more_fantastic_products = 'explore_more_fantastic_products';
 
 }
