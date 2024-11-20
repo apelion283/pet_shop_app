@@ -2,6 +2,7 @@ import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
@@ -18,6 +19,7 @@ import 'package:flutter_pet_shop_app/presentation/explore/widgets/explore_item.d
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:scrollable_list_tab_scroller/scrollable_list_tab_scroller.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ExplorePage extends StatefulWidget {
@@ -39,6 +41,21 @@ class _ExplorePageState extends State<ExplorePage> {
       _itemKeys[itemId] = GlobalKey();
     }
     return _itemKeys[itemId]!;
+  }
+
+  void handleClick(int item) {
+    switch (item) {
+      case 0:
+        _isShimmer
+            ? {}
+            : {
+                Share.share("explore_more_fantastic_products"
+                    .tr(args: ["${AppConfig.customUri}${RouteName.explore}"]))
+              };
+        break;
+      case 1:
+        break;
+    }
   }
 
   @override
@@ -98,7 +115,32 @@ class _ExplorePageState extends State<ExplorePage> {
                               icon: Icon(
                                 Icons.shopping_cart_outlined,
                                 color: AppColor.white,
-                              )))
+                              ))),
+                  PopupMenuButton<int>(
+                    color: AppColor.green,
+                    iconColor: AppColor.white,
+                    onSelected: (item) => (handleClick(item)),
+                    itemBuilder: (context) => [
+                      PopupMenuItem<int>(
+                        value: 0,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.share_outlined,
+                              color: AppColor.white,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              'share',
+                              style: TextStyle(color: AppColor.white),
+                            ).tr()
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
               body: BlocProvider(
