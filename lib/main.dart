@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,8 +10,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_pet_shop_app/core/auto_generated/codegen_loader.g.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
+import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
+import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_manager.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
@@ -45,8 +50,48 @@ void main() async {
   FlutterNativeSplash.remove();
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  late AppLinks _appLinks;
+  StreamSubscription<Uri>? _linkSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    initDeepLinks();
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+
+    super.dispose();
+  }
+
+  Future<void> initDeepLinks() async {
+    _appLinks = AppLinks();
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+      openAppLink(uri);
+    });
+  }
+
+  void openAppLink(Uri uri) {
+    _navigatorKey.currentState?.pushNamed(uri.path,
+        arguments: uri.path == RouteName.petProfile
+            ? PetProfilePageArguments(
+                petId: uri.query.substring(uri.query.indexOf("=") + 1))
+            : uri.path == RouteName.merchandiseDetail
+                ? MerchandiseItemPageArguments(
+                    itemId: uri.query.substring(uri.query.indexOf("=") + 1))
+                : null);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +110,9 @@ class MyApp extends StatelessWidget {
             ),
             builder: EasyLoading.init(),
             home: MainPage(),
+            navigatorKey: _navigatorKey,
             routes: Routes.routes,
+            initialRoute: "/",
           ),
         ));
   }
