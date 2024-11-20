@@ -22,6 +22,7 @@ import 'package:flutter_pet_shop_app/presentation/widgets/add_button.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/remove_button.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MerchandiseItemDetailPage extends StatefulWidget {
@@ -421,80 +422,108 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                               )
                             ],
                           ),
-                          BlocBuilder<AuthCubit, AuthState>(
-                            builder: (context, authState) {
-                              return ElevatedButton(
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              IconButton(
+                                  style: IconButton.styleFrom(
+                                      backgroundColor: AppColor.green),
                                   onPressed: _isShimmer
                                       ? () {}
                                       : () {
-                                          if (authState.authState ==
-                                              AuthenticationState
-                                                  .authenticated) {
-                                            ProgressHUD.show();
-                                            context
-                                                .read<CartCubit>()
-                                                .addProduct(
-                                                    state.item,
-                                                    int.parse(
-                                                        _quantityController
-                                                            .text));
-                                            addButtonClick(_widgetKey);
-                                            ProgressHUD.showSuccess(context.tr(
-                                                'add_item_to_cart_successfully'));
-                                          } else {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return CustomAlertDialog(
-                                                      icon: Icons
-                                                          .question_mark_outlined,
-                                                      title:
-                                                          'sign_in_to_shopping',
-                                                      message:
-                                                          'need_to_sign_in_description',
-                                                      positiveButtonText:
-                                                          'sign_in',
-                                                      negativeButtonText:
-                                                          'cancel',
-                                                      onPositiveButtonClick:
-                                                          () {
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            RouteName.signIn,
-                                                            arguments:
-                                                                SignInPageArguments(
-                                                                    itemToAdd: (
-                                                                  1,
-                                                                  state.item!
-                                                                )));
-                                                      },
-                                                      onNegativeButtonClick:
-                                                          () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      });
-                                                });
-                                          }
+                                          Share.share("let_check_this_product"
+                                              .tr(args: [
+                                            "${AppConfig.customUri}${RouteName.merchandiseDetail}?id=${state.item!.id}"
+                                          ]));
                                         },
-                                  style: ElevatedButton.styleFrom(
-                                      iconColor: AppColor.white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      backgroundColor: AppColor.green),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      SizedBox(width: 1),
-                                      Text(
-                                        'add_to_cart',
-                                        style: TextStyle(color: AppColor.white),
-                                      ).tr(),
-                                      Icon(Icons.add_shopping_cart_outlined)
-                                    ],
-                                  ));
-                            },
+                                  icon: Icon(
+                                    Icons.share_outlined,
+                                    color: AppColor.white,
+                                  )),
+                              Expanded(
+                                child: BlocBuilder<AuthCubit, AuthState>(
+                                  builder: (context, authState) {
+                                    return ElevatedButton(
+                                        onPressed: _isShimmer
+                                            ? () {}
+                                            : () {
+                                                if (authState.authState ==
+                                                    AuthenticationState
+                                                        .authenticated) {
+                                                  ProgressHUD.show();
+                                                  context
+                                                      .read<CartCubit>()
+                                                      .addProduct(
+                                                          state.item,
+                                                          int.parse(
+                                                              _quantityController
+                                                                  .text));
+                                                  addButtonClick(_widgetKey);
+                                                  ProgressHUD.showSuccess(
+                                                      context.tr(
+                                                          'add_item_to_cart_successfully'));
+                                                } else {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return CustomAlertDialog(
+                                                            icon: Icons
+                                                                .question_mark_outlined,
+                                                            title:
+                                                                'sign_in_to_shopping',
+                                                            message:
+                                                                'need_to_sign_in_description',
+                                                            positiveButtonText:
+                                                                'sign_in',
+                                                            negativeButtonText:
+                                                                'cancel',
+                                                            onPositiveButtonClick:
+                                                                () {
+                                                              Navigator.pushNamed(
+                                                                  context,
+                                                                  RouteName
+                                                                      .signIn,
+                                                                  arguments:
+                                                                      SignInPageArguments(
+                                                                          itemToAdd: (
+                                                                        1,
+                                                                        state
+                                                                            .item!
+                                                                      )));
+                                                            },
+                                                            onNegativeButtonClick:
+                                                                () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            });
+                                                      });
+                                                }
+                                              },
+                                        style: ElevatedButton.styleFrom(
+                                            iconColor: AppColor.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8)),
+                                            backgroundColor: AppColor.green),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            SizedBox(width: 1),
+                                            Text(
+                                              'add_to_cart',
+                                              style: TextStyle(
+                                                  color: AppColor.white),
+                                            ).tr(),
+                                            Icon(Icons
+                                                .add_shopping_cart_outlined)
+                                          ],
+                                        ));
+                                  },
+                                ),
+                              ),
+                            ],
                           )
                         ],
                       ),
