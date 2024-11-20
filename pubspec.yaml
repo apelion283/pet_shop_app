@@ -57,6 +57,8 @@ dependencies:
   flutter_easyloading: ^3.0.5
   scrollable_list_tab_scroller: ^3.1.0
   add_to_cart_animation: ^2.0.4
+  share_plus: ^10.1.2
+  app_links: ^6.3.2
 
 
 dev_dependencies:
