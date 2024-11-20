@@ -170,7 +170,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                     )));
           }, listener: (context, state) {
-            if (state.accessoryList.isNotEmpty && state.foodList.isNotEmpty) {
+            if (state.accessoryList.isNotEmpty &&
+                state.foodList.isNotEmpty &&
+                state.petList.isNotEmpty) {
               setState(() {
                 _isShimmer = false;
               });
