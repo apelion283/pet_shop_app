@@ -2,6 +2,7 @@ import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
@@ -23,6 +24,7 @@ import 'package:flutter_pet_shop_app/presentation/widgets/color_box_from_color_h
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PetProfilePage extends StatefulWidget {
@@ -358,103 +360,137 @@ class _PetProfilePage extends State<PetProfilePage> {
                     ),
                     bottomNavigationBar: Padding(
                         padding: EdgeInsets.only(left: 16, right: 16),
-                        child: BlocBuilder<AuthCubit, AuthState>(
-                          builder: (context, authState) {
-                            return ElevatedButton(
-                                onPressed: () {
-                                  _isShimmer
-                                      ? {}
-                                      : {
-                                          if (authState.authState ==
-                                              AuthenticationState.authenticated)
-                                            {
-                                              if (!context
-                                                  .read<CartCubit>()
-                                                  .isPetExistInCart(state.pet!))
-                                                {
-                                                  ProgressHUD.show(),
-                                                  context
-                                                      .read<CartCubit>()
-                                                      .addProduct(state.pet, 1),
-                                                  onAddToCartAnimation(
-                                                      _widgetKey),
-                                                  ProgressHUD.showSuccess(
-                                                      context.tr(
-                                                          'add_item_to_cart_successfully'))
-                                                }
-                                              else
-                                                {
-                                                  ProgressHUD.showError(context
-                                                      .tr('you_can_only_add_one'))
-                                                }
-                                            }
-                                          else
-                                            {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return CustomAlertDialog(
-                                                        icon: Icons
-                                                            .question_mark_outlined,
-                                                        title:
-                                                            'sign_in_to_shopping',
-                                                        message:
-                                                            'need_to_sign_in_description',
-                                                        positiveButtonText:
-                                                            'sign_in',
-                                                        negativeButtonText:
-                                                            'cancel',
-                                                        onPositiveButtonClick:
-                                                            () {
-                                                          Navigator.pushNamed(
-                                                              context,
-                                                              RouteName.signIn,
-                                                              arguments:
-                                                                  SignInPageArguments(
-                                                                      itemToAdd: (
-                                                                    1,
-                                                                    state.pet!
-                                                                  )));
-                                                        },
-                                                        onNegativeButtonClick:
-                                                            () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        });
-                                                  })
-                                            }
-                                        };
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    iconColor: AppColor.white,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            IconButton(
+                                style: IconButton.styleFrom(
                                     backgroundColor: AppColor.green),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(width: 1),
-                                    _isShimmer
-                                        ? Shimmer.fromColors(
-                                            baseColor:
-                                                AppColor.green.withOpacity(0.4),
-                                            highlightColor: AppColor.gray,
-                                            child: SizedBox())
-                                        : Text(
-                                            'get_with',
-                                            style: TextStyle(
-                                                color: AppColor.white),
-                                          ).tr(args: [
-                                            state.pet!.name,
-                                            MoneyFormatHelper.formatVNCurrency(
-                                                state.pet!.price *
-                                                    CurrencyRate.vnd)
-                                          ]),
-                                    Icon(Icons.add_shopping_cart_outlined)
-                                  ],
-                                ));
-                          },
+                                onPressed: _isShimmer
+                                    ? () {}
+                                    : () {
+                                        Share.share("let_check_this_cute_pet"
+                                            .tr(args: [
+                                          "${AppConfig.customUri}${RouteName.petProfile}?id=${state.pet!.id}"
+                                        ]));
+                                      },
+                                icon: Icon(
+                                  Icons.share_outlined,
+                                  color: AppColor.white,
+                                )),
+                            Expanded(
+                              child: BlocBuilder<AuthCubit, AuthState>(
+                                builder: (context, authState) {
+                                  return ElevatedButton(
+                                      onPressed: () {
+                                        _isShimmer
+                                            ? {}
+                                            : {
+                                                if (authState.authState ==
+                                                    AuthenticationState
+                                                        .authenticated)
+                                                  {
+                                                    if (!context
+                                                        .read<CartCubit>()
+                                                        .isPetExistInCart(
+                                                            state.pet!))
+                                                      {
+                                                        ProgressHUD.show(),
+                                                        context
+                                                            .read<CartCubit>()
+                                                            .addProduct(
+                                                                state.pet, 1),
+                                                        onAddToCartAnimation(
+                                                            _widgetKey),
+                                                        ProgressHUD.showSuccess(
+                                                            context.tr(
+                                                                'add_item_to_cart_successfully'))
+                                                      }
+                                                    else
+                                                      {
+                                                        ProgressHUD.showError(
+                                                            context.tr(
+                                                                'you_can_only_add_one'))
+                                                      }
+                                                  }
+                                                else
+                                                  {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return CustomAlertDialog(
+                                                              icon: Icons
+                                                                  .question_mark_outlined,
+                                                              title:
+                                                                  'sign_in_to_shopping',
+                                                              message:
+                                                                  'need_to_sign_in_description',
+                                                              positiveButtonText:
+                                                                  'sign_in',
+                                                              negativeButtonText:
+                                                                  'cancel',
+                                                              onPositiveButtonClick:
+                                                                  () {
+                                                                Navigator.pushNamed(
+                                                                    context,
+                                                                    RouteName
+                                                                        .signIn,
+                                                                    arguments:
+                                                                        SignInPageArguments(
+                                                                            itemToAdd: (
+                                                                          1,
+                                                                          state
+                                                                              .pet!
+                                                                        )));
+                                                              },
+                                                              onNegativeButtonClick:
+                                                                  () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              });
+                                                        })
+                                                  }
+                                              };
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          iconColor: AppColor.white,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          backgroundColor: AppColor.green),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          SizedBox(width: 1),
+                                          _isShimmer
+                                              ? Shimmer.fromColors(
+                                                  baseColor: AppColor.green
+                                                      .withOpacity(0.4),
+                                                  highlightColor: AppColor.gray,
+                                                  child: SizedBox())
+                                              : Expanded(
+                                                  child: Text(
+                                                  'get_with',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      color: AppColor.white),
+                                                ).tr(args: [
+                                                  state.pet!.name,
+                                                  MoneyFormatHelper
+                                                      .formatVNCurrency(
+                                                          state.pet!.price *
+                                                              CurrencyRate.vnd)
+                                                ])),
+                                          Icon(Icons.add_shopping_cart_outlined)
+                                        ],
+                                      ));
+                                },
+                              ),
+                            ),
+                          ],
                         )))));
       }, listener: (context, state) {
         if (state.pet != null && state.species != null && state.type != null) {
