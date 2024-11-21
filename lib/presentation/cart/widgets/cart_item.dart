@@ -38,7 +38,7 @@ class _CartItemState extends State<CartItem> {
 
   @override
   Widget build(BuildContext context) {
-    bool _isMerchandise = widget.cartItem.$2 is MerchandiseItem;
+    bool isMerchandise = widget.cartItem.$2 is MerchandiseItem;
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -53,7 +53,7 @@ class _CartItemState extends State<CartItem> {
                   flex: 5,
                   child: Image.network(
                     fit: BoxFit.fill,
-                    _isMerchandise
+                    isMerchandise
                         ? (widget.cartItem.$2 as MerchandiseItem).imageUrl
                         : (widget.cartItem.$2 as Pet).imageUrl,
                   ),
@@ -70,13 +70,13 @@ class _CartItemState extends State<CartItem> {
                           int indexOfItem = context
                               .read<CartCubit>()
                               .getIndexOfItem(
-                                  itemId: _isMerchandise
+                                  itemId: isMerchandise
                                       ? (widget.cartItem.$2 as MerchandiseItem)
                                           .id
                                       : (widget.cartItem.$2 as Pet).id);
 
                           return Text(
-                            "${MoneyFormatHelper.formatVNCurrency(_isMerchandise ? (widget.cartItem.$2 as MerchandiseItem).price * CurrencyRate.vnd : (widget.cartItem.$2 as Pet).price * CurrencyRate.vnd)} x ${indexOfItem != -1 ? state.cartList[indexOfItem].$1 : _quantityController.text}",
+                            "${MoneyFormatHelper.formatVNCurrency(isMerchandise ? (widget.cartItem.$2 as MerchandiseItem).price * CurrencyRate.vnd : (widget.cartItem.$2 as Pet).price * CurrencyRate.vnd)} x ${indexOfItem != -1 ? state.cartList[indexOfItem].$1 : _quantityController.text}",
                             style: TextStyle(
                                 color: AppColor.green,
                                 fontSize: 15,
@@ -87,7 +87,7 @@ class _CartItemState extends State<CartItem> {
                           height: 8,
                         ),
                         Text(
-                          _isMerchandise
+                          isMerchandise
                               ? (widget.cartItem.$2 as MerchandiseItem).name
                               : (widget.cartItem.$2 as Pet).name,
                           style: TextStyle(
@@ -97,7 +97,7 @@ class _CartItemState extends State<CartItem> {
                         SizedBox(
                           height: 8,
                         ),
-                        _isMerchandise
+                        isMerchandise
                             ? Text(
                                 (widget.cartItem.$2 as MerchandiseItem).weight,
                                 style: TextStyle(
@@ -109,7 +109,7 @@ class _CartItemState extends State<CartItem> {
                                 height: 30)
                       ],
                     )),
-                _isMerchandise
+                isMerchandise
                     ? Expanded(
                         flex: 2,
                         child: Column(
@@ -124,7 +124,7 @@ class _CartItemState extends State<CartItem> {
                                     : "1";
                               });
                               context.read<CartCubit>().increaseQuantityOfItem(
-                                    _isMerchandise
+                                    isMerchandise
                                         ? (widget.cartItem.$2
                                                 as MerchandiseItem)
                                             .id
@@ -174,7 +174,7 @@ class _CartItemState extends State<CartItem> {
                                     : "1";
                               });
                               context.read<CartCubit>().decreaseQuantityOfItem(
-                                    _isMerchandise
+                                    isMerchandise
                                         ? (widget.cartItem.$2
                                                 as MerchandiseItem)
                                             .id
