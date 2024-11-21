@@ -18,6 +18,7 @@ import 'package:flutter_pet_shop_app/core/resources/route_manager.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
+import 'package:flutter_pet_shop_app/fcm_service.dart';
 import 'package:flutter_pet_shop_app/firebase_options.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
@@ -29,6 +30,8 @@ import 'package:flutter_pet_shop_app/presentation/profile/pages/profile.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -38,6 +41,7 @@ void main() async {
   );
   await Hive.initFlutter();
   await Hive.openBox('cartBox');
+  FCMService().initNotifications();
   configLoading();
 
   runApp(EasyLocalization(
@@ -58,7 +62,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
   late AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
 
@@ -83,7 +86,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   void openAppLink(Uri uri) {
-    _navigatorKey.currentState?.pushNamed(uri.path,
+    navigatorKey.currentState?.pushNamed(
+        uri.path.isEmpty || uri.path == "/" ? "/home" : uri.path,
         arguments: uri.path == RouteName.petProfile
             ? PetProfilePageArguments(
                 petId: uri.query.substring(uri.query.indexOf("=") + 1))
@@ -110,7 +114,7 @@ class _MyAppState extends State<MyApp> {
             ),
             builder: EasyLoading.init(),
             home: MainPage(),
-            navigatorKey: _navigatorKey,
+            navigatorKey: navigatorKey,
             routes: Routes.routes,
             initialRoute: "/",
           ),
