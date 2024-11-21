@@ -23,6 +23,7 @@ abstract class FirebaseDataSource {
   Future<Either<Failure, (AnimalTypeModel, PetSpeciesModel, PetModel)>>
       getPetDataById(String petId);
   Future<Either<Failure, List<PetModel>>> getAllPets();
+  Future<void> putDeviceToken(String deviceId, String token);
 }
 
 class FirebaseDataSourceImpl implements FirebaseDataSource {
@@ -150,10 +151,23 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
             snapshot: petSpeciesResult, options: null),
         petFromFirebase
       ));
-
-      // return Right(PetModel.fromFirestore(result, null));
     } on FirebaseException catch (e) {
       return Left(Failure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<void> putDeviceToken(String deviceId, String token) async {
+    try {
+      final devicesTokenCollection = database.collection('deviceTokens');
+      final result = await devicesTokenCollection.doc(deviceId).get();
+      if (result.data()?["token"] == token) {
+        return;
+      } else {
+        await devicesTokenCollection.doc(deviceId).set({"token": token});
+      }
+    } on FirebaseException catch (e) {
+      e.toString();
     }
   }
 }
