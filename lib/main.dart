@@ -4,10 +4,13 @@ import 'package:app_links/app_links.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_pet_shop_app/analytics_service.dart';
 import 'package:flutter_pet_shop_app/core/auto_generated/codegen_loader.g.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
@@ -39,6 +42,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FlutterError.onError = (errorDetail) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetail);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   await Hive.initFlutter();
   await Hive.openBox('cartBox');
   FCMService().initNotifications();
@@ -115,6 +126,9 @@ class _MyAppState extends State<MyApp> {
             builder: EasyLoading.init(),
             home: MainPage(),
             navigatorKey: navigatorKey,
+            navigatorObservers: <NavigatorObserver>[
+              AnalyticsService().getAnalyticsObserver()
+            ],
             routes: Routes.routes,
             initialRoute: "/",
           ),
