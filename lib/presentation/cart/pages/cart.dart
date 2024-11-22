@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/analytics_service.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
@@ -193,23 +194,12 @@ class _CartPageState extends State<CartPage> {
                                             return BillDetailBottomModalSheet(
                                               onCheckoutButtonClick:
                                                   (value) async {
+                                                Navigator.of(context).pop();
                                                 ProgressHUD.show();
-                                                final result = await context
-                                                    .read<CartCubit>()
-                                                    .checkOut(
-                                                        state.cartList, value);
-                                                if (result == null) {
-                                                  // ignore: use_build_context_synchronously
-                                                  ProgressHUD.showSuccess(
-                                                      context.tr(
-                                                          'order_successfully'));
-                                                  // ignore: use_build_context_synchronously
-                                                  Navigator.of(context).pop();
-                                                } else {
-                                                  // ignore: use_build_context_synchronously
-                                                  ProgressHUD.showError(context
-                                                      .tr('something_went_wrong'));
-                                                }
+                                                checkOut(
+                                                    checkOutList:
+                                                        state.cartList,
+                                                    orderMessage: value);
                                               },
                                             );
                                           });
@@ -224,19 +214,7 @@ class _CartPageState extends State<CartPage> {
                                     child: ElevatedButton(
                                       onPressed: () async {
                                         ProgressHUD.show();
-                                        final result = await context
-                                            .read<CartCubit>()
-                                            .checkOut(state.cartList, null);
-                                        if (result == null) {
-                                          ProgressHUD.showSuccess(
-                                              // ignore: use_build_context_synchronously
-                                              context.tr('order_successfully'));
-                                        } else {
-                                          ProgressHUD.showError(
-                                              // ignore: use_build_context_synchronously
-                                              context
-                                                  .tr('something_went_wrong'));
-                                        }
+                                        checkOut(checkOutList: state.cartList);
                                       },
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColor.green,
@@ -259,5 +237,39 @@ class _CartPageState extends State<CartPage> {
                           height: 0,
                         ))));
     });
+  }
+
+  Future<void> checkOut(
+      {required List<(int, Object)> checkOutList, String? orderMessage}) async {
+    final result =
+        await context.read<CartCubit>().checkOut(checkOutList, orderMessage);
+    AnalyticsService().checkOutLog(
+        // ignore: use_build_context_synchronously
+        currency: context.locale.toString() == "vi_VI"
+            ? "đ"
+            // ignore: use_build_context_synchronously
+            : context.locale.toString() == "en_EN"
+                ? "\$"
+                : "đ",
+        // ignore: use_build_context_synchronously
+        total: context.read<CartCubit>().state.getTotal() *
+            // ignore: use_build_context_synchronously
+            (context.locale.toString() == "vi_VI"
+                ? CurrencyRate.vnd
+                // ignore: use_build_context_synchronously
+                : context.locale.toString() == "en_EN"
+                    ? 1
+                    : CurrencyRate.vnd),
+        items: checkOutList,
+        message: orderMessage);
+    if (result == null) {
+      ProgressHUD.showSuccess(
+          // ignore: use_build_context_synchronously
+          context.tr('order_successfully'));
+    } else {
+      ProgressHUD.showError(
+          // ignore: use_build_context_synchronously
+          context.tr('something_went_wrong'));
+    }
   }
 }

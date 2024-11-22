@@ -2,6 +2,7 @@ import 'package:add_to_cart_animation/add_to_cart_animation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/analytics_service.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
@@ -402,6 +403,31 @@ class _PetProfilePage extends State<PetProfilePage> {
                                                                 state.pet, 1),
                                                         onAddToCartAnimation(
                                                             _widgetKey),
+                                                        AnalyticsService()
+                                                            .viewProductLog(
+                                                                currency: context
+                                                                            .locale
+                                                                            .toString() ==
+                                                                        "vi_VI"
+                                                                    ? "đ"
+                                                                    : context.locale.toString() ==
+                                                                            "en_EN"
+                                                                        ? "\$"
+                                                                        : "đ",
+                                                                itemValue: state
+                                                                        .pet!
+                                                                        .price *
+                                                                    (context.locale.toString() ==
+                                                                            "vi_VI"
+                                                                        ? CurrencyRate
+                                                                            .vnd
+                                                                        : context.locale.toString() ==
+                                                                                "en_EN"
+                                                                            ? 1
+                                                                            : CurrencyRate
+                                                                                .vnd),
+                                                                item:
+                                                                    state.pet),
                                                         ProgressHUD.showSuccess(
                                                             context.tr(
                                                                 'add_item_to_cart_successfully'))

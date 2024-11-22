@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pet_shop_app/analytics_service.dart';
+import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
@@ -45,6 +47,21 @@ class _OurPetsSectionState extends State<OurPetsSection> {
                             children: [
                               GestureDetector(
                                 onTap: () {
+                                  AnalyticsService().viewProductLog(
+                                      currency: context.locale.toString() ==
+                                              "vi_VI"
+                                          ? "đ"
+                                          : context.locale.toString() == "en_EN"
+                                              ? "\$"
+                                              : "đ",
+                                      itemValue: widget.petList[index].price *
+                                          (context.locale.toString() == "vi_VI"
+                                              ? CurrencyRate.vnd
+                                              : context.locale.toString() ==
+                                                      "en_EN"
+                                                  ? 1
+                                                  : CurrencyRate.vnd),
+                                      item: widget.petList[index]);
                                   Navigator.of(context).pushNamed(
                                       RouteName.petProfile,
                                       arguments: PetProfilePageArguments(

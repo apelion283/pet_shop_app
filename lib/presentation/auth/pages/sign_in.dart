@@ -2,12 +2,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/analytics_service.dart';
+import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
+import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
+import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
@@ -206,6 +210,11 @@ class _SignInPageState extends State<SignInPage> {
               _passwordController.text = "";
               _emailController.text = "";
             });
+            AnalyticsService().signInLog(parameters: {
+              "userId": state.user!.id,
+              "userName": state.user!.name,
+              "userEmail": state.user!.email
+            });
             ProgressHUD.showSuccess(context.tr('sign_in_successfully'));
             if (itemToAddToCart != null) {
               CommonPageController.controller
@@ -213,6 +222,21 @@ class _SignInPageState extends State<SignInPage> {
               context
                   .read<CartCubit>()
                   .addProduct(itemToAddToCart.$2, itemToAddToCart.$1);
+              AnalyticsService().viewProductLog(
+                  currency: context.locale.toString() == "vi_VI"
+                      ? "đ"
+                      : context.locale.toString() == "en_EN"
+                          ? "\$"
+                          : "đ",
+                  itemValue: (itemToAddToCart.$2 is MerchandiseItem
+                          ? (itemToAddToCart.$2 as MerchandiseItem).price
+                          : (itemToAddToCart.$2 as Pet).price) *
+                      (context.locale.toString() == "vi_VI"
+                          ? CurrencyRate.vnd
+                          : context.locale.toString() == "en_EN"
+                              ? 1
+                              : CurrencyRate.vnd),
+                  item: itemToAddToCart.$2);
             } else {
               CommonPageController.controller
                   .jumpToPage(ScreenInBottomBarOfMainScreen.home.index);

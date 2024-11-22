@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/analytics_service.dart';
+import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
@@ -71,6 +73,28 @@ class _FoodsSectionState extends State<FoodsSection> {
                                     horizontalMerchandiseItem(
                                         item: widget.foodList![firstItemIndex],
                                         onItemClick: () {
+                                          AnalyticsService().viewProductLog(
+                                              currency: context.locale
+                                                          .toString() ==
+                                                      "vi_VI"
+                                                  ? "đ"
+                                                  : context.locale.toString() ==
+                                                          "en_EN"
+                                                      ? "\$"
+                                                      : "đ",
+                                              itemValue: widget
+                                                      .foodList![firstItemIndex]
+                                                      .price *
+                                                  (context.locale.toString() ==
+                                                          "vi_VI"
+                                                      ? CurrencyRate.vnd
+                                                      : context.locale
+                                                                  .toString() ==
+                                                              "en_EN"
+                                                          ? 1
+                                                          : CurrencyRate.vnd),
+                                              item: widget
+                                                  .foodList![firstItemIndex]);
                                           Navigator.pushNamed(context,
                                               RouteName.merchandiseDetail,
                                               arguments:
@@ -85,6 +109,31 @@ class _FoodsSectionState extends State<FoodsSection> {
                                           if (authState.authState ==
                                               AuthenticationState
                                                   .authenticated) {
+                                            AnalyticsService().addItemToCartLog(
+                                                currency: context.locale
+                                                            .toString() ==
+                                                        "vi_VI"
+                                                    ? "đ"
+                                                    : context.locale
+                                                                .toString() ==
+                                                            "en_EN"
+                                                        ? "\$"
+                                                        : "đ",
+                                                itemValue: widget
+                                                        .foodList![
+                                                            firstItemIndex]
+                                                        .price *
+                                                    (context.locale
+                                                                .toString() ==
+                                                            "vi_VI"
+                                                        ? CurrencyRate.vnd
+                                                        : context.locale
+                                                                    .toString() ==
+                                                                "en_EN"
+                                                            ? 1
+                                                            : CurrencyRate.vnd),
+                                                item: widget
+                                                    .foodList![firstItemIndex]);
                                             addProduct(
                                               widget.foodList![firstItemIndex],
                                             );
@@ -130,6 +179,31 @@ class _FoodsSectionState extends State<FoodsSection> {
                                           item: widget
                                               .foodList![firstItemIndex + 1],
                                           onItemClick: () {
+                                            AnalyticsService().viewProductLog(
+                                                currency: context.locale
+                                                            .toString() ==
+                                                        "vi_VI"
+                                                    ? "đ"
+                                                    : context.locale
+                                                                .toString() ==
+                                                            "en_EN"
+                                                        ? "\$"
+                                                        : "đ",
+                                                itemValue: widget
+                                                        .foodList![
+                                                            firstItemIndex]
+                                                        .price *
+                                                    (context.locale
+                                                                .toString() ==
+                                                            "vi_VI"
+                                                        ? CurrencyRate.vnd
+                                                        : context.locale
+                                                                    .toString() ==
+                                                                "en_EN"
+                                                            ? 1
+                                                            : CurrencyRate.vnd),
+                                                item: widget
+                                                    .foodList![firstItemIndex]);
                                             Navigator.pushNamed(context,
                                                 RouteName.merchandiseDetail,
                                                 arguments:
@@ -145,6 +219,33 @@ class _FoodsSectionState extends State<FoodsSection> {
                                             if (authState.authState ==
                                                 AuthenticationState
                                                     .authenticated) {
+                                              AnalyticsService()
+                                                  .addItemToCartLog(
+                                                      currency: context.locale
+                                                                  .toString() ==
+                                                              "vi_VI"
+                                                          ? "đ"
+                                                          : context.locale
+                                                                      .toString() ==
+                                                                  "en_EN"
+                                                              ? "\$"
+                                                              : "đ",
+                                                      itemValue: widget
+                                                              .foodList![
+                                                                  firstItemIndex]
+                                                              .price *
+                                                          (context.locale
+                                                                      .toString() ==
+                                                                  "vi_VI"
+                                                              ? CurrencyRate.vnd
+                                                              : context.locale
+                                                                          .toString() ==
+                                                                      "en_EN"
+                                                                  ? 1
+                                                                  : CurrencyRate
+                                                                      .vnd),
+                                                      item: widget.foodList![
+                                                          firstItemIndex]);
                                               addProduct(
                                                 widget.foodList![
                                                     firstItemIndex + 1],
