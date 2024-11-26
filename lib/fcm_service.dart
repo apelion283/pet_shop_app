@@ -34,7 +34,6 @@ class FCMService {
               deviceRepositoryImpl: DeviceRepositoryImpl(
                   firebaseDataSourceImpl: FirebaseDataSourceImpl()))
           .putDeviceToken(deviceId, fCMToken!);
-      debugPrint(fCMToken);
       initPushNotification();
       initLocalNotifications();
     }
