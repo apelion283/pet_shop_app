@@ -7,4 +7,5 @@ class RouteName {
   static const String petProfile = '/petProfile';
   static const String merchandiseDetail = '/merchandiseDetail';
   static const String explore = '/explore';
+  static const String markerDetail = '/markerDetail';
 }
