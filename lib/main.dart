@@ -29,6 +29,7 @@ import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/pages/cart.dart';
 import 'package:flutter_pet_shop_app/presentation/home/pages/home.dart';
+import 'package:flutter_pet_shop_app/presentation/markers/pages/markers.dart';
 import 'package:flutter_pet_shop_app/presentation/profile/pages/profile.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -208,6 +209,7 @@ class _MainPageState extends State<MainPage> {
                     const ProfilePage(),
                     const HomePage(),
                     const CartPage(),
+                    const MarkersPage()
                   ],
                   onPageChanged: (value) => onPageChanged(value),
                 ),
@@ -236,7 +238,8 @@ class _MainPageState extends State<MainPage> {
                                   Icons.shopping_cart_outlined,
                                 );
                         },
-                      )
+                      ),
+                      Icon(Icons.location_on_outlined)
                     ]))),
       ),
     );
