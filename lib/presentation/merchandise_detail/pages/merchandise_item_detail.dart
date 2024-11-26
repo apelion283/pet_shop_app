@@ -18,7 +18,7 @@ import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/merchandise_detail/cubit/merchandise_detail_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/merchandise_detail/cubit/merchandise_detail_state.dart';
-import 'package:flutter_pet_shop_app/presentation/merchandise_detail/widgets/clip_path.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/clip_path.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/add_button.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
