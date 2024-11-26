@@ -6,6 +6,7 @@ import 'package:flutter_pet_shop_app/data/datasource/firebase_auth_service.dart'
 import 'package:flutter_pet_shop_app/data/models/animal_type_model.dart';
 import 'package:flutter_pet_shop_app/data/models/bill_detail_model.dart';
 import 'package:flutter_pet_shop_app/data/models/bill_model.dart';
+import 'package:flutter_pet_shop_app/data/models/marker_model.dart';
 import 'package:flutter_pet_shop_app/data/models/merchandise_item_model.dart';
 import 'package:flutter_pet_shop_app/data/models/pet_model.dart';
 import 'package:flutter_pet_shop_app/data/models/pet_species_model.dart';
@@ -24,6 +25,8 @@ abstract class FirebaseDataSource {
       getPetDataById(String petId);
   Future<Either<Failure, List<PetModel>>> getAllPets();
   Future<void> putDeviceToken(String deviceId, String token);
+  Future<Either<Failure, List<MarkerModel>>> getAllMarker();
+  Future<Either<Failure, MarkerModel>> getMarkerById(String markerId);
 }
 
 class FirebaseDataSourceImpl implements FirebaseDataSource {
@@ -42,8 +45,8 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
           .map((doc) =>
               MerchandiseItemModel.fromFirestore(doc, SnapshotOptions()))
           .toList());
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
+    } on FirebaseException catch (e) {
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 
@@ -57,8 +60,8 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       return Right(result.docs
           .map((doc) => MerchandiseItemModel.fromFirestore(doc, null))
           .toList());
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
+    } on FirebaseException catch (e) {
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 
@@ -69,8 +72,8 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       final merchandiseCollection = database.collection("merchandises");
       final result = await merchandiseCollection.doc(itemId).get();
       return Right(MerchandiseItemModel.fromFirestore(result, null));
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
+    } on FirebaseException catch (e) {
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 
@@ -80,8 +83,8 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       final brandCollection = database.collection("brands");
       final result = await brandCollection.doc(brandId).get();
       return Right(result["name"]);
-    } catch (e) {
-      return Left(Failure(message: e.toString()));
+    } on FirebaseException catch (e) {
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 
@@ -113,8 +116,8 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
             .toJson());
       }
       return null;
-    } catch (e) {
-      return Failure(message: e.toString());
+    } on FirebaseException catch (e) {
+      return Failure(message: e.message, code: e.code);
     }
   }
 
@@ -127,7 +130,7 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
           result.docs.map((doc) => PetModel.fromFirestore(doc, null)).toList();
       return Right(pets);
     } on FirebaseException catch (e) {
-      return Left(Failure(message: e.toString()));
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 
@@ -152,7 +155,7 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
         petFromFirebase
       ));
     } on FirebaseException catch (e) {
-      return Left(Failure(message: e.toString()));
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 
@@ -168,6 +171,30 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       }
     } on FirebaseException catch (e) {
       e.toString();
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<MarkerModel>>> getAllMarker() async {
+    try {
+      final markersCollection = database.collection("markers");
+      final result = await markersCollection.get();
+      return Right(result.docs
+          .map((doc) => MarkerModel.fromFirestore(snapshot: doc, options: null))
+          .toList());
+    } on FirebaseException catch (e) {
+      return Left(Failure(message: e.message, code: e.code));
+    }
+  }
+
+  @override
+  Future<Either<Failure, MarkerModel>> getMarkerById(String markerId) async {
+    try {
+      final markersCollection = database.collection("markers");
+      final result = await markersCollection.doc(markerId).get();
+      return Right(MarkerModel.fromFirestore(snapshot: result, options: null));
+    } on FirebaseException catch (e) {
+      return Left(Failure(message: e.message, code: e.code));
     }
   }
 }
