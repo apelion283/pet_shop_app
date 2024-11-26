@@ -9,7 +9,7 @@ class MerchandiseItem extends Equatable {
   final String weight;
   final double price;
   final MerchandiseType? type;
-  final String manufactorId;
+  final String manufacturerId;
   final String brandId;
 
   const MerchandiseItem(
@@ -20,7 +20,7 @@ class MerchandiseItem extends Equatable {
       required this.price,
       required this.imageUrl,
       this.type,
-      required this.manufactorId,
+      required this.manufacturerId,
       required this.brandId});
 
   factory MerchandiseItem.fromJson(Map<dynamic, dynamic> json) {
@@ -31,7 +31,7 @@ class MerchandiseItem extends Equatable {
         weight: json['weight'],
         price: json['price'] as double,
         imageUrl: json['imageUrl'],
-        manufactorId: json['manufactorId'],
+        manufacturerId: json['manufacturerId'],
         brandId: json['brandId']);
   }
 
@@ -43,12 +43,12 @@ class MerchandiseItem extends Equatable {
       'weight': weight,
       'price': price,
       'imageUrl': imageUrl,
-      'manufactorId': manufactorId,
+      'manufacturerId': manufacturerId,
       'brandId': brandId
     };
   }
 
   @override
   List<Object?> get props =>
-      [id, name, description, weight, price, imageUrl, manufactorId, brandId];
+      [id, name, description, weight, price, imageUrl, manufacturerId, brandId];
 }

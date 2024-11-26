@@ -11,7 +11,7 @@ class MerchandiseItemModel extends MerchandiseItem {
       required super.price,
       required super.imageUrl,
       required super.type,
-      required super.manufactorId,
+      required super.manufacturerId,
       required super.brandId})
       : super(id: id);
 
@@ -27,7 +27,7 @@ class MerchandiseItemModel extends MerchandiseItem {
         price: (data?["price"] as num).toDouble(),
         imageUrl: data?["imageUrl"],
         type: MerchandiseType.fromJson(data?["type"]),
-        manufactorId: data?["manufactorId"],
+        manufacturerId: data?["manufacturerId"],
         brandId: data?["brandId"]);
   }
 
@@ -40,7 +40,7 @@ class MerchandiseItemModel extends MerchandiseItem {
       "price": price,
       "imageUrl": imageUrl,
       "type": type?.toJson(),
-      "manufactorId": manufactorId,
+      "manufacturerId": manufacturerId,
       "brandId": brandId
     };
   }
