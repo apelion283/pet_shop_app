@@ -90,7 +90,14 @@ class CodegenLoader extends AssetLoader{
   "share": "Share",
   "let_check_this_product": "Let's check this product: {}",
   "let_check_this_cute_pet": "Let's check this cute pet: {}",
-  "explore_more_fantastic_products": "Explore more fantastic products: {}"
+  "explore_more_fantastic_products": "Explore more fantastic products: {}",
+  "address": "Address: ",
+  "phone_number": "Phone Number {}:",
+  "marker_information": "Marker Information",
+  "description": "Description:",
+  "work_time": "Work Time: {} - {}",
+  "let_check_this_store": "Let check this store: {}",
+  "all_markers": "All Markers"
 };
 static const Map<String,dynamic> vi_VI = {
   "profile": "Hồ sơ",
@@ -168,7 +175,14 @@ static const Map<String,dynamic> vi_VI = {
   "share": "Chia sẻ",
   "let_check_this_product": "Xem ngay sản phẩm yêu thích của tôi: {}",
   "let_check_this_cute_pet": "Xem ngay bé thú cưng đáng yêu này nè: {}",
-  "explore_more_fantastic_products": "Khám phá những sản phẩm tuyệt vời ngay: {}"
+  "explore_more_fantastic_products": "Khám phá những sản phẩm tuyệt vời ngay: {}",
+  "address": "Địa chỉ: ",
+  "phone_number": "SĐT: {}",
+  "marker_information": "Thông tin cửa hàng",
+  "description": "Giới thiệu về cửa hàng:",
+  "work_time": "Thời gian làm việc: {} - {}",
+  "let_check_this_store": "Xem ngay shop xịn nè: {}",
+  "all_markers": "Các cửa hàng của chúng tôi"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "vi_VI": vi_VI};
 }

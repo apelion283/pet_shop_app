@@ -75,5 +75,12 @@ abstract class  LocaleKeys {
   static const let_check_this_product = 'let_check_this_product';
   static const let_check_this_cute_pet = 'let_check_this_cute_pet';
   static const explore_more_fantastic_products = 'explore_more_fantastic_products';
+  static const address = 'address';
+  static const phone_number = 'phone_number';
+  static const marker_information = 'marker_information';
+  static const description = 'description';
+  static const work_time = 'work_time';
+  static const let_check_this_store = 'let_check_this_store';
+  static const all_markers = 'all_markers';
 
 }

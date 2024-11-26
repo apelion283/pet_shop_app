@@ -74,5 +74,12 @@
     "share": "Share",
     "let_check_this_product": "Let's check this product: {}",
     "let_check_this_cute_pet": "Let's check this cute pet: {}",
-    "explore_more_fantastic_products": "Explore more fantastic products: {}"
+    "explore_more_fantastic_products": "Explore more fantastic products: {}",
+    "address": "Address: ",
+    "phone_number": "Phone Number {}:",
+    "marker_information": "Marker Information",
+    "description": "Description:",
+    "work_time": "Work Time: {} - {}",
+    "let_check_this_store": "Let check this store: {}",
+    "all_markers": "All Markers"
 }
