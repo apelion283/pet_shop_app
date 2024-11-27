@@ -10,6 +10,7 @@ import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/presentation/markers/cubit/markers_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/markers/cubit/markers_state.dart';
 import 'package:flutter_pet_shop_app/presentation/markers/widgets/marker_info_window.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:platform_maps_flutter/platform_maps_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -23,6 +24,7 @@ class MarkersPage extends StatefulWidget {
 class _MarkersState extends State<MarkersPage> {
   bool _isShowMarkerDetail = false;
   int _itemClickedIndex = -1;
+  late PlatformMapController _mapController;
   @override
   Widget build(BuildContext context) {
     bool isShimmer = false;
@@ -30,7 +32,7 @@ class _MarkersState extends State<MarkersPage> {
     return SafeArea(
       bottom: false,
       child: Scaffold(
-        extendBody: false,
+        extendBody: true,
         appBar: AppBar(
           backgroundColor: AppColor.green,
           automaticallyImplyLeading: false,
@@ -60,18 +62,21 @@ class _MarkersState extends State<MarkersPage> {
                   : Stack(
                       children: [
                         PlatformMap(
+                            onMapCreated: (PlatformMapController controller) {
+                              _mapController = controller;
+                            },
                             initialCameraPosition: CameraPosition(
                               target: const LatLng(
                                   10.807302473390003, 106.66951777342513),
                               zoom: 16.0,
                             ),
-                            myLocationEnabled: true,
                             myLocationButtonEnabled: true,
+                            myLocationEnabled: true,
                             scrollGesturesEnabled: true,
-                            rotateGesturesEnabled: true,
-                            zoomControlsEnabled: true,
+                            rotateGesturesEnabled: false,
+                            zoomControlsEnabled: false,
                             zoomGesturesEnabled: true,
-                            compassEnabled: true,
+                            compassEnabled: false,
                             gestureRecognizers: <Factory<
                                 OneSequenceGestureRecognizer>>{
                               Factory<OneSequenceGestureRecognizer>(
@@ -122,12 +127,19 @@ class _MarkersState extends State<MarkersPage> {
                       ],
                     );
             },
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state.markerList.isNotEmpty) {
                 setState(() {
                   isShimmer = false;
                 });
               }
+              Position currentLocation = await getCurrentLocation();
+
+              _mapController.animateCamera(CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      zoom: 14,
+                      target: LatLng(currentLocation.latitude,
+                          currentLocation.longitude))));
             },
           ),
         ),
@@ -143,5 +155,27 @@ class _MarkersState extends State<MarkersPage> {
       _isShowMarkerDetail = false;
       _itemClickedIndex = -1;
     });
+  }
+
+  Future<Position> getCurrentLocation() async {
+    bool serviceEnable = await Geolocator.isLocationServiceEnabled();
+    LocationPermission permission;
+    if (!serviceEnable) {
+      return Future.error("Location services are disabled");
+    }
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition();
   }
 }
