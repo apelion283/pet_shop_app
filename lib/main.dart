@@ -116,6 +116,7 @@ class _MyAppState extends State<MyApp> {
         child: BlocProvider(
           create: (context) => CartCubit()..loadDataFromLocal(),
           child: MaterialApp(
+            title: "Pet Shop",
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
