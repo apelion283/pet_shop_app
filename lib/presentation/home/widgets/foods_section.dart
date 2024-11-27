@@ -288,7 +288,7 @@ class _FoodsSectionState extends State<FoodsSection> {
                                             }
                                           })
                                     else
-                                      Container()
+                                      Container(),
                                   ]);
                                 });
                               },
@@ -311,7 +311,10 @@ class _FoodsSectionState extends State<FoodsSection> {
                     child: Center(
                       child: Text('there_is_no_data').tr(),
                     ),
-                  )
+                  ),
+            SizedBox(
+              height: 8,
+            )
           ],
         ));
   }
