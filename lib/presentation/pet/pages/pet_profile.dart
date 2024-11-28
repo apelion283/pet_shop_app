@@ -164,66 +164,93 @@ class _PetProfilePage extends State<PetProfilePage> {
                                   SizedBox(
                                     width: 32,
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      _isShimmer
-                                          ? Shimmer.fromColors(
-                                              baseColor: AppColor.green
-                                                  .withOpacity(0.4),
-                                              highlightColor: AppColor.gray,
-                                              child: Text(
-                                                "",
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        _isShimmer
+                                            ? Shimmer.fromColors(
+                                                baseColor: AppColor.green
+                                                    .withOpacity(0.4),
+                                                highlightColor: AppColor.gray,
+                                                child: Container(
+                                                    color: AppColor.gray,
+                                                    child: Text(
+                                                      'loading',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 20),
+                                                    ).tr()))
+                                            : Text(
+                                                state.pet!.name,
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 20),
-                                              ))
-                                          : Text(
-                                              state.pet!.name,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 20),
+                                              ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Row(
+                                          children: [
+                                            _isShimmer
+                                                ? Shimmer.fromColors(
+                                                    baseColor: AppColor.green
+                                                        .withOpacity(0.4),
+                                                    highlightColor:
+                                                        AppColor.gray,
+                                                    child: Container(
+                                                        color: AppColor.gray,
+                                                        child: Text(
+                                                          'loading',
+                                                          style: TextStyle(
+                                                              fontSize: 15),
+                                                        ).tr()),
+                                                  )
+                                                : Text(state.type!.name,
+                                                    style: TextStyle(
+                                                        color: AppColor.gray,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 15)),
+                                            SizedBox(
+                                              height: 15,
+                                              child: VerticalDivider(
+                                                thickness: 2,
+                                                color: AppColor.gray,
+                                              ),
                                             ),
-                                      Row(
-                                        children: [
-                                          _isShimmer
-                                              ? Shimmer.fromColors(
-                                                  baseColor: AppColor.green
-                                                      .withOpacity(0.4),
-                                                  highlightColor: AppColor.gray,
-                                                  child: SizedBox(),
-                                                )
-                                              : Text(state.type!.name,
-                                                  style: TextStyle(
-                                                      color: AppColor.gray,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 15)),
-                                          SizedBox(
-                                            height: 15,
-                                            child: VerticalDivider(
-                                              thickness: 2,
-                                              color: AppColor.gray,
-                                            ),
-                                          ),
-                                          _isShimmer
-                                              ? Shimmer.fromColors(
-                                                  baseColor: AppColor.green
-                                                      .withOpacity(0.4),
-                                                  highlightColor: AppColor.gray,
-                                                  child: SizedBox(),
-                                                )
-                                              : Text(state.species!.name,
-                                                  style: TextStyle(
-                                                      color: AppColor.gray,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 15)),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                            _isShimmer
+                                                ? Flexible(
+                                                    child: Shimmer.fromColors(
+                                                      baseColor: AppColor.green
+                                                          .withOpacity(0.4),
+                                                      highlightColor:
+                                                          AppColor.gray,
+                                                      child: Container(
+                                                          color: AppColor.gray,
+                                                          child: Text(
+                                                            'loading',
+                                                            style: TextStyle(
+                                                                fontSize: 15),
+                                                          ).tr()),
+                                                    ),
+                                                  )
+                                                : Flexible(
+                                                    child: Text(
+                                                        state.species!.name,
+                                                        style: TextStyle(
+                                                            color:
+                                                                AppColor.gray,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 15))),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                 ],
                               ),
                               SizedBox(
@@ -345,7 +372,7 @@ class _PetProfilePage extends State<PetProfilePage> {
                                           PetStatusRow(
                                             trailing: SvgPicture.asset(
                                                 'assets/icons/ic_birthday.svg'),
-                                            name: context.tr('weight'),
+                                            name: context.tr('birthday'),
                                             value: Text(DateTimeFormatHelper
                                                 .formatVNDate(
                                                     state.pet!.birthday)),
