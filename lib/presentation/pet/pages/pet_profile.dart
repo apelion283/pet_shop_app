@@ -7,12 +7,10 @@ import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
-import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/helper/datetime_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
-import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
@@ -23,10 +21,10 @@ import 'package:flutter_pet_shop_app/presentation/pet/widgets/pet_status_row.dar
 import 'package:flutter_pet_shop_app/presentation/pet/widgets/section_header.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/color_box_from_color_hex.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shimmer/shimmer.dart';
 
 class PetProfilePage extends StatefulWidget {
   const PetProfilePage({super.key});
@@ -61,11 +59,13 @@ class _PetProfilePage extends State<PetProfilePage> {
               this.runAddToCartAnimation = runAddToCartAnimation;
             },
             child: RefreshIndicator(
-                color: AppColor.green,
+                color: AppColor.black,
+                backgroundColor: AppColor.green,
                 onRefresh: () async {
                   context.read<PetCubit>().getPetDataById(args.petId);
                 },
                 child: Scaffold(
+                    backgroundColor: AppColor.white,
                     appBar: AppBar(
                       automaticallyImplyLeading: false,
                       backgroundColor: AppColor.green,
@@ -76,23 +76,23 @@ class _PetProfilePage extends State<PetProfilePage> {
                                 onPressed: (Navigator.of(context).pop),
                                 icon: Icon(
                                   Icons.arrow_back_ios_new_rounded,
-                                  color: AppColor.white,
+                                  color: AppColor.black,
                                 )),
                             _isShimmer
-                                ? Shimmer.fromColors(
-                                    baseColor: AppColor.green.withOpacity(0.4),
-                                    highlightColor: AppColor.gray,
-                                    child: Text(context.tr(""),
-                                        style: TextStyle(
-                                            color: AppColor.white,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 18)),
+                                ? CustomShimmer(
+                                    child: Container(
+                                        color: AppColor.gray,
+                                        child: Text(context.tr("loading"),
+                                            style: TextStyle(
+                                                color: AppColor.white,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 18))),
                                   )
                                 : Text(
                                     context.tr("pet_profile",
                                         args: [state.pet!.name]),
                                     style: TextStyle(
-                                        color: AppColor.white,
+                                        color: AppColor.black,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 18)),
                             SizedBox()
@@ -101,26 +101,18 @@ class _PetProfilePage extends State<PetProfilePage> {
                         AddToCartIcon(
                             key: _cartKey,
                             badgeOptions: BadgeOptions(
-                                backgroundColor: Colors.red,
-                                foregroundColor: AppColor.white),
-                            icon: _isShimmer
-                                ? Shimmer.fromColors(
-                                    baseColor: AppColor.green.withOpacity(0.4),
-                                    highlightColor: AppColor.gray,
-                                    child: SizedBox())
-                                : IconButton(
-                                    onPressed: () {
-                                      CommonPageController.controller
-                                          .jumpToPage(
-                                              ScreenInBottomBarOfMainScreen
-                                                  .cart.index);
-                                      Navigator.of(context)
-                                          .popUntil((route) => route.isFirst);
-                                    },
-                                    icon: Icon(
-                                      Icons.shopping_cart_outlined,
-                                      color: AppColor.white,
-                                    )))
+                                backgroundColor: AppColor.black,
+                                foregroundColor: AppColor.green),
+                            icon: IconButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isFirst);
+                                  Navigator.pushNamed(context, RouteName.cart);
+                                },
+                                icon: Icon(
+                                  Icons.shopping_cart_outlined,
+                                  color: AppColor.black,
+                                )))
                       ],
                     ),
                     body: Column(
@@ -136,31 +128,22 @@ class _PetProfilePage extends State<PetProfilePage> {
                                   SizedBox(
                                     width: 16,
                                   ),
-                                  _isShimmer
-                                      ? Shimmer.fromColors(
-                                          baseColor:
-                                              AppColor.green.withOpacity(0.4),
-                                          highlightColor: AppColor.gray,
-                                          child: CircleAvatar(
-                                            radius: 60,
-                                            backgroundColor:
-                                                AppColor.gray.withOpacity(0.5),
-                                            child: SizedBox(),
-                                          ),
-                                        )
-                                      : CircleAvatar(
-                                          backgroundColor:
-                                              AppColor.gray.withOpacity(0.5),
-                                          radius: 60,
-                                          child: Container(
-                                            key: _widgetKey,
-                                            child: CircleAvatar(
+                                  CircleAvatar(
+                                    backgroundColor:
+                                        AppColor.gray.withOpacity(0.5),
+                                    radius: 60,
+                                    child: Container(
+                                      key: _widgetKey,
+                                      child: _isShimmer
+                                          ? CustomShimmer(
+                                              child: CircleAvatar(radius: 60))
+                                          : CircleAvatar(
                                               backgroundImage: NetworkImage(
                                                   state.pet?.imageUrl ?? ""),
                                               radius: 50,
                                             ),
-                                          ),
-                                        ),
+                                    ),
+                                  ),
                                   SizedBox(
                                     width: 32,
                                   ),
@@ -170,10 +153,7 @@ class _PetProfilePage extends State<PetProfilePage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         _isShimmer
-                                            ? Shimmer.fromColors(
-                                                baseColor: AppColor.green
-                                                    .withOpacity(0.4),
-                                                highlightColor: AppColor.gray,
+                                            ? CustomShimmer(
                                                 child: Container(
                                                     color: AppColor.gray,
                                                     child: Text(
@@ -195,11 +175,7 @@ class _PetProfilePage extends State<PetProfilePage> {
                                         Row(
                                           children: [
                                             _isShimmer
-                                                ? Shimmer.fromColors(
-                                                    baseColor: AppColor.green
-                                                        .withOpacity(0.4),
-                                                    highlightColor:
-                                                        AppColor.gray,
+                                                ? CustomShimmer(
                                                     child: Container(
                                                         color: AppColor.gray,
                                                         child: Text(
@@ -223,11 +199,7 @@ class _PetProfilePage extends State<PetProfilePage> {
                                             ),
                                             _isShimmer
                                                 ? Flexible(
-                                                    child: Shimmer.fromColors(
-                                                      baseColor: AppColor.green
-                                                          .withOpacity(0.4),
-                                                      highlightColor:
-                                                          AppColor.gray,
+                                                    child: CustomShimmer(
                                                       child: Container(
                                                           color: AppColor.gray,
                                                           child: Text(
@@ -261,126 +233,143 @@ class _PetProfilePage extends State<PetProfilePage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _isShimmer
-                                        ? Shimmer.fromColors(
-                                            baseColor:
-                                                AppColor.green.withOpacity(0.4),
-                                            highlightColor: AppColor.gray,
-                                            child: SizedBox())
-                                        : Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SectionHeader(
-                                                  svgIconPath:
-                                                      "assets/icons/ic_pets.svg",
-                                                  sectionName: context.tr(
-                                                      'about_pet',
-                                                      args: [state.pet!.name])),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              AutoScrollAfterFillMaxHeight(
-                                                  maxHeight:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .height *
-                                                          0.3,
-                                                  textToShow:
-                                                      state.pet!.description,
-                                                  textStyle: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.normal))
-                                            ],
-                                          )
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        _isShimmer
+                                            ? CustomShimmer(
+                                                child: Container(
+                                                  color: AppColor.gray,
+                                                  child: Text("loading".tr()),
+                                                ),
+                                              )
+                                            : SectionHeader(
+                                                svgIconPath:
+                                                    "assets/icons/ic_pets.svg",
+                                                sectionName: context.tr(
+                                                    'about_pet',
+                                                    args: [state.pet!.name])),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        _isShimmer
+                                            ? CustomShimmer(
+                                                child: Container(
+                                                color: AppColor.gray,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.3,
+                                              ))
+                                            : AutoScrollAfterFillMaxHeight(
+                                                maxHeight:
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .height *
+                                                        0.3,
+                                                textToShow:
+                                                    state.pet!.description,
+                                                textStyle: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.normal))
+                                      ],
+                                    )
                                   ],
                                 ),
                               ),
-                              _isShimmer
-                                  ? Shimmer.fromColors(
-                                      baseColor:
-                                          AppColor.green.withOpacity(0.4),
-                                      highlightColor: AppColor.gray,
-                                      child: SizedBox())
-                                  : SizedBox(
-                                      width: double.infinity,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SectionHeader(
-                                              svgIconPath:
-                                                  "assets/icons/ic_pet_status.svg",
-                                              sectionName: context.tr(
-                                                  'pet_status',
-                                                  args: [state.pet!.name])),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                          PetStatusRow(
-                                              trailing: SvgPicture.asset(
-                                                  'assets/icons/ic_gender.svg'),
-                                              name: context.tr('gender'),
-                                              value: Row(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      SvgPicture.asset(state.pet
-                                                                  ?.gender ??
-                                                              false
-                                                          ? "assets/icons/ic_gender_male.svg"
-                                                          : "assets/icons/ic_gender_female.svg"),
-                                                      SizedBox(
-                                                        width: 8,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Text(context.tr(
-                                                      state.pet!.gender
-                                                          ? 'male'
-                                                          : 'female'))
-                                                ],
-                                              )),
-                                          PetStatusRow(
-                                            trailing: SvgPicture.asset(
-                                                'assets/icons/ic_height.svg'),
-                                            name: context.tr('height'),
-                                            value: Text(state.pet!.height),
-                                          ),
-                                          PetStatusRow(
-                                            trailing: SvgPicture.asset(
-                                                'assets/icons/ic_weight.svg'),
-                                            name: context.tr('weight'),
-                                            value: Text(state.pet!.weight),
-                                          ),
-                                          PetStatusRow(
-                                            trailing: SvgPicture.asset(
-                                                'assets/icons/ic_color.svg'),
-                                            name: context.tr('color'),
-                                            value: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                              SizedBox(
+                                width: double.infinity,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _isShimmer
+                                        ? CustomShimmer(
+                                            child: Container(
+                                              margin: EdgeInsets.only(top: 8),
+                                              color: AppColor.gray,
+                                              child: Text("loading".tr()),
+                                            ),
+                                          )
+                                        : SectionHeader(
+                                            svgIconPath:
+                                                "assets/icons/ic_pet_status.svg",
+                                            sectionName: context.tr(
+                                                'pet_status',
+                                                args: [state.pet!.name])),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    PetStatusRow(
+                                        isShimmer: _isShimmer,
+                                        trailing: SvgPicture.asset(
+                                            'assets/icons/ic_gender.svg'),
+                                        name: context.tr('gender'),
+                                        value: Row(
+                                          children: [
+                                            Row(
                                               children: [
-                                                ColorBoxFromColorHex(
-                                                    colorName: state.pet!.color,
-                                                    width: 50,
-                                                    height: 50)
+                                                SvgPicture.asset(state
+                                                            .pet?.gender ??
+                                                        false
+                                                    ? "assets/icons/ic_gender_male.svg"
+                                                    : "assets/icons/ic_gender_female.svg"),
+                                                SizedBox(
+                                                  width: 8,
+                                                )
                                               ],
                                             ),
-                                          ),
-                                          PetStatusRow(
-                                            trailing: SvgPicture.asset(
-                                                'assets/icons/ic_birthday.svg'),
-                                            name: context.tr('birthday'),
-                                            value: Text(DateTimeFormatHelper
-                                                .formatVNDate(
-                                                    state.pet!.birthday)),
-                                            isShowDivider: false,
-                                          )
+                                            Text(context.tr(
+                                                state.pet?.gender ?? false
+                                                    ? 'male'
+                                                    : 'female'))
+                                          ],
+                                        )),
+                                    PetStatusRow(
+                                      isShimmer: _isShimmer,
+                                      trailing: SvgPicture.asset(
+                                          'assets/icons/ic_height.svg'),
+                                      name: context.tr('height'),
+                                      value: Text(state.pet?.height ?? ""),
+                                    ),
+                                    PetStatusRow(
+                                      isShimmer: _isShimmer,
+                                      trailing: SvgPicture.asset(
+                                          'assets/icons/ic_weight.svg'),
+                                      name: context.tr('weight'),
+                                      value: Text(state.pet?.weight ?? ""),
+                                    ),
+                                    PetStatusRow(
+                                      isShimmer: _isShimmer,
+                                      trailing: SvgPicture.asset(
+                                          'assets/icons/ic_color.svg'),
+                                      name: context.tr('color'),
+                                      value: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          ColorBoxFromColorHex(
+                                              colorName: state.pet?.color ?? "",
+                                              width: 50,
+                                              height: 50)
                                         ],
                                       ),
+                                    ),
+                                    PetStatusRow(
+                                      isShimmer: _isShimmer,
+                                      trailing: SvgPicture.asset(
+                                          'assets/icons/ic_birthday.svg'),
+                                      name: context.tr('birthday'),
+                                      value: Text(
+                                          DateTimeFormatHelper.formatVNDate(
+                                              state.pet?.birthday ??
+                                                  DateTime.now())),
+                                      isShowDivider: false,
                                     )
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         )))
@@ -404,7 +393,7 @@ class _PetProfilePage extends State<PetProfilePage> {
                                       },
                                 icon: Icon(
                                   Icons.share_outlined,
-                                  color: AppColor.white,
+                                  color: AppColor.black,
                                 )),
                             Expanded(
                               child: BlocBuilder<AuthCubit, AuthState>(
@@ -518,18 +507,19 @@ class _PetProfilePage extends State<PetProfilePage> {
                                         children: [
                                           SizedBox(width: 1),
                                           _isShimmer
-                                              ? Shimmer.fromColors(
-                                                  baseColor: AppColor.green
-                                                      .withOpacity(0.4),
-                                                  highlightColor: AppColor.gray,
-                                                  child: SizedBox())
+                                              ? CustomShimmer(
+                                                  child: Container(
+                                                    color: AppColor.gray,
+                                                    child: Text("loading".tr()),
+                                                  ),
+                                                )
                                               : Expanded(
                                                   child: Text(
                                                   'get_with',
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      color: AppColor.white),
+                                                      color: AppColor.black),
                                                 ).tr(args: [
                                                   state.pet!.name,
                                                   MoneyFormatHelper
@@ -537,7 +527,8 @@ class _PetProfilePage extends State<PetProfilePage> {
                                                           state.pet!.price *
                                                               CurrencyRate.vnd)
                                                 ])),
-                                          Icon(Icons.add_shopping_cart_outlined)
+                                          Icon(Icons.add_shopping_cart_outlined,
+                                              color: AppColor.black)
                                         ],
                                       ));
                                 },

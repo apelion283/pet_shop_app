@@ -1,1 +1,5 @@
-enum ScreenInBottomBarOfMainScreen { profile, home, cart, markers }
+enum ScreenInBottomBarOfMainScreen {
+  home,
+  markers,
+  profile,
+}

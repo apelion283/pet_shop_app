@@ -79,7 +79,9 @@ class _SignUpPageState extends State<SignUpPage> {
       },
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: AppColor.white,
           appBar: AppBar(
+            backgroundColor: AppColor.white,
             title: Text('sign_up').tr(),
             centerTitle: true,
           ),
@@ -228,7 +230,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: Text(
                           'sign_in',
                           style: TextStyle(
-                            color: AppColor.green,
+                            color: AppColor.blue,
                             fontSize: 15,
                             fontWeight: FontWeight.normal,
                           ),

@@ -1,46 +1,70 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
 
-Widget verticalMerchandiseItem(
-    {required MerchandiseItem item, required Function onItemClick}) {
-  return GestureDetector(
-      onTap: () {
-        onItemClick();
-      },
-      child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 250),
-          child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                      color: AppColor.gray.withOpacity(0.3), width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(16))),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Image.network(
-                      item.imageUrl,
-                      width: 150,
-                      height: 200,
-                    ),
-                    Text(
-                      item.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: AppColor.green, fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      MoneyFormatHelper.formatVNCurrency(
-                          item.price * CurrencyRate.vnd),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: Colors.red, fontWeight: FontWeight.w400),
-                    )
-                  ],
+class VerticalMerchandiseItem extends StatelessWidget {
+  final bool isShimmer;
+  final MerchandiseItem item;
+  final Function onItemClick;
+  const VerticalMerchandiseItem(
+      {super.key,
+      required this.isShimmer,
+      required this.item,
+      required this.onItemClick});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () {
+          onItemClick();
+        },
+        child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 150),
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: isShimmer
+                      ? CustomShimmer(
+                          child: Container(
+                          color: AppColor.gray,
+                          child: Image.asset('assets/images/app_icon.png'),
+                        ))
+                      : Image.network(
+                          item.imageUrl,
+                        ),
                 ),
-              ))));
+                SizedBox(
+                  height: 8,
+                ),
+                isShimmer
+                    ? CustomShimmer(
+                        child: Container(
+                            color: AppColor.gray, child: Text('loading')))
+                    : Text(
+                        "${item.name.split(' ').first} ${item.name.split(' ')[1]}",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: AppColor.black, fontWeight: FontWeight.w500),
+                      ),
+                SizedBox(
+                  height: 4,
+                ),
+                isShimmer
+                    ? CustomShimmer(
+                        child: Container(
+                            color: AppColor.gray, child: Text('loading')))
+                    : Text(
+                        MoneyFormatHelper.formatVNCurrency(
+                            item.price * CurrencyRate.vnd),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: AppColor.gray, fontWeight: FontWeight.w400),
+                      )
+              ],
+            )));
+  }
 }

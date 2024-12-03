@@ -48,7 +48,7 @@
         android:name="com.google.firebase.messaging.default_notification_channel_id"
         android:value="test_channel" /> 
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value=""/> 
+               android:value="AIzaSyClll0Y_mK7HwGYiYLwU4lta0SEohEHNBs"/> 
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

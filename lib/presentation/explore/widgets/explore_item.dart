@@ -55,7 +55,7 @@ class ExploreItem extends StatelessWidget {
                         CurrencyRate.vnd),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        color: AppColor.green,
+                        color: AppColor.blue,
                         fontWeight: FontWeight.w500,
                         fontSize: 15),
                   ),
@@ -98,7 +98,7 @@ class ExploreItem extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.add_shopping_cart,
-                          color: AppColor.green,
+                          color: AppColor.black,
                         ),
                         SizedBox(
                           width: 8,

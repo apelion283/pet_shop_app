@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -12,7 +11,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_pet_shop_app/analytics_service.dart';
 import 'package:flutter_pet_shop_app/core/auto_generated/codegen_loader.g.dart';
-import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
@@ -27,10 +25,10 @@ import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
-import 'package:flutter_pet_shop_app/presentation/cart/pages/cart.dart';
 import 'package:flutter_pet_shop_app/presentation/home/pages/home.dart';
 import 'package:flutter_pet_shop_app/presentation/markers/pages/markers.dart';
 import 'package:flutter_pet_shop_app/presentation/profile/pages/profile.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -203,45 +201,68 @@ class _MainPageState extends State<MainPage> {
             top: false,
             bottom: false,
             child: Scaffold(
-                extendBody: true,
-                body: PageView(
-                  controller: CommonPageController.controller,
-                  children: [
-                    const ProfilePage(),
-                    const HomePage(),
-                    const CartPage(),
-                    const MarkersPage()
-                  ],
-                  onPageChanged: (value) => onPageChanged(value),
-                ),
-                bottomNavigationBar: CurvedNavigationBar(
-                    index: _currentIndex,
-                    height: AppConfig.mainBottomNavigationBarHeight,
-                    color: AppColor.green,
-                    backgroundColor: Colors.transparent,
-                    onTap: (index) => setState(() {
-                          onTap(index);
-                          _currentIndex = index;
-                        }),
-                    items: [
-                      Icon(Icons.person_outline_rounded),
-                      Icon(Icons.home_outlined),
-                      BlocBuilder<CartCubit, CartState>(
-                        builder: (context, state) {
-                          return state.cartList.isNotEmpty
-                              ? Badge(
-                                  label: Text(state.cartList.length.toString()),
-                                  child: Icon(
-                                    Icons.shopping_cart_outlined,
-                                  ),
-                                )
-                              : Icon(
-                                  Icons.shopping_cart_outlined,
-                                );
-                        },
+              extendBody: true,
+              body: PageView(
+                controller: CommonPageController.controller,
+                children: [
+                  const HomePage(),
+                  const MarkersPage(),
+                  const ProfilePage(),
+                ],
+                onPageChanged: (value) => onPageChanged(value),
+              ),
+              bottomNavigationBar: CustomSalomonBottomBar(
+                backgroundColor: AppColor.black,
+                items: [
+                  CustomSalomonBottomBarItem(
+                      icon: Icon(
+                        Icons.home_outlined,
+                        color: AppColor.white,
                       ),
-                      Icon(Icons.location_on_outlined)
-                    ]))),
+                      activeIcon: Icon(
+                        Icons.home_outlined,
+                        color: AppColor.black,
+                      ),
+                      title:
+                          Text('home', style: TextStyle(color: AppColor.black))
+                              .tr()),
+                  CustomSalomonBottomBarItem(
+                      icon: Icon(
+                        Icons.location_on_outlined,
+                        color: AppColor.white,
+                      ),
+                      activeIcon: Icon(
+                        Icons.location_on_outlined,
+                        color: AppColor.black,
+                      ),
+                      title: Text(
+                        'markers',
+                        style: TextStyle(color: AppColor.black),
+                      ).tr()),
+                  CustomSalomonBottomBarItem(
+                      icon: Icon(
+                        Icons.person_outline_rounded,
+                        color: AppColor.white,
+                      ),
+                      activeIcon: Icon(
+                        Icons.person_outline_rounded,
+                        color: AppColor.black,
+                      ),
+                      title: Text('profile',
+                              style: TextStyle(color: AppColor.black))
+                          .tr()),
+                ],
+                currentIndex: _currentIndex,
+                selectedItemColor: AppColor.green,
+                selectedColorOpacity: 1,
+                onTap: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                  onTap(index);
+                },
+              ),
+            )),
       ),
     );
   }

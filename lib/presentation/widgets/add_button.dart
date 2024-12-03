@@ -13,7 +13,7 @@ class AddButton extends StatelessWidget {
         },
         icon: Icon(
           Icons.add,
-          color: AppColor.green,
+          color: AppColor.gray,
         ));
   }
 }

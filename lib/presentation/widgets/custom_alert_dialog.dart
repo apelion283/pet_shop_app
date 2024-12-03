@@ -29,12 +29,12 @@ class CustomAlertDialog extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: AppColor.green,
+            color: AppColor.black,
           ),
           Flexible(
               child: Text(
             title,
-            style: TextStyle(color: AppColor.green),
+            style: TextStyle(color: AppColor.black),
           ).tr())
         ],
       ),
@@ -71,7 +71,7 @@ class CustomAlertDialog extends StatelessWidget {
                   },
                   child: Text(
                     positiveButtonText,
-                    style: TextStyle(color: AppColor.white),
+                    style: TextStyle(color: AppColor.black),
                   ).tr())
             ],
           )

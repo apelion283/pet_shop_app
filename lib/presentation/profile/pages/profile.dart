@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
+import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
@@ -19,7 +20,9 @@ class ProfilePage extends StatelessWidget {
     return SafeArea(
         bottom: false,
         child: Scaffold(
+            backgroundColor: AppColor.white,
             appBar: AppBar(
+              backgroundColor: AppColor.white,
               title: const Text(
                 'profile',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
@@ -42,7 +45,7 @@ class ProfilePage extends StatelessWidget {
                             Navigator.pushNamed(context, RouteName.signIn);
                           }
                         }),
-                    SizedBox(height: 16),
+                    SizedBox(height: 8),
                     if (state.authState == AuthenticationState.authenticated)
                       ProfileCard(
                           leadingIcon: Icons.logout_outlined,

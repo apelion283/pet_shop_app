@@ -17,7 +17,7 @@ class SectionHeader extends StatelessWidget {
           margin: EdgeInsets.only(top: 8, bottom: 8),
           child: Divider(
             thickness: 2,
-            color: AppColor.green,
+            color: AppColor.black,
           ),
         ),
         Row(

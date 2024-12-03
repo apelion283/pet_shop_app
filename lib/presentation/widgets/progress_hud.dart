@@ -41,8 +41,8 @@ void configLoading() {
     ..displayDuration = const Duration(milliseconds: 2000)
     ..backgroundColor = AppColor.green
     ..indicatorType = EasyLoadingIndicatorType.cubeGrid
-    ..indicatorColor = AppColor.white
-    ..textColor = AppColor.white
-    ..maskColor = AppColor.green.withOpacity(0.3)
+    ..indicatorColor = AppColor.black
+    ..textColor = AppColor.black
+    ..maskColor = AppColor.black.withOpacity(0.3)
     ..userInteractions = false;
 }

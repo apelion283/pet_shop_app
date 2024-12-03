@@ -1,5 +1,4 @@
 class RouteName {
-  static const String main = '/main';
   static const String home = '/home';
   static const String signIn = '/signIn';
   static const String signUp = '/signUp';
@@ -8,4 +7,5 @@ class RouteName {
   static const String merchandiseDetail = '/merchandiseDetail';
   static const String explore = '/explore';
   static const String markerDetail = '/markerDetail';
+  static const String cart = '/cart';
 }

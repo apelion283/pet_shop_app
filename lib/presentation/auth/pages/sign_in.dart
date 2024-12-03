@@ -56,7 +56,9 @@ class _SignInPageState extends State<SignInPage> {
     (int, Object)? itemToAddToCart = args.itemToAdd;
 
     return Scaffold(
+        backgroundColor: AppColor.white,
         appBar: AppBar(
+          backgroundColor: AppColor.white,
           title: Text('sign_in').tr(),
           centerTitle: true,
         ),
@@ -131,7 +133,7 @@ class _SignInPageState extends State<SignInPage> {
                                 child: Text(
                                   'forgot_password',
                                   style: TextStyle(
-                                      color: AppColor.green,
+                                      color: AppColor.blue,
                                       fontSize: 20,
                                       fontWeight: FontWeight.w400),
                                 ).tr(),
@@ -193,7 +195,7 @@ class _SignInPageState extends State<SignInPage> {
                                           style: TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.w400,
-                                              color: AppColor.green))
+                                              color: AppColor.blue))
                                       .tr(),
                                 )
                               ],
@@ -217,8 +219,8 @@ class _SignInPageState extends State<SignInPage> {
             });
             ProgressHUD.showSuccess(context.tr('sign_in_successfully'));
             if (itemToAddToCart != null) {
-              CommonPageController.controller
-                  .jumpToPage(ScreenInBottomBarOfMainScreen.cart.index);
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushNamed(context, RouteName.cart);
               context
                   .read<CartCubit>()
                   .addProduct(itemToAddToCart.$2, itemToAddToCart.$1);

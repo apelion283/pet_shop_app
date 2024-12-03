@@ -39,7 +39,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         return Scaffold(
+            backgroundColor: AppColor.white,
             appBar: AppBar(
+              backgroundColor: AppColor.white,
               title: Text('forgot_password').tr(),
               centerTitle: true,
             ),

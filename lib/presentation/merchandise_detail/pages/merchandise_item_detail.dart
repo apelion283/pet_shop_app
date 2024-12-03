@@ -8,11 +8,9 @@ import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
-import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
-import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
@@ -21,10 +19,10 @@ import 'package:flutter_pet_shop_app/presentation/merchandise_detail/cubit/merch
 import 'package:flutter_pet_shop_app/presentation/widgets/clip_path.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/add_button.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/remove_button.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shimmer/shimmer.dart';
 
 class MerchandiseItemDetailPage extends StatefulWidget {
   const MerchandiseItemDetailPage({super.key});
@@ -76,13 +74,15 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
               MerchandiseDetailCubit()..getMerchandiseDataById(arg.itemId),
           child: BlocConsumer<MerchandiseDetailCubit, MerchandiseDetailState>(
             builder: (context, state) => RefreshIndicator(
-                color: AppColor.green,
+                color: AppColor.black,
+                backgroundColor: AppColor.green,
                 onRefresh: () async {
                   context
                       .read<MerchandiseDetailCubit>()
                       .getMerchandiseDataById(arg.itemId);
                 },
                 child: Scaffold(
+                    backgroundColor: AppColor.white,
                     appBar: AppBar(
                       automaticallyImplyLeading: false,
                       backgroundColor: AppColor.green,
@@ -93,25 +93,27 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                 onPressed: (Navigator.of(context).pop),
                                 icon: Icon(
                                   Icons.arrow_back_ios_new_rounded,
-                                  color: AppColor.white,
+                                  color: AppColor.black,
                                 )),
                             _isShimmer
-                                ? Shimmer.fromColors(
-                                    baseColor: AppColor.green.withOpacity(0.4),
-                                    highlightColor: AppColor.gray,
+                                ? CustomShimmer(
+                                    child: Container(
+                                    color: AppColor.gray,
                                     child: Text(
-                                      state.item?.name ?? context.tr('loading'),
-                                      style: TextStyle(
-                                          color: AppColor.white,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18),
-                                    ))
-                                : Text(
-                                    state.item?.name ?? context.tr('loading'),
-                                    style: TextStyle(
-                                        color: AppColor.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 18)),
+                                      context.tr('loading'),
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ))
+                                : Flexible(
+                                    flex: 1,
+                                    child: Text(
+                                        state.item?.name ??
+                                            context.tr('loading'),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: AppColor.black,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18))),
                             SizedBox()
                           ]),
                       actions: [
@@ -119,173 +121,98 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                             key: _cartKey,
                             badgeOptions: const BadgeOptions(
                                 active: true,
-                                backgroundColor: Colors.red,
-                                foregroundColor: AppColor.white),
-                            icon: _isShimmer
-                                ? Shimmer.fromColors(
-                                    baseColor: AppColor.green.withOpacity(0.4),
-                                    highlightColor: AppColor.gray,
-                                    child: SizedBox())
-                                : IconButton(
-                                    onPressed: () {
-                                      CommonPageController.controller
-                                          .jumpToPage(
-                                              ScreenInBottomBarOfMainScreen
-                                                  .cart.index);
-                                      Navigator.of(context)
-                                          .popUntil((route) => route.isFirst);
-                                    },
-                                    icon: Icon(
-                                      Icons.shopping_cart_outlined,
-                                      color: AppColor.white,
-                                    )))
+                                backgroundColor: AppColor.black,
+                                foregroundColor: AppColor.green),
+                            icon: IconButton(
+                                onPressed: _isShimmer
+                                    ? () {}
+                                    : () {
+                                        Navigator.of(context)
+                                            .popUntil((route) => route.isFirst);
+                                        Navigator.pushNamed(
+                                            context, RouteName.cart);
+                                      },
+                                icon: Icon(
+                                  Icons.shopping_cart_outlined,
+                                  color: AppColor.black,
+                                )))
                       ],
                     ),
-                    body: _isShimmer
-                        ? Shimmer.fromColors(
-                            baseColor: AppColor.green.withOpacity(0.4),
-                            highlightColor: AppColor.gray,
-                            child: CustomScrollView(
-                              slivers: <Widget>[
-                                SliverAppBar(
-                                  automaticallyImplyLeading: false,
-                                  expandedHeight: size.height * 0.3,
-                                  flexibleSpace: FlexibleSpaceBar(
-                                    background: ClipPath(
-                                      clipper: ClipPathOnBoard(),
-                                      child: Image.network(
-                                        AppConfig
-                                            .placeHolderMerchandiseImageUrl,
-                                        height: size.height * 0.3,
-                                        width: size.width,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SliverToBoxAdapter(
-                                  child: SingleChildScrollView(
-                                      scrollDirection: Axis.vertical,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(16),
-                                        child: Column(
-                                          children: [
-                                            Card(
-                                              elevation: 10,
-                                              child: Padding(
-                                                padding: EdgeInsets.all(16),
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                      'loading',
-                                                      style: TextStyle(
-                                                          fontSize: 22,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ).tr(),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          'brand',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  AppColor.blue,
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
-                                                        ).tr(args: [
-                                                          context.tr('loading')
-                                                        ]),
-                                                        Text(
-                                                          MoneyFormatHelper
-                                                              .formatVNCurrency(
-                                                                  0),
-                                                          style: TextStyle(
-                                                              color: AppColor
-                                                                  .green,
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
-                                                        )
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 16,
-                                            ),
-                                            Text(
-                                              context.tr('loading'),
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          ],
-                                        ),
-                                      )),
-                                )
-                              ],
-                            ),
-                          )
-                        : CustomScrollView(
-                            slivers: <Widget>[
-                              SliverAppBar(
-                                automaticallyImplyLeading: false,
-                                expandedHeight: size.height * 0.3,
-                                flexibleSpace: FlexibleSpaceBar(
-                                  background: ClipPath(
-                                    clipper: ClipPathOnBoard(),
-                                    child: Hero(
-                                        tag: state.item!.id!,
-                                        child: Container(
-                                          key: _widgetKey,
-                                          child: Image.network(
-                                            state.item?.imageUrl ??
-                                                AppConfig
-                                                    .placeHolderMerchandiseImageUrl,
+                    body: CustomScrollView(
+                      slivers: <Widget>[
+                        SliverAppBar(
+                          automaticallyImplyLeading: false,
+                          expandedHeight: size.height * 0.3,
+                          backgroundColor: AppColor.white,
+                          flexibleSpace: FlexibleSpaceBar(
+                            background: ClipPath(
+                              clipper: ClipPathOnBoard(),
+                              child: Hero(
+                                  tag: _isShimmer ? "" : state.item!.id!,
+                                  child: Container(
+                                    key: _widgetKey,
+                                    child: _isShimmer
+                                        ? CustomShimmer(
+                                            child: Container(
+                                                color: AppColor.gray,
+                                                child: Image.asset(
+                                                    "assets/images/app_icon.png")),
+                                          )
+                                        : Image.network(
+                                            state.item!.imageUrl,
                                             height: size.height * 0.3,
                                             width: size.width,
                                             fit: BoxFit.contain,
                                           ),
-                                        )),
-                                  ),
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16),
-                                      child: Column(
-                                        children: [
-                                          Card(
-                                            elevation: 10,
-                                            child: Padding(
-                                              padding: EdgeInsets.all(16),
-                                              child: Column(
-                                                children: [
-                                                  Text(
+                                  )),
+                            ),
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      elevation: 10,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16),
+                                        child: Column(
+                                          children: [
+                                            _isShimmer
+                                                ? CustomShimmer(
+                                                    child: Container(
+                                                      color: AppColor.gray,
+                                                      child:
+                                                          Text("loading".tr(),
+                                                              style: TextStyle(
+                                                                fontSize: 22,
+                                                              )),
+                                                    ),
+                                                  )
+                                                : Text(
                                                     "${state.item!.name} - ${state.item!.weight}",
                                                     style: TextStyle(
                                                         fontSize: 22,
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                _isShimmer
+                                                    ? CustomShimmer(
+                                                        child: Container(
+                                                          color: AppColor.gray,
+                                                          child: Text(
+                                                              "loading".tr()),
+                                                        ),
+                                                      )
+                                                    : Text(
                                                         'brand',
                                                         style: TextStyle(
                                                             color:
@@ -297,7 +224,15 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                                       ).tr(args: [
                                                         state.brandName!
                                                       ]),
-                                                      Text(
+                                                _isShimmer
+                                                    ? CustomShimmer(
+                                                        child: Container(
+                                                          color: AppColor.gray,
+                                                          child: Text(
+                                                              "loading".tr()),
+                                                        ),
+                                                      )
+                                                    : Text(
                                                         MoneyFormatHelper
                                                             .formatVNCurrency(
                                                                 state.item!
@@ -312,29 +247,37 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                                                 FontWeight
                                                                     .w500),
                                                       )
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 16,
+                                    ),
+                                    _isShimmer
+                                        ? CustomShimmer(
+                                            child: Container(
+                                              color: AppColor.gray,
+                                              child: Text("loading".tr()),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            height: 16,
-                                          ),
-                                          Text(
+                                          )
+                                        : Text(
                                             state.item!.description,
                                             style: TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.normal),
                                             textAlign: TextAlign.start,
                                           ),
-                                        ],
-                                      ),
-                                    )),
-                              )
-                            ],
-                          ),
-                    bottomNavigationBar: Padding(
+                                  ],
+                                ),
+                              )),
+                        )
+                      ],
+                    ),
+                    bottomNavigationBar: Container(
+                      color: AppColor.white,
                       padding: EdgeInsets.all(16),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -351,20 +294,26 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                               ).tr(),
                               Row(
                                 children: [
-                                  RemoveButton(onButtonClick: () {
-                                    setState(() {
-                                      _quantityController.text =
-                                          _quantityController.text.isNotEmpty &&
-                                                  int.parse(_quantityController
-                                                          .text) >
-                                                      1
-                                              ? (int.parse(_quantityController
-                                                          .text) -
-                                                      1)
-                                                  .toString()
-                                              : "1";
-                                    });
-                                  }),
+                                  RemoveButton(
+                                      onButtonClick: _isShimmer
+                                          ? () {}
+                                          : () {
+                                              setState(() {
+                                                _quantityController
+                                                    .text = _quantityController
+                                                            .text.isNotEmpty &&
+                                                        int.parse(
+                                                                _quantityController
+                                                                    .text) >
+                                                            1
+                                                    ? (int.parse(
+                                                                _quantityController
+                                                                    .text) -
+                                                            1)
+                                                        .toString()
+                                                    : "1";
+                                              });
+                                            }),
                                   Container(
                                       decoration: BoxDecoration(
                                           border: Border(
@@ -408,17 +357,22 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                           ),
                                         ),
                                       )),
-                                  AddButton(onButtonClick: () {
-                                    setState(() {
-                                      _quantityController.text =
-                                          _quantityController.text.isNotEmpty
-                                              ? (int.parse(_quantityController
-                                                          .text) +
-                                                      1)
-                                                  .toString()
-                                              : "1";
-                                    });
-                                  }),
+                                  AddButton(
+                                      onButtonClick: _isShimmer
+                                          ? () {}
+                                          : () {
+                                              setState(() {
+                                                _quantityController
+                                                    .text = _quantityController
+                                                        .text.isNotEmpty
+                                                    ? (int.parse(
+                                                                _quantityController
+                                                                    .text) +
+                                                            1)
+                                                        .toString()
+                                                    : "1";
+                                              });
+                                            }),
                                 ],
                               )
                             ],
@@ -439,7 +393,7 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                         },
                                   icon: Icon(
                                     Icons.share_outlined,
-                                    color: AppColor.white,
+                                    color: AppColor.black,
                                   )),
                               Expanded(
                                 child: BlocBuilder<AuthCubit, AuthState>(
@@ -528,7 +482,7 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                                 }
                                               },
                                         style: ElevatedButton.styleFrom(
-                                            iconColor: AppColor.white,
+                                            iconColor: AppColor.black,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(8)),
@@ -541,7 +495,7 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                             Text(
                                               'add_to_cart',
                                               style: TextStyle(
-                                                  color: AppColor.white),
+                                                  color: AppColor.black),
                                             ).tr(),
                                             Icon(Icons
                                                 .add_shopping_cart_outlined)

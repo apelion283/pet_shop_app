@@ -5,10 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
-import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
-import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
@@ -17,10 +15,10 @@ import 'package:flutter_pet_shop_app/presentation/explore/cubit/explore_cubit.da
 import 'package:flutter_pet_shop_app/presentation/explore/cubit/explore_state.dart';
 import 'package:flutter_pet_shop_app/presentation/explore/widgets/explore_item.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:scrollable_list_tab_scroller/scrollable_list_tab_scroller.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shimmer/shimmer.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
@@ -74,6 +72,7 @@ class _ExplorePageState extends State<ExplorePage> {
       },
       child: SafeArea(
           child: Scaffold(
+              backgroundColor: AppColor.white,
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 backgroundColor: AppColor.green,
@@ -84,11 +83,11 @@ class _ExplorePageState extends State<ExplorePage> {
                           onPressed: (Navigator.of(context).pop),
                           icon: Icon(
                             Icons.arrow_back_ios_new_rounded,
-                            color: AppColor.white,
+                            color: AppColor.black,
                           )),
                       Text(context.tr('explore'),
                           style: TextStyle(
-                              color: AppColor.white,
+                              color: AppColor.black,
                               fontWeight: FontWeight.w500,
                               fontSize: 18)),
                       SizedBox()
@@ -98,27 +97,25 @@ class _ExplorePageState extends State<ExplorePage> {
                       key: _cartKey,
                       badgeOptions: const BadgeOptions(
                           active: true,
-                          backgroundColor: Colors.red,
-                          foregroundColor: AppColor.white),
-                      icon: _isShimmer
-                          ? Shimmer.fromColors(
-                              baseColor: AppColor.green.withOpacity(0.4),
-                              highlightColor: AppColor.gray,
-                              child: SizedBox())
-                          : IconButton(
-                              onPressed: () {
-                                CommonPageController.controller.jumpToPage(
-                                    ScreenInBottomBarOfMainScreen.cart.index);
-                                Navigator.of(context)
-                                    .popUntil((route) => route.isFirst);
-                              },
-                              icon: Icon(
-                                Icons.shopping_cart_outlined,
-                                color: AppColor.white,
-                              ))),
+                          backgroundColor: AppColor.black,
+                          foregroundColor: AppColor.green),
+                      icon: IconButton(
+                          onPressed: _isShimmer
+                              ? () {}
+                              : () {
+                                  Navigator.popUntil(
+                                      context, (route) => route.isFirst);
+                                  Navigator.of(context)
+                                      .pushNamed(RouteName.cart);
+                                },
+                          icon: Icon(
+                            Icons.shopping_cart_outlined,
+                            color: AppColor.black,
+                          ))),
                   PopupMenuButton<int>(
                     color: AppColor.green,
-                    iconColor: AppColor.white,
+                    surfaceTintColor: AppColor.black,
+                    iconColor: AppColor.black,
                     onSelected: (item) => (handleClick(item)),
                     itemBuilder: (context) => [
                       PopupMenuItem<int>(
@@ -127,14 +124,14 @@ class _ExplorePageState extends State<ExplorePage> {
                           children: [
                             Icon(
                               Icons.share_outlined,
-                              color: AppColor.white,
+                              color: AppColor.black,
                             ),
                             SizedBox(
                               width: 8,
                             ),
                             Text(
                               'share',
-                              style: TextStyle(color: AppColor.white),
+                              style: TextStyle(color: AppColor.black),
                             ).tr()
                           ],
                         ),
@@ -153,7 +150,8 @@ class _ExplorePageState extends State<ExplorePage> {
                       context.tr('pet_food'): state.foodList
                     };
                     return RefreshIndicator(
-                        color: AppColor.green,
+                        color: AppColor.black,
+                        backgroundColor: AppColor.green,
                         onRefresh: () async {
                           context.read<ExploreCubit>().initData();
                         },
@@ -166,10 +164,10 @@ class _ExplorePageState extends State<ExplorePage> {
                               child: Text(
                                 data.keys.elementAt(index),
                                 style: !active
-                                    ? null
+                                    ? TextStyle(fontWeight: FontWeight.w400)
                                     : TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.green),
+                                        color: AppColor.blue),
                               ),
                             );
                           },
@@ -183,39 +181,29 @@ class _ExplorePageState extends State<ExplorePage> {
                                       fontSize: 20),
                                 ),
                                 _isShimmer
-                                    ? Shimmer.fromColors(
-                                        baseColor:
-                                            AppColor.green.withOpacity(0.4),
-                                        highlightColor: AppColor.gray,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                                child: Container(
-                                              decoration: BoxDecoration(
-                                                color: AppColor.gray,
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                              ),
-                                              margin: EdgeInsets.only(
-                                                  top: 8, left: 16),
-                                              height: 200,
-                                            )),
-                                            SizedBox(
-                                              width: 16,
-                                            ),
-                                            Expanded(
-                                                child: Container(
-                                              margin: EdgeInsets.only(
-                                                  top: 8, right: 16),
-                                              decoration: BoxDecoration(
-                                                color: AppColor.gray,
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                              ),
-                                              height: 200,
-                                            ))
-                                          ],
-                                        ))
+                                    ? CustomShimmer(
+                                        child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            child: Row(
+                                              children:
+                                                  List.generate(2, (index) {
+                                                return Expanded(
+                                                    child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: AppColor.gray,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16),
+                                                  ),
+                                                  margin: EdgeInsets.only(
+                                                      top: 8,
+                                                      left: 8,
+                                                      right: 8),
+                                                  height: 200,
+                                                ));
+                                              }),
+                                            )))
                                     : Padding(
                                         padding: EdgeInsets.all(16),
                                         child: Column(

@@ -41,7 +41,7 @@ class _MarkersState extends State<MarkersPage> {
             style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
-                color: AppColor.white),
+                color: AppColor.black),
           ).tr(),
           centerTitle: true,
         ),

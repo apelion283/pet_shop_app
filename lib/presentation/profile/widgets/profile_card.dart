@@ -18,12 +18,12 @@ class ProfileCard extends StatelessWidget {
     return Card(
       color: AppColor.green,
       child: ListTile(
-        leading: Icon(leadingIcon, color: AppColor.white),
+        leading: Icon(leadingIcon, color: AppColor.black),
         title: Text(
           title,
-          style: TextStyle(color: AppColor.white),
+          style: TextStyle(color: AppColor.black),
         ).tr(),
-        trailing: Icon(Icons.arrow_forward_ios, color: AppColor.white),
+        trailing: Icon(Icons.arrow_forward_ios, color: AppColor.black),
         onTap: () {
           onCardClick();
         },

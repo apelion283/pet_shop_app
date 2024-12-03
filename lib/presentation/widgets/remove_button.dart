@@ -13,7 +13,7 @@ class RemoveButton extends StatelessWidget {
         },
         icon: Icon(
           Icons.remove,
-          color: AppColor.green,
+          color: AppColor.gray,
         ));
   }
 }
