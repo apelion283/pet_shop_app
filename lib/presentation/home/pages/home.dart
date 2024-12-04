@@ -21,7 +21,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   bool _isShimmer = true;
 
   @override
@@ -32,6 +36,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
       return BlocProvider(
           create: (context) => HomeCubit()..getInitData(),
