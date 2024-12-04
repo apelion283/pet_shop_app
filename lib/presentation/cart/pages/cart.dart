@@ -326,14 +326,8 @@ class _CartPageState extends State<CartPage> {
             getPriceBaseOnLocale(context.read<CartCubit>().state.getTotal())),
         items: checkOutList,
         message: orderMessage);
-    if (result == null) {
-      ProgressHUD.showSuccess(
-          // ignore: use_build_context_synchronously
-          context.tr('order_successfully'));
-    } else {
-      ProgressHUD.showError(
-          // ignore: use_build_context_synchronously
-          context.tr('something_went_wrong'));
+    if (result != null) {
+      ProgressHUD.showError("something_went_wrong".tr());
     }
   }
 
