@@ -46,35 +46,16 @@ class _SlideToRightAnimationState extends State<SlideToRightAnimation>
         );
       },
       child: Row(
-        children: [
-          Align(
-            widthFactor: .05,
-            child: SvgPicture.asset(
-              "assets/icons/ic_right_arrow.svg",
-              colorFilter:
-                  const ColorFilter.mode(AppColor.green, BlendMode.srcIn),
-            ),
+          children: List.generate(4, (index) {
+        return Align(
+          widthFactor: .05,
+          child: SvgPicture.asset(
+            "assets/icons/ic_right_arrow.svg",
+            colorFilter:
+                const ColorFilter.mode(AppColor.green, BlendMode.srcIn),
           ),
-          Align(
-            widthFactor: .05,
-            child: SvgPicture.asset("assets/icons/ic_right_arrow.svg",
-                colorFilter:
-                    const ColorFilter.mode(AppColor.green, BlendMode.srcIn)),
-          ),
-          Align(
-            widthFactor: .05,
-            child: SvgPicture.asset("assets/icons/ic_right_arrow.svg",
-                colorFilter:
-                    const ColorFilter.mode(AppColor.green, BlendMode.srcIn)),
-          ),
-          Align(
-            widthFactor: .05,
-            child: SvgPicture.asset("assets/icons/ic_right_arrow.svg",
-                colorFilter:
-                    const ColorFilter.mode(AppColor.green, BlendMode.srcIn)),
-          ),
-        ],
-      ),
+        );
+      })),
     );
   }
 }
