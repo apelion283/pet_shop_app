@@ -15,7 +15,7 @@ class ProgressHUD {
   static void showError(String status) {
     EasyLoading.isShow ? dismiss() : () {};
     EasyLoading.showError(status,
-        duration: Duration(seconds: 2),
+        duration: Duration(milliseconds: 500),
         maskType: EasyLoadingMaskType.custom,
         dismissOnTap: false);
   }
@@ -23,7 +23,7 @@ class ProgressHUD {
   static void showSuccess(String status) {
     EasyLoading.isShow ? dismiss() : () {};
     EasyLoading.showSuccess(status,
-        duration: Duration(seconds: 2),
+        duration: Duration(milliseconds: 500),
         maskType: EasyLoadingMaskType.custom,
         dismissOnTap: true);
   }
@@ -38,7 +38,7 @@ class ProgressHUD {
 void configLoading() {
   EasyLoading.instance
     ..loadingStyle = EasyLoadingStyle.custom
-    ..displayDuration = const Duration(milliseconds: 2000)
+    ..displayDuration = const Duration(milliseconds: 1000)
     ..backgroundColor = AppColor.green
     ..indicatorType = EasyLoadingIndicatorType.cubeGrid
     ..indicatorColor = AppColor.black
