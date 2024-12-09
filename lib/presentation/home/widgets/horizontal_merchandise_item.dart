@@ -20,7 +20,7 @@ class HorizontalMerchandiseItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        elevation: 5,
+        elevation: 0.5,
         shadowColor: AppColor.gray,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
