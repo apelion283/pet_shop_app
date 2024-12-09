@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
@@ -25,13 +27,35 @@ class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-
+  double _imageHeight = 200.0;
   bool _isShimmer = true;
 
   @override
   void initState() {
     super.initState();
     _isShimmer = true;
+    _fetchImageDimensions();
+  }
+
+  Future<void> _fetchImageDimensions() async {
+    final ImageStream imageStream = NetworkImage(AppConfig.homeBannerImageUrl)
+        .resolve(const ImageConfiguration());
+    final Completer<ImageInfo> completer = Completer<ImageInfo>();
+    imageStream.addListener(
+      ImageStreamListener((ImageInfo info, bool _) {
+        completer.complete(info);
+      }),
+    );
+
+    final ImageInfo imageInfo = await completer.future;
+
+    if (mounted) {
+      setState(() {
+        _imageHeight = MediaQuery.of(context).size.width /
+            imageInfo.image.width *
+            imageInfo.image.height;
+      });
+    }
   }
 
   @override
@@ -65,8 +89,10 @@ class _HomePageState extends State<HomePage>
                                     ? Badge(
                                         backgroundColor: AppColor.green,
                                         textColor: AppColor.black,
-                                        label: Text(
-                                            state.cartList.length.toString()),
+                                        label: Text(state.getQuantity() >
+                                                AppConfig.maxBadgeQuantity
+                                            ? "${AppConfig.maxBadgeQuantity}+"
+                                            : state.getQuantity().toString()),
                                         child: Icon(
                                           Icons.shopping_cart_outlined,
                                         ),
@@ -96,10 +122,10 @@ class _HomePageState extends State<HomePage>
                         slivers: <Widget>[
                           SliverAppBar(
                             automaticallyImplyLeading: false,
-                            expandedHeight:
-                                MediaQuery.of(context).size.height * 0.3,
+                            expandedHeight: _imageHeight,
                             flexibleSpace: FlexibleSpaceBar(
                               background: Container(
+                                width: double.infinity,
                                 color: AppColor.white,
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 child: ClipRRect(
@@ -108,10 +134,12 @@ class _HomePageState extends State<HomePage>
                                       ? CustomShimmer(
                                           child: Container(
                                               color: AppColor.white,
-                                              child: Image.network(AppConfig
-                                                  .homeBannerImageUrl)))
+                                              child: Image.asset(
+                                                  "assets/images/app_icon.png")))
                                       : Image.network(
                                           fit: BoxFit.fill,
+                                          width: double.infinity,
+                                          height: _imageHeight,
                                           AppConfig.homeBannerImageUrl),
                                 ),
                               ),
