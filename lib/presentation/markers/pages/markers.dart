@@ -98,7 +98,7 @@ class _MarkersState extends State<MarkersPage> {
                                   });
                             }).toSet()),
                         Positioned(
-                            bottom: MediaQuery.of(context).size.height * 0.1,
+                            bottom: AppConfig.mainBottomNavigationBarHeight * 2,
                             left: MediaQuery.of(context).size.width * 0.1,
                             right: MediaQuery.of(context).size.width * 0.1,
                             child: Visibility(
