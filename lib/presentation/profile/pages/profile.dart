@@ -43,6 +43,10 @@ class ProfilePage extends StatelessWidget {
                           if (state.authState ==
                               AuthenticationState.unAuthenticated) {
                             Navigator.pushNamed(context, RouteName.signIn);
+                          } else if (state.authState ==
+                              AuthenticationState.authenticated) {
+                            Navigator.pushNamed(
+                                context, RouteName.profileDetail);
                           }
                         }),
                     SizedBox(height: 8),
