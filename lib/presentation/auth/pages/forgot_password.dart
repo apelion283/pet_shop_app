@@ -7,7 +7,7 @@ import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
-import 'package:flutter_pet_shop_app/presentation/auth/widgets/custom_text_field.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_text_field.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -24,6 +24,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   void initState() {
     super.initState();
     _emailController = TextEditingController();
+    context.read<AuthCubit>().clearError();
   }
 
   @override
@@ -54,7 +55,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomTextField(
-                        hintText: 'enter_your_email',
+                        hintText: "enter_your_email".tr(),
                         controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {

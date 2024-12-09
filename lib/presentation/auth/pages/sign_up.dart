@@ -7,8 +7,8 @@ import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
-import 'package:flutter_pet_shop_app/presentation/auth/widgets/custom_text_field.dart';
-import 'package:flutter_pet_shop_app/presentation/auth/widgets/password_text_field.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_text_field.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/password_text_field.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -28,8 +28,8 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  bool _isNewPasswordVisible = true;
-  bool _isConfirmPasswordVisible = true;
+  bool _isNewPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
   bool _isValidate = false;
 
   @override
@@ -39,6 +39,12 @@ class _SignUpPageState extends State<SignUpPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthCubit>().clearError();
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -94,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     : AutovalidateMode.disabled,
                 child: Column(children: [
                   CustomTextField(
-                    hintText: 'enter_your_email',
+                    hintText: "enter_your_email".tr(),
                     controller: _emailController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -115,11 +121,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 32),
                   CustomTextField(
-                    hintText: 'enter_your_name',
+                    hintText: "enter_your_name".tr(),
                     controller: _nameController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return context.tr('name_is_required');
+                        return "name_is_required".tr();
                       } else {
                         return null;
                       }
@@ -133,7 +139,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 32),
                   PasswordTextField(
-                    hintText: 'enter_new_password',
+                    hintText: "enter_new_password".tr(),
                     controller: _passwordController,
                     isPasswordVisible: _isNewPasswordVisible,
                     validator: (value) {
@@ -156,7 +162,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 32),
                   PasswordTextField(
-                    hintText: 'confirm_password',
+                    hintText: "confirm_password".tr(),
                     textInputAction: TextInputAction.done,
                     validator: (value) {
                       if (value == null || value.isEmpty) {

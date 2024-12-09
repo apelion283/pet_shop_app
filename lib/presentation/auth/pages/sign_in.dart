@@ -3,21 +3,19 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/analytics_service.dart';
-import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
+import 'package:flutter_pet_shop_app/core/helper/common_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
-import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
-import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
-import 'package:flutter_pet_shop_app/presentation/auth/widgets/custom_text_field.dart';
-import 'package:flutter_pet_shop_app/presentation/auth/widgets/password_text_field.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_text_field.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/password_text_field.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -36,9 +34,9 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    isPasswordVisible = true;
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    context.read<AuthCubit>().clearError();
   }
 
   @override
@@ -75,7 +73,7 @@ class _SignInPageState extends State<SignInPage> {
                       child: Column(
                         children: [
                           CustomTextField(
-                            hintText: 'enter_your_email',
+                            hintText: "enter_your_email".tr(),
                             controller: _emailController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -96,7 +94,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                           SizedBox(height: 32),
                           PasswordTextField(
-                            hintText: 'enter_your_password',
+                            hintText: "enter_your_password".tr(),
                             controller: _passwordController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -225,19 +223,10 @@ class _SignInPageState extends State<SignInPage> {
                   .read<CartCubit>()
                   .addProduct(itemToAddToCart.$2, itemToAddToCart.$1);
               AnalyticsService().viewProductLog(
-                  currency: context.locale.toString() == "vi_VI"
-                      ? "đ"
-                      : context.locale.toString() == "en_EN"
-                          ? "\$"
-                          : "đ",
-                  itemValue: (itemToAddToCart.$2 is MerchandiseItem
-                          ? (itemToAddToCart.$2 as MerchandiseItem).price
-                          : (itemToAddToCart.$2 as Pet).price) *
-                      (context.locale.toString() == "vi_VI"
-                          ? CurrencyRate.vnd
-                          : context.locale.toString() == "en_EN"
-                              ? 1
-                              : CurrencyRate.vnd),
+                  currency: CommonHelper.getCurrencySymbolBaseOnLocale(
+                      context: context),
+                  itemValue: CommonHelper.getPriceBaseOnLocale(
+                      context: context, item: itemToAddToCart.$2),
                   item: itemToAddToCart.$2);
             } else {
               CommonPageController.controller
