@@ -7,7 +7,9 @@ import 'package:flutter_pet_shop_app/presentation/cart/pages/cart.dart';
 import 'package:flutter_pet_shop_app/presentation/explore/pages/explore.dart';
 import 'package:flutter_pet_shop_app/presentation/marker_detail/pages/maker_detail.dart';
 import 'package:flutter_pet_shop_app/presentation/merchandise_detail/pages/merchandise_item_detail.dart';
+import 'package:flutter_pet_shop_app/presentation/order_success/order_success.dart';
 import 'package:flutter_pet_shop_app/presentation/pet/pages/pet_profile.dart';
+import 'package:flutter_pet_shop_app/presentation/profile_detail/profile_detail.dart';
 
 class Routes {
   static final routes = <String, WidgetBuilder>{
@@ -18,6 +20,8 @@ class Routes {
     RouteName.explore: (context) => const ExplorePage(),
     RouteName.petProfile: (context) => const PetProfilePage(),
     RouteName.markerDetail: (context) => const MarkerDetailPage(),
-    RouteName.cart: (context) => const CartPage()
+    RouteName.cart: (context) => const CartPage(),
+    RouteName.orderSuccess: (context) => const OrderSuccessPage(),
+    RouteName.profileDetail: (context) => const ProfileDetailPage()
   };
 }
