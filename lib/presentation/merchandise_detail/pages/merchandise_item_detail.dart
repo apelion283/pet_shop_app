@@ -8,19 +8,20 @@ import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
+import 'package:flutter_pet_shop_app/core/helper/common_helper.dart';
 import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
+import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/merchandise_detail/cubit/merchandise_detail_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/merchandise_detail/cubit/merchandise_detail_state.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/clip_path.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/add_button.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/remove_button.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -63,6 +64,7 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
       width: 30,
       opacity: 0.85,
       dragAnimation: const DragToCartAnimationOptions(
+        duration: Duration(milliseconds: 100),
         rotation: true,
       ),
       jumpAnimation: const JumpAnimationOptions(),
@@ -114,29 +116,44 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                             color: AppColor.black,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 18))),
-                            SizedBox()
+                            AddToCartIcon(
+                                key: _cartKey,
+                                badgeOptions: BadgeOptions(
+                                  active: false,
+                                ),
+                                icon: BlocBuilder<CartCubit, CartState>(
+                                    builder: (context, cartState) {
+                                  return IconButton(
+                                      onPressed: _isShimmer
+                                          ? () {}
+                                          : () {
+                                              Navigator.of(context).popUntil(
+                                                  (route) => route.isFirst);
+                                              Navigator.pushNamed(
+                                                  context, RouteName.cart);
+                                            },
+                                      icon: cartState.cartList.isNotEmpty
+                                          ? Badge(
+                                              backgroundColor: AppColor.black,
+                                              textColor: AppColor.green,
+                                              label: Text(context
+                                                          .read<CartCubit>()
+                                                          .state
+                                                          .getQuantity() >
+                                                      AppConfig.maxBadgeQuantity
+                                                  ? "${AppConfig.maxBadgeQuantity}+"
+                                                  : cartState
+                                                      .getQuantity()
+                                                      .toString()),
+                                              child: Icon(
+                                                Icons.shopping_cart_outlined,
+                                              ),
+                                            )
+                                          : Icon(
+                                              Icons.shopping_cart_outlined,
+                                            ));
+                                })),
                           ]),
-                      actions: [
-                        AddToCartIcon(
-                            key: _cartKey,
-                            badgeOptions: const BadgeOptions(
-                                active: true,
-                                backgroundColor: AppColor.black,
-                                foregroundColor: AppColor.green),
-                            icon: IconButton(
-                                onPressed: _isShimmer
-                                    ? () {}
-                                    : () {
-                                        Navigator.of(context)
-                                            .popUntil((route) => route.isFirst);
-                                        Navigator.pushNamed(
-                                            context, RouteName.cart);
-                                      },
-                                icon: Icon(
-                                  Icons.shopping_cart_outlined,
-                                  color: AppColor.black,
-                                )))
-                      ],
                     ),
                     body: CustomScrollView(
                       slivers: <Widget>[
@@ -241,7 +258,7 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                                                         .vnd),
                                                         style: TextStyle(
                                                             color:
-                                                                AppColor.green,
+                                                                AppColor.blue,
                                                             fontSize: 15,
                                                             fontWeight:
                                                                 FontWeight
@@ -401,11 +418,18 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                     return ElevatedButton(
                                         onPressed: _isShimmer
                                             ? () {}
-                                            : () {
+                                            : () async {
                                                 if (authState.authState ==
                                                     AuthenticationState
                                                         .authenticated) {
-                                                  ProgressHUD.show();
+                                                  await CommonHelper
+                                                      .addButtonClickAnimation(
+                                                          context: context,
+                                                          widgetKey: _widgetKey,
+                                                          runAddToCartAnimation:
+                                                              runAddToCartAnimation,
+                                                          cartKey: _cartKey);
+                                                  // ignore: use_build_context_synchronously
                                                   context
                                                       .read<CartCubit>()
                                                       .addProduct(
@@ -413,14 +437,16 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                                           int.parse(
                                                               _quantityController
                                                                   .text));
-                                                  addButtonClick(_widgetKey);
+
                                                   AnalyticsService()
                                                       .addItemToCartLog(
+                                                          // ignore: use_build_context_synchronously
                                                           currency: context
                                                                       .locale
                                                                       .toString() ==
                                                                   "vi_VI"
                                                               ? "đ"
+                                                              // ignore: use_build_context_synchronously
                                                               : context.locale
                                                                           .toString() ==
                                                                       "en_EN"
@@ -428,11 +454,13 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                                                   : "đ",
                                                           itemValue: state
                                                                   .item!.price *
+                                                              // ignore: use_build_context_synchronously
                                                               (context.locale
                                                                           .toString() ==
                                                                       "vi_VI"
                                                                   ? CurrencyRate
                                                                       .vnd
+                                                                  // ignore: use_build_context_synchronously
                                                                   : context.locale
                                                                               .toString() ==
                                                                           "en_EN"
@@ -440,45 +468,23 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                                                       : CurrencyRate
                                                                           .vnd),
                                                           item: state.item);
-                                                  ProgressHUD.showSuccess(
-                                                      context.tr(
-                                                          'add_item_to_cart_successfully'));
+                                                  // ignore: use_build_context_synchronously
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                          notifySnackBar(
+                                                              message:
+                                                                  "add_item_to_cart_successfully"
+                                                                      .tr(),
+                                                              onHideSnackBarButtonClick:
+                                                                  () {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .hideCurrentSnackBar();
+                                                              }));
                                                 } else {
-                                                  showDialog(
+                                                  CommonHelper.showSignInDialog(
                                                       context: context,
-                                                      builder: (context) {
-                                                        return CustomAlertDialog(
-                                                            icon: Icons
-                                                                .question_mark_outlined,
-                                                            title:
-                                                                'sign_in_to_shopping',
-                                                            message:
-                                                                'need_to_sign_in_description',
-                                                            positiveButtonText:
-                                                                'sign_in',
-                                                            negativeButtonText:
-                                                                'cancel',
-                                                            onPositiveButtonClick:
-                                                                () {
-                                                              Navigator.pushNamed(
-                                                                  context,
-                                                                  RouteName
-                                                                      .signIn,
-                                                                  arguments:
-                                                                      SignInPageArguments(
-                                                                          itemToAdd: (
-                                                                        1,
-                                                                        state
-                                                                            .item!
-                                                                      )));
-                                                            },
-                                                            onNegativeButtonClick:
-                                                                () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            });
-                                                      });
+                                                      item: state.item!);
                                                 }
                                               },
                                         style: ElevatedButton.styleFrom(
@@ -515,17 +521,13 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                   _isShimmer = false;
                 });
                 _cartKey.currentState!.updateBadge(
-                    "${context.read<CartCubit>().state.cartList.length}");
+                    context.read<CartCubit>().state.getQuantity() >
+                            AppConfig.maxBadgeQuantity
+                        ? "${AppConfig.maxBadgeQuantity}+"
+                        : "${context.read<CartCubit>().state.getQuantity()}");
               }
             },
           )),
     );
-  }
-
-  void addButtonClick(GlobalKey widgetKey) async {
-    await runAddToCartAnimation(widgetKey);
-    await _cartKey.currentState!
-        // ignore: use_build_context_synchronously
-        .runCartAnimation("${context.read<CartCubit>().state.cartList.length}");
   }
 }
