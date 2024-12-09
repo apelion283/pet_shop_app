@@ -1,6 +1,7 @@
 import 'package:either_dart/either.dart';
 import 'package:flutter_pet_shop_app/core/error/failure.dart';
 import 'package:flutter_pet_shop_app/data/datasource/firebase_auth_service.dart';
+import 'package:flutter_pet_shop_app/data/models/user_model.dart';
 import 'package:flutter_pet_shop_app/domain/entities/user_entity.dart';
 
 abstract class AuthRepository {
@@ -10,6 +11,10 @@ abstract class AuthRepository {
       {required String email, required String password, required String name});
   Future<Either<Failure, UserEntity>> signInWithEmailAndPassword(
       {required String email, required String password});
+  Future<Either<Failure, void>> updatePassword(
+      {required String currentPassword, required String newPassword});
+  Future<Either<Failure, void>> updateUserInformation(
+      {required UserEntity user});
   Future<void> signOut();
 }
 
@@ -74,5 +79,20 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       return false;
     }
+  }
+
+  @override
+  Future<Either<Failure, void>> updatePassword(
+      {required String currentPassword, required String newPassword}) async {
+    final result = await firebaseAuthService.updatePassword(
+        currentPassword: currentPassword, newPassword: newPassword);
+    return result.fold((l) => Left(result.left), (r) => Right(result.right));
+  }
+
+  @override
+  Future<Either<Failure, void>> updateUserInformation(
+      {required UserEntity user}) async {
+    return await firebaseAuthService.updateUserInformation(
+        user: UserModel(id: user.id, email: user.email, name: user.name));
   }
 }

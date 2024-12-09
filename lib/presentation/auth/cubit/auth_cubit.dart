@@ -3,6 +3,7 @@ import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/error/failure.dart';
 import 'package:flutter_pet_shop_app/data/datasource/firebase_auth_service.dart';
 import 'package:flutter_pet_shop_app/data/repository/auth_repository.dart';
+import 'package:flutter_pet_shop_app/domain/entities/user_entity.dart';
 import 'package:flutter_pet_shop_app/domain/usecases/auth_usecase.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 
@@ -24,6 +25,17 @@ class AuthCubit extends Cubit<AuthState> {
                   : AuthenticationState.unAuthenticated)));
     } catch (e) {
       emit(state.copyWith(error: Failure(message: e.toString())));
+    }
+  }
+
+  Future<bool> updateUserInformation({required UserEntity user}) async {
+    final result = await _authUsecase.updateUserInformation(user: user);
+    if (result.isLeft) {
+      emit(state.copyWith(user: state.user, error: result.left));
+      return false;
+    } else {
+      getCurrentUserInformation();
+      return true;
     }
   }
 
@@ -64,6 +76,23 @@ class AuthCubit extends Cubit<AuthState> {
           user: null, state: AuthenticationState.unAuthenticated));
     } catch (e) {
       emit(state.copyWith(error: Failure(message: e.toString())));
+    }
+  }
+
+  void clearError() {
+    emit(state.copyWith(user: state.user));
+  }
+
+  Future<bool> updatePassword(
+      {required String currentPassword, required String newPassword}) async {
+    final result = await _authUsecase.updatePassword(
+        currentPassword: currentPassword, newPassword: newPassword);
+    if (result.isRight) {
+      emit(state.copyWith(user: state.user));
+      return true;
+    } else {
+      emit(state.copyWith(user: state.user, error: result.left));
+      return false;
     }
   }
 

@@ -13,8 +13,14 @@ abstract class FirebaseAuthService {
       {required String email, required String password});
 
   Future<Either<Failure, UserModel>> getCurrentUserInformation();
+  Future<Either<Failure, void>> updatePassword(
+      {required String currentPassword, required String newPassword});
+  Future<Failure?> reauthenticateCredential(
+      {required String email, required String password});
 
   Future<bool> sendResetPasswordEmail(String email);
+  Future<Either<Failure, void>> updateUserInformation(
+      {required UserModel user});
 
   Future<void> signOut();
 }
@@ -76,6 +82,45 @@ class FirebaseAuthServiceImpl implements FirebaseAuthService {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updatePassword(
+      {required String currentPassword, required String newPassword}) async {
+    try {
+      final result = await reauthenticateCredential(
+          email: auth?.currentUser?.email ?? "", password: currentPassword);
+      if (result != null) {
+        return Left(result);
+      } else {
+        return Right(await auth?.currentUser?.updatePassword(newPassword));
+      }
+    } on FirebaseAuthException catch (e) {
+      return Left(Failure(code: e.code, message: e.message));
+    }
+  }
+
+  @override
+  Future<Failure?> reauthenticateCredential(
+      {required String email, required String password}) async {
+    try {
+      await auth?.currentUser?.reauthenticateWithCredential(
+          EmailAuthProvider.credential(email: email, password: password));
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return Failure(code: e.code, message: e.message);
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateUserInformation(
+      {required UserModel user}) async {
+    try {
+      return Right(
+          await auth?.currentUser?.updateProfile(displayName: user.name));
+    } on FirebaseAuthException catch (e) {
+      return Left(Failure(code: e.code, message: e.message));
     }
   }
 }
