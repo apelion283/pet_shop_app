@@ -9,6 +9,7 @@ class PasswordTextField extends StatefulWidget {
   final Function(bool) onPasswordVisibleChanged;
   final TextInputAction? textInputAction;
   final FormFieldValidator? validator;
+  final AutovalidateMode? validateMode;
 
   const PasswordTextField(
       {super.key,
@@ -18,7 +19,8 @@ class PasswordTextField extends StatefulWidget {
       this.onPasswordChanged,
       required this.onPasswordVisibleChanged,
       this.textInputAction = TextInputAction.next,
-      this.validator});
+      this.validator,
+      this.validateMode});
 
   @override
   State<PasswordTextField> createState() => _PasswordTextFieldState();
@@ -28,11 +30,13 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autovalidateMode: widget.validateMode ?? AutovalidateMode.disabled,
       textInputAction: widget.textInputAction,
       onChanged: widget.onPasswordChanged,
       controller: widget.controller,
       validator: widget.validator,
-      obscureText: widget.isPasswordVisible ?? false,
+      obscureText:
+          widget.isPasswordVisible == null ? true : !widget.isPasswordVisible!,
       decoration: InputDecoration(
           errorStyle: TextStyle(color: Colors.red),
           prefixIcon: Icon(
