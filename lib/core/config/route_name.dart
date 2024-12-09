@@ -8,4 +8,6 @@ class RouteName {
   static const String explore = '/explore';
   static const String markerDetail = '/markerDetail';
   static const String cart = '/cart';
+  static const String orderSuccess = '/orderSuccess';
+  static const String profileDetail = '/profileDetail';
 }
