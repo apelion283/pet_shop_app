@@ -5,18 +5,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
+import 'package:flutter_pet_shop_app/core/helper/common_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
+import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/explore/cubit/explore_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/explore/cubit/explore_state.dart';
 import 'package:flutter_pet_shop_app/presentation/explore/widgets/explore_item.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 import 'package:scrollable_list_tab_scroller/scrollable_list_tab_scroller.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -64,6 +65,7 @@ class _ExplorePageState extends State<ExplorePage> {
       width: 30,
       opacity: 0.85,
       dragAnimation: const DragToCartAnimationOptions(
+        duration: Duration(milliseconds: 100),
         rotation: true,
       ),
       jumpAnimation: const JumpAnimationOptions(),
@@ -90,28 +92,45 @@ class _ExplorePageState extends State<ExplorePage> {
                               color: AppColor.black,
                               fontWeight: FontWeight.w500,
                               fontSize: 18)),
-                      SizedBox()
+                      AddToCartIcon(
+                          key: _cartKey,
+                          badgeOptions: BadgeOptions(
+                            active: false,
+                          ),
+                          icon: BlocBuilder<CartCubit, CartState>(
+                              builder: (context, cartState) {
+                            return IconButton(
+                                onPressed: _isShimmer
+                                    ? () {}
+                                    : () {
+                                        Navigator.of(context)
+                                            .popUntil((route) => route.isFirst);
+                                        Navigator.pushNamed(
+                                            context, RouteName.cart);
+                                      },
+                                icon: cartState.cartList.isNotEmpty
+                                    ? Badge(
+                                        backgroundColor: AppColor.black,
+                                        textColor: AppColor.green,
+                                        label: Text(context
+                                                    .read<CartCubit>()
+                                                    .state
+                                                    .getQuantity() >
+                                                AppConfig.maxBadgeQuantity
+                                            ? "${AppConfig.maxBadgeQuantity}+"
+                                            : cartState
+                                                .getQuantity()
+                                                .toString()),
+                                        child: Icon(
+                                          Icons.shopping_cart_outlined,
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.shopping_cart_outlined,
+                                      ));
+                          }))
                     ]),
                 actions: [
-                  AddToCartIcon(
-                      key: _cartKey,
-                      badgeOptions: const BadgeOptions(
-                          active: true,
-                          backgroundColor: AppColor.black,
-                          foregroundColor: AppColor.green),
-                      icon: IconButton(
-                          onPressed: _isShimmer
-                              ? () {}
-                              : () {
-                                  Navigator.popUntil(
-                                      context, (route) => route.isFirst);
-                                  Navigator.of(context)
-                                      .pushNamed(RouteName.cart);
-                                },
-                          icon: Icon(
-                            Icons.shopping_cart_outlined,
-                            color: AppColor.black,
-                          ))),
                   PopupMenuButton<int>(
                     color: AppColor.green,
                     surfaceTintColor: AppColor.black,
@@ -291,8 +310,13 @@ class _ExplorePageState extends State<ExplorePage> {
                       setState(() {
                         _isShimmer = false;
                       });
-                      _cartKey.currentState!.updateBadge(
-                          "${context.read<CartCubit>().state.cartList.length}");
+                      _cartKey.currentState!.updateBadge(context
+                                  .read<CartCubit>()
+                                  .state
+                                  .getQuantity() >
+                              AppConfig.maxBadgeQuantity
+                          ? "${AppConfig.maxBadgeQuantity}+"
+                          : "${context.read<CartCubit>().state.getQuantity()}");
                     }
                   },
                 ),
@@ -310,49 +334,43 @@ class _ExplorePageState extends State<ExplorePage> {
     } else {}
   }
 
-  void addProduct(Object item) {
+  void addProduct(Object item) async {
     if (context.read<AuthCubit>().state.authState ==
         AuthenticationState.unAuthenticated) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return CustomAlertDialog(
-                icon: Icons.question_mark_outlined,
-                title: 'sign_in_to_shopping',
-                message: 'need_to_sign_in_description',
-                positiveButtonText: 'sign_in',
-                negativeButtonText: 'cancel',
-                onPositiveButtonClick: () {
-                  Navigator.pushNamed(context, RouteName.signIn,
-                      arguments: SignInPageArguments(itemToAdd: (1, item)));
-                },
-                onNegativeButtonClick: () {
-                  Navigator.of(context).pop();
-                });
-          });
+      CommonHelper.showSignInDialog(context: context, item: item);
     } else {
       if (item is MerchandiseItem) {
-        ProgressHUD.show();
+        await CommonHelper.addButtonClickAnimation(
+            context: context,
+            widgetKey: _getKeyForItem(item),
+            runAddToCartAnimation: runAddToCartAnimation,
+            cartKey: _cartKey);
+        // ignore: use_build_context_synchronously
         context.read<CartCubit>().addProduct(item, 1);
-        listClick(_getKeyForItem(item));
-        ProgressHUD.showSuccess(context.tr('add_item_to_cart_successfully'));
       } else if (item is Pet) {
         if (!context.read<CartCubit>().isPetExistInCart(item)) {
-          ProgressHUD.show();
+          await CommonHelper.addButtonClickAnimation(
+              context: context,
+              widgetKey: _getKeyForItem(item),
+              runAddToCartAnimation: runAddToCartAnimation,
+              cartKey: _cartKey);
+          // ignore: use_build_context_synchronously
           context.read<CartCubit>().addProduct(item, 1);
-          listClick(_getKeyForItem(item));
-          ProgressHUD.showSuccess(context.tr('add_item_to_cart_successfully'));
         } else {
-          ProgressHUD.showError(context.tr('you_can_only_add_one'));
+          ScaffoldMessenger.of(context).showSnackBar(notifySnackBar(
+              message: "you_can_only_add_one".tr(),
+              onHideSnackBarButtonClick: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              }));
+          return;
         }
       } else {}
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(notifySnackBar(
+          message: "add_item_to_cart_successfully".tr(),
+          onHideSnackBarButtonClick: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          }));
     }
-  }
-
-  void listClick(GlobalKey widgetKey) async {
-    await runAddToCartAnimation(widgetKey);
-    await _cartKey.currentState!.runCartAnimation(
-        // ignore: use_build_context_synchronously
-        ("${context.read<CartCubit>().state.cartList.length}").toString());
   }
 }
