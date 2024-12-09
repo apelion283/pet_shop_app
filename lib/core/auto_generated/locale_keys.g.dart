@@ -84,5 +84,25 @@ abstract class  LocaleKeys {
   static const work_time = 'work_time';
   static const let_check_this_store = 'let_check_this_store';
   static const all_markers = 'all_markers';
+  static const clear_cart = 'clear_cart';
+  static const about_to_clear_cart = 'about_to_clear_cart';
+  static const are_you_sure_to_clear_cart = 'are_you_sure_to_clear_cart';
+  static const place_an_order = 'place_an_order';
+  static const clear_cart_successfully = 'clear_cart_successfully';
+  static const successful = 'successful';
+  static const your_purchase_was_done = 'your_purchase_was_done';
+  static const back_to_home = 'back_to_home';
+  static const edit_your_profile = 'edit_your_profile';
+  static const note = 'note';
+  static const your_can_not_change_email_address = 'your_can_not_change_email_address';
+  static const your_information = 'your_information';
+  static const security_privacy = 'security_privacy';
+  static const your_account = 'your_account';
+  static const change_password = 'change_password';
+  static const change_information = 'change_information';
+  static const your_current_password = 'your_current_password';
+  static const update_information_successful = 'update_information_successful';
+  static const incorrect_password = 'incorrect_password';
+  static const change_password_successful = 'change_password_successful';
 
 }

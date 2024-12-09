@@ -99,7 +99,27 @@ class CodegenLoader extends AssetLoader{
   "description": "Description:",
   "work_time": "Work Time: {} - {}",
   "let_check_this_store": "Let check this store: {}",
-  "all_markers": "All Markers"
+  "all_markers": "All Markers",
+  "clear_cart": "Clear cart",
+  "about_to_clear_cart": "About to clear cart?",
+  "are_you_sure_to_clear_cart": "Are you sure to clear cart?",
+  "place_an_order": "Place an order",
+  "clear_cart_successfully": "Clear cart successfully",
+  "successful": "Successful!",
+  "your_purchase_was_done": "Your purchased was done successfully",
+  "back_to_home": "Back to Home",
+  "edit_your_profile": "Edit Profile",
+  "note": "Note: {}",
+  "your_can_not_change_email_address": "You can't change your email address!",
+  "your_information": "Your Information",
+  "security_privacy": "Security & Privacy",
+  "your_account": "Your account",
+  "change_password": "Change Password",
+  "change_information": "Change information",
+  "your_current_password": "Your current password",
+  "update_information_successful": "You information was updated successfully!",
+  "incorrect_password": "Please check you password again",
+  "change_password_successful": "Your password was updated successfully!"
 };
 static const Map<String,dynamic> vi_VI = {
   "profile": "Hồ sơ",
@@ -186,7 +206,27 @@ static const Map<String,dynamic> vi_VI = {
   "description": "Giới thiệu về cửa hàng:",
   "work_time": "Thời gian làm việc: {} - {}",
   "let_check_this_store": "Xem ngay shop xịn nè: {}",
-  "all_markers": "Các cửa hàng của chúng tôi"
+  "all_markers": "Các cửa hàng của chúng tôi",
+  "clear_cart": "Xóa giỏ hàng",
+  "about_to_clear_cart": "Xóa giỏ hàng?",
+  "are_you_sure_to_clear_cart": "Bạn chắc chắn muốn xóa toàn bộ giỏ hàng?",
+  "place_an_order": "Đặt hàng",
+  "clear_cart_successfully": "Xóa giỏ hàng thành công",
+  "successful": "Thành công!",
+  "your_purchase_was_done": "Đơn hàng của bạn đã thanh toán thành công",
+  "back_to_home": "Quay về trang chủ",
+  "edit_your_profile": "Chỉnh sửa thông tin",
+  "note": "Chú ý: {}",
+  "your_can_not_change_email_address": "Bạn không thể thay đổi địa chỉ email!",
+  "your_information": "Thông tin của bạn",
+  "security_privacy": "Bảo mật và Riêng tư",
+  "your_account": "Tài khoản của bạn",
+  "change_password": "Thay đổi mật khẩu",
+  "change_information": "Thay đổi thông tin",
+  "your_current_password": "Mật khẩu hiện tại",
+  "update_information_successful": "Thông tin của bạn đã được cập nhật thành công!",
+  "incorrect_password": "Vui lòng kiểm tra lại mật khẩu",
+  "change_password_successful": "Mật khẩu của bạn đã được cập nhật!"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "vi_VI": vi_VI};
 }
