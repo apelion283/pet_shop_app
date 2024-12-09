@@ -1,9 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pet_shop_app/analytics_service.dart';
-import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
-import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
+import 'package:flutter_pet_shop_app/core/helper/common_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
@@ -12,8 +11,9 @@ import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
 
 class OurPetsSection extends StatefulWidget {
   final List<Pet> petList;
-  final isShimmer;
-  const OurPetsSection({super.key, required this.petList, this.isShimmer});
+  final bool _isShimmer;
+  const OurPetsSection({super.key, required this.petList, dynamic isShimmer})
+      : _isShimmer = isShimmer;
 
   @override
   State<OurPetsSection> createState() => _OurPetsSectionState();
@@ -46,17 +46,12 @@ class _OurPetsSectionState extends State<OurPetsSection> {
                           GestureDetector(
                             onTap: () {
                               AnalyticsService().viewProductLog(
-                                  currency: context.locale.toString() == "vi_VI"
-                                      ? "đ"
-                                      : context.locale.toString() == "en_EN"
-                                          ? "\$"
-                                          : "đ",
-                                  itemValue: widget.petList[index].price *
-                                      (context.locale.toString() == "vi_VI"
-                                          ? CurrencyRate.vnd
-                                          : context.locale.toString() == "en_EN"
-                                              ? 1
-                                              : CurrencyRate.vnd),
+                                  currency: CommonHelper
+                                      .getCurrencySymbolBaseOnLocale(
+                                          context: context),
+                                  itemValue: CommonHelper.getPriceBaseOnLocale(
+                                      context: context,
+                                      item: widget.petList[index]),
                                   item: widget.petList[index]);
                               Navigator.of(context).pushNamed(
                                   RouteName.petProfile,
@@ -67,17 +62,11 @@ class _OurPetsSectionState extends State<OurPetsSection> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
-                                  decoration: BoxDecoration(boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: -2.0,
-                                      blurRadius: 4.0,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ], borderRadius: BorderRadius.circular(16)),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16)),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(16),
-                                    child: widget.isShimmer
+                                    child: widget._isShimmer
                                         ? CustomShimmer(
                                             child: Container(
                                                 color: AppColor.gray,
@@ -95,7 +84,7 @@ class _OurPetsSectionState extends State<OurPetsSection> {
                                 SizedBox(
                                   height: 8,
                                 ),
-                                widget.isShimmer
+                                widget._isShimmer
                                     ? CustomShimmer(
                                         child: Container(
                                             color: AppColor.gray,
@@ -103,14 +92,12 @@ class _OurPetsSectionState extends State<OurPetsSection> {
                                               'loading',
                                             ).tr()))
                                     : Text(
-                                        context.locale.toString() == "vi-VI"
-                                            ? MoneyFormatHelper
-                                                .formatVNCurrency(widget
-                                                        .petList[index].price *
-                                                    CurrencyRate.vnd)
-                                            : "\$${widget.petList[index].price}",
+                                        CommonHelper.getPriceStringBaseOnLocale(
+                                            context: context,
+                                            price: widget.petList[index].price),
                                       ),
-                                widget.isShimmer
+                                SizedBox(height: widget._isShimmer ? 4 : 0),
+                                widget._isShimmer
                                     ? CustomShimmer(
                                         child: Container(
                                             color: AppColor.gray,
