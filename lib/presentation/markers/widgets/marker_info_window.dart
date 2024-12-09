@@ -58,7 +58,7 @@ class MarkerInfoWindow extends StatelessWidget {
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 15,
-                    color: AppColor.green),
+                    color: AppColor.blue),
               )),
               SizedBox(height: 8),
               Row(
@@ -75,7 +75,7 @@ class MarkerInfoWindow extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8))),
                       child: Text(
                         "view_detail".tr(),
-                        style: TextStyle(color: AppColor.white),
+                        style: TextStyle(color: AppColor.black),
                       ))
                 ],
               )
