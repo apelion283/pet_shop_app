@@ -3,9 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/analytics_service.dart';
-import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
+import 'package:flutter_pet_shop_app/core/helper/common_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
@@ -13,7 +13,6 @@ import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/card_header.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/horizontal_merchandise_item.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 
 class FoodsSection extends StatefulWidget {
@@ -69,10 +68,14 @@ class _FoodsSectionState extends State<FoodsSection> {
                                     item: widget.foodList![firstItemIndex],
                                     onItemClick: () {
                                       AnalyticsService().viewProductLog(
-                                          currency:
-                                              getCurrencySymbolBaseOnLocale(),
-                                          itemValue: getPriceBaseOnLocale(
-                                              widget.foodList![firstItemIndex]),
+                                          currency: CommonHelper
+                                              .getCurrencySymbolBaseOnLocale(
+                                                  context: context),
+                                          itemValue:
+                                              CommonHelper.getPriceBaseOnLocale(
+                                                  context: context,
+                                                  item: widget.foodList![
+                                                      firstItemIndex]),
                                           item:
                                               widget.foodList![firstItemIndex]);
                                       Navigator.pushNamed(
@@ -89,19 +92,24 @@ class _FoodsSectionState extends State<FoodsSection> {
                                       if (authState.authState ==
                                           AuthenticationState.authenticated) {
                                         AnalyticsService().addItemToCartLog(
-                                            currency:
-                                                getCurrencySymbolBaseOnLocale(),
-                                            itemValue: getPriceBaseOnLocale(
-                                                widget
-                                                    .foodList![firstItemIndex]),
+                                            currency: CommonHelper
+                                                .getCurrencySymbolBaseOnLocale(
+                                                    context: context),
+                                            itemValue: CommonHelper
+                                                .getPriceBaseOnLocale(
+                                                    context: context,
+                                                    item: widget.foodList![
+                                                        firstItemIndex]),
                                             item: widget
                                                 .foodList![firstItemIndex]);
                                         addProduct(
                                           widget.foodList![firstItemIndex],
                                         );
                                       } else {
-                                        showSignInDialog(
-                                            widget.foodList![firstItemIndex]);
+                                        CommonHelper.showSignInDialog(
+                                            context: context,
+                                            item: widget
+                                                .foodList![firstItemIndex]);
                                       }
                                     }),
                                 if (firstItemIndex + 1 <
@@ -112,11 +120,14 @@ class _FoodsSectionState extends State<FoodsSection> {
                                           widget.foodList![firstItemIndex + 1],
                                       onItemClick: () {
                                         AnalyticsService().viewProductLog(
-                                            currency:
-                                                getCurrencySymbolBaseOnLocale(),
-                                            itemValue: getPriceBaseOnLocale(
-                                                widget.foodList![
-                                                    firstItemIndex + 1]),
+                                            currency: CommonHelper
+                                                .getCurrencySymbolBaseOnLocale(
+                                                    context: context),
+                                            itemValue: CommonHelper
+                                                .getPriceBaseOnLocale(
+                                                    context: context,
+                                                    item: widget.foodList![
+                                                        firstItemIndex + 1]),
                                             item: widget
                                                 .foodList![firstItemIndex]);
                                         Navigator.pushNamed(context,
@@ -134,11 +145,14 @@ class _FoodsSectionState extends State<FoodsSection> {
                                         if (authState.authState ==
                                             AuthenticationState.authenticated) {
                                           AnalyticsService().addItemToCartLog(
-                                              currency:
-                                                  getCurrencySymbolBaseOnLocale(),
-                                              itemValue: getPriceBaseOnLocale(
-                                                  widget.foodList![
-                                                      firstItemIndex + 1]),
+                                              currency: CommonHelper
+                                                  .getCurrencySymbolBaseOnLocale(
+                                                      context: context),
+                                              itemValue: CommonHelper
+                                                  .getPriceBaseOnLocale(
+                                                      context: context,
+                                                      item: widget.foodList![
+                                                          firstItemIndex + 1]),
                                               item: widget
                                                   .foodList![firstItemIndex]);
                                           addProduct(
@@ -146,8 +160,10 @@ class _FoodsSectionState extends State<FoodsSection> {
                                                 .foodList![firstItemIndex + 1],
                                           );
                                         } else {
-                                          showSignInDialog(widget
-                                              .foodList![firstItemIndex + 1]);
+                                          CommonHelper.showSignInDialog(
+                                              context: context,
+                                              item: widget.foodList![
+                                                  firstItemIndex + 1]);
                                         }
                                       })
                                 else
@@ -182,43 +198,6 @@ class _FoodsSectionState extends State<FoodsSection> {
         )
       ],
     );
-  }
-
-  void showSignInDialog(MerchandiseItem item) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return CustomAlertDialog(
-              icon: Icons.question_mark_outlined,
-              title: 'sign_in_to_shopping',
-              message: 'need_to_sign_in_description',
-              positiveButtonText: 'sign_in',
-              negativeButtonText: 'cancel',
-              onPositiveButtonClick: () {
-                Navigator.pushNamed(context, RouteName.signIn,
-                    arguments: SignInPageArguments(itemToAdd: (1, item)));
-              },
-              onNegativeButtonClick: () {
-                Navigator.of(context).pop();
-              });
-        });
-  }
-
-  String getCurrencySymbolBaseOnLocale() {
-    return context.locale.toString() == "vi_VI"
-        ? "đ"
-        : context.locale.toString() == "en_EN"
-            ? "\$"
-            : "đ";
-  }
-
-  double getPriceBaseOnLocale(MerchandiseItem item) {
-    return item.price *
-        (context.locale.toString() == "vi_VI"
-            ? CurrencyRate.vnd
-            : context.locale.toString() == "en_EN"
-                ? 1
-                : CurrencyRate.vnd);
   }
 
   void addProduct(MerchandiseItem item) {
