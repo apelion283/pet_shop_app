@@ -28,7 +28,7 @@ import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/home/pages/home.dart';
 import 'package:flutter_pet_shop_app/presentation/markers/pages/markers.dart';
 import 'package:flutter_pet_shop_app/presentation/profile/pages/profile.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/custom_bottom_nav_bar.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/custom_salomon_bottom_nav_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -240,10 +240,12 @@ class _MainPageState extends State<MainPage> {
                         style: TextStyle(color: AppColor.black),
                       ).tr()),
                   CustomSalomonBottomBarItem(
-                      icon: Icon(
-                        Icons.person_outline_rounded,
-                        color: AppColor.white,
-                      ),
+                      icon: Container(
+                          margin: EdgeInsets.only(right: 8),
+                          child: Icon(
+                            Icons.person_outline_rounded,
+                            color: AppColor.white,
+                          )),
                       activeIcon: Icon(
                         Icons.person_outline_rounded,
                         color: AppColor.black,
