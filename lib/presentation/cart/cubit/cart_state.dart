@@ -9,6 +9,13 @@ class CartState {
     return CartState(cartList: list ?? cartList);
   }
 
+  int getQuantity() {
+    return cartList.fold(0, (sum, item) {
+      sum += item.$1;
+      return sum;
+    });
+  }
+
   double getTotal() {
     return cartList.fold(0, (sum, item) {
       if (item.$2 is MerchandiseItem) {

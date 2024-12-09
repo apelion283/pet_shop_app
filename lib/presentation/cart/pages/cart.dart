@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/analytics_service.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
-import 'package:flutter_pet_shop_app/core/config/currency_rate.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
-import 'package:flutter_pet_shop_app/core/helper/money_format_helper.dart';
+import 'package:flutter_pet_shop_app/core/helper/common_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/domain/entities/merchandise_item.dart';
 import 'package:flutter_pet_shop_app/domain/entities/pet.dart';
@@ -13,9 +12,10 @@ import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/widgets/cart_item.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/widgets/expense_row.dart';
-import 'package:flutter_pet_shop_app/presentation/cart/widgets/slide_to_right_animation.dart';
+import 'package:flutter_pet_shop_app/core/static/slide_to_right_animation.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/dash_line.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/svg.dart';
@@ -37,6 +37,8 @@ class _CartPageState extends State<CartPage> {
       return SafeArea(
           bottom: true,
           child: RefreshIndicator(
+              color: AppColor.black,
+              backgroundColor: AppColor.green,
               onRefresh: () async {
                 context.read<CartCubit>();
               },
@@ -50,6 +52,36 @@ class _CartPageState extends State<CartPage> {
                           TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                     ).tr(),
                     centerTitle: true,
+                    actions: [
+                      state.getQuantity() <= 0
+                          ? SizedBox()
+                          : PopupMenuButton<int>(
+                              color: AppColor.green,
+                              surfaceTintColor: AppColor.black,
+                              iconColor: AppColor.black,
+                              onSelected: (item) => (handleClick(item)),
+                              itemBuilder: (context) => [
+                                PopupMenuItem<int>(
+                                  value: 0,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.delete_outline,
+                                        color: AppColor.black,
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        'clear_cart',
+                                        style: TextStyle(color: AppColor.black),
+                                      ).tr()
+                                    ],
+                                  ),
+                                )
+                              ],
+                            )
+                    ],
                   ),
                   body: Column(
                     children: [
@@ -222,9 +254,11 @@ class _CartPageState extends State<CartPage> {
                                                   rowTextStyle: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w500),
-                                                  rowValue:
-                                                      getPriceBaseOnLocale(
-                                                          state.getTotal())),
+                                                  rowValue: CommonHelper
+                                                      .getPriceStringBaseOnLocale(
+                                                          context: context,
+                                                          price: state
+                                                              .getTotal())),
                                             ),
                                             Container(
                                               margin: EdgeInsets.only(
@@ -234,8 +268,10 @@ class _CartPageState extends State<CartPage> {
                                                   rowTextStyle: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w500),
-                                                  rowValue:
-                                                      getPriceBaseOnLocale(5)),
+                                                  rowValue: CommonHelper
+                                                      .getPriceStringBaseOnLocale(
+                                                          context: context,
+                                                          price: 5)),
                                             ),
                                             Container(
                                               margin: EdgeInsets.only(
@@ -244,12 +280,14 @@ class _CartPageState extends State<CartPage> {
                                               child: ExpenseRow(
                                                   rowName: "total",
                                                   rowTextStyle: TextStyle(
-                                                      fontWeight: FontWeight
-                                                          .w500),
-                                                  rowValue:
-                                                      getPriceBaseOnLocale(
-                                                          state.getTotal() +
-                                                              5)),
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                  rowValue: CommonHelper
+                                                      .getPriceStringBaseOnLocale(
+                                                          context: context,
+                                                          price:
+                                                              state.getTotal() +
+                                                                  5)),
                                             ),
                                           ]))))
                     ],
@@ -267,10 +305,14 @@ class _CartPageState extends State<CartPage> {
                               Column(mainAxisSize: MainAxisSize.min, children: [
                             SlideAction(
                               height: AppConfig.mainBottomNavigationBarHeight,
-                              onSubmit: () {
-                                return checkOut(
+                              onSubmit: () async {
+                                await checkOut(
                                     checkOutList: state.cartList,
                                     orderMessage: _messageController.text);
+                                Navigator.pushNamed(
+                                    // ignore: use_build_context_synchronously
+                                    context,
+                                    RouteName.orderSuccess);
                               },
                               innerColor: AppColor.green,
                               outerColor: AppColor.black,
@@ -297,13 +339,13 @@ class _CartPageState extends State<CartPage> {
                                         EdgeInsets.only(top: 16, bottom: 16),
                                     child: SlideToRightAnimation(),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.all(16),
+                                  Container(
+                                    margin: EdgeInsets.only(right: 16),
                                     child: Text(
-                                      "Place an order",
+                                      "place_an_order".tr(),
                                       style: TextStyle(color: AppColor.white),
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             )
@@ -319,11 +361,10 @@ class _CartPageState extends State<CartPage> {
     final result =
         await context.read<CartCubit>().checkOut(checkOutList, orderMessage);
     AnalyticsService().checkOutLog(
-        currency: getCurrencySymbolBaseOnLocale(),
         // ignore: use_build_context_synchronously
-        total: double.parse(
-            // ignore: use_build_context_synchronously
-            getPriceBaseOnLocale(context.read<CartCubit>().state.getTotal())),
+        currency: CommonHelper.getCurrencySymbolBaseOnLocale(context: context),
+        // ignore: use_build_context_synchronously
+        total: context.read<CartCubit>().state.getTotal(),
         items: checkOutList,
         message: orderMessage);
     if (result != null) {
@@ -331,19 +372,33 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  String getCurrencySymbolBaseOnLocale() {
-    return context.locale.toString() == "vi_VI"
-        ? "đ"
-        : context.locale.toString() == "en_EN"
-            ? "\$"
-            : "đ";
-  }
-
-  String getPriceBaseOnLocale(double price) {
-    return context.locale.toString() == "vi_VI"
-        ? MoneyFormatHelper.formatVNCurrency(price * CurrencyRate.vnd)
-        : context.locale.toString() == "en_EN"
-            ? "\$${price * 1}"
-            : MoneyFormatHelper.formatVNCurrency(price * CurrencyRate.vnd);
+  handleClick(int item) {
+    switch (item) {
+      case 0:
+        showDialog(
+            context: context,
+            builder: (context) {
+              return CustomAlertDialog(
+                  icon: Icons.question_mark_outlined,
+                  title: 'about_to_clear_cart',
+                  message: 'are_you_sure_to_clear_cart',
+                  positiveButtonText: 'delete',
+                  negativeButtonText: 'cancel',
+                  onPositiveButtonClick: () {
+                    context.read<CartCubit>().clearCart();
+                    ScaffoldMessenger.of(context).showSnackBar(notifySnackBar(
+                        message: "clear_cart_successfully".tr(),
+                        onHideSnackBarButtonClick: () {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        }));
+                  },
+                  onNegativeButtonClick: () {
+                    Navigator.of(context).pop();
+                  });
+            });
+        break;
+      case 1:
+        break;
+    }
   }
 }
