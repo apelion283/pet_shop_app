@@ -11,6 +11,11 @@ class AuthUsecase {
     return await authRepositoryImpl.getCurrentUserInformation();
   }
 
+  Future<Either<Failure, void>> updateUserInformation(
+      {required UserEntity user}) async {
+    return await authRepositoryImpl.updateUserInformation(user: user);
+  }
+
   Future<Either<Failure, UserEntity>> signUp(
       {required String email,
       required String password,
@@ -27,6 +32,13 @@ class AuthUsecase {
       {required String email, required String password}) async {
     return await authRepositoryImpl.signInWithEmailAndPassword(
         email: email, password: password);
+  }
+
+  Future<Either<Failure, void>> updatePassword(
+      {required String currentPassword, required String newPassword}) async {
+    final result = await authRepositoryImpl.updatePassword(
+        currentPassword: currentPassword, newPassword: newPassword);
+    return result.fold((l) => Left(result.left), (r) => Right(result.right));
   }
 
   Future<bool> sendResetPasswordEmail(String email) async {
