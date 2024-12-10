@@ -21,12 +21,18 @@ class MarkersPage extends StatefulWidget {
   State<MarkersPage> createState() => _MarkersState();
 }
 
-class _MarkersState extends State<MarkersPage> {
+class _MarkersState extends State<MarkersPage>
+    with AutomaticKeepAliveClientMixin {
   bool _isShowMarkerDetail = false;
   int _itemClickedIndex = -1;
   late PlatformMapController _mapController;
+
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     bool isShimmer = false;
 
     return SafeArea(
