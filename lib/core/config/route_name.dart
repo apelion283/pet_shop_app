@@ -10,4 +10,6 @@ class RouteName {
   static const String cart = '/cart';
   static const String orderSuccess = '/orderSuccess';
   static const String profileDetail = '/profileDetail';
+  static const String wishList = 'wishList';
+  static const String settings = '/setting';
 }
