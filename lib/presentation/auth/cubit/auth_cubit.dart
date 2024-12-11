@@ -6,6 +6,7 @@ import 'package:flutter_pet_shop_app/data/repository/auth_repository.dart';
 import 'package:flutter_pet_shop_app/domain/entities/user_entity.dart';
 import 'package:flutter_pet_shop_app/domain/usecases/auth_usecase.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthState());
@@ -69,7 +70,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> signOut() async {
+  Future<void> signOutAndResetSetting() async {
     try {
       await _authUsecase.signOut();
       emit(state.copyWith(
@@ -77,6 +78,8 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       emit(state.copyWith(error: Failure(message: e.toString())));
     }
+    final settingsBox = Hive.box('settings');
+    settingsBox.clear();
   }
 
   void clearError() {
