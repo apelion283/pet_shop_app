@@ -6,6 +6,7 @@ import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
+import 'package:flutter_pet_shop_app/fcm_service.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
@@ -35,6 +36,21 @@ class ProfilePage extends StatelessWidget {
                     EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 16),
                 child: Column(
                   children: [
+                    Row(children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: NetworkImage(
+                            "https://avatars.githubusercontent.com/u/112379980?v=4"),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Text(
+                        'greeting',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ).tr(args: [state.user?.name ?? "guess".tr()]),
+                    ]),
                     SizedBox(height: 16),
                     ProfileCard(
                         leadingIcon: Icons.person_outline_outlined,
@@ -42,11 +58,43 @@ class ProfilePage extends StatelessWidget {
                         onCardClick: () {
                           if (state.authState ==
                               AuthenticationState.unAuthenticated) {
-                            Navigator.pushNamed(context, RouteName.signIn);
+                            Navigator.pushNamed(context, RouteName.signIn,
+                                arguments:
+                                    SignInPageArguments(itemToAdd: null));
                           } else if (state.authState ==
                               AuthenticationState.authenticated) {
                             Navigator.pushNamed(
                                 context, RouteName.profileDetail);
+                          }
+                        }),
+                    SizedBox(height: 8),
+                    ProfileCard(
+                        leadingIcon: Icons.favorite_border,
+                        title: 'wish_list',
+                        onCardClick: () {
+                          if (state.authState ==
+                              AuthenticationState.unAuthenticated) {
+                            Navigator.pushNamed(context, RouteName.signIn,
+                                arguments:
+                                    SignInPageArguments(itemToAdd: null));
+                          } else if (state.authState ==
+                              AuthenticationState.authenticated) {
+                            Navigator.pushNamed(context, RouteName.wishList);
+                          }
+                        }),
+                    SizedBox(height: 8),
+                    ProfileCard(
+                        leadingIcon: Icons.settings,
+                        title: 'settings',
+                        onCardClick: () {
+                          if (state.authState ==
+                              AuthenticationState.unAuthenticated) {
+                            Navigator.pushNamed(context, RouteName.signIn,
+                                arguments:
+                                    SignInPageArguments(itemToAdd: null));
+                          } else if (state.authState ==
+                              AuthenticationState.authenticated) {
+                            Navigator.pushNamed(context, RouteName.settings);
                           }
                         }),
                     SizedBox(height: 8),
@@ -66,7 +114,10 @@ class ProfilePage extends StatelessWidget {
                                       negativeButtonText: 'cancel',
                                       onPositiveButtonClick: () {
                                         context.read<CartCubit>().clearCart();
-                                        context.read<AuthCubit>().signOut();
+                                        context
+                                            .read<AuthCubit>()
+                                            .signOutAndResetSetting();
+                                        FCMService().initNotifications();
                                       },
                                       onNegativeButtonClick: () {
                                         Navigator.of(context).pop();
