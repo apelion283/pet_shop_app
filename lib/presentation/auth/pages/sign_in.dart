@@ -10,6 +10,7 @@ import 'package:flutter_pet_shop_app/core/helper/common_helper.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/resources/route_arguments.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
+import 'package:flutter_pet_shop_app/fcm_service.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
@@ -233,6 +234,7 @@ class _SignInPageState extends State<SignInPage> {
                   .jumpToPage(ScreenInBottomBarOfMainScreen.home.index);
             }
             Navigator.popUntil(context, (route) => route.isFirst);
+            FCMService().initNotifications(userId: state.user!.id);
           } else {
             ProgressHUD.showError(context.tr('check_credential_again'));
           }

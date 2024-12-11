@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/enum/main_screen_in_bottom_bar_of_main_screen.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/core/static/page_view_controller.dart';
+import 'package:flutter_pet_shop_app/fcm_service.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_text_field.dart';
@@ -81,6 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
           CommonPageController.controller
               .jumpToPage(ScreenInBottomBarOfMainScreen.home.index);
           Navigator.of(context).popUntil((route) => route.isFirst);
+          FCMService().initNotifications(userId: state.user!.id);
         }
       },
       builder: (context, state) {

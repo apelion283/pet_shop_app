@@ -24,9 +24,14 @@ abstract class FirebaseDataSource {
   Future<Either<Failure, (AnimalTypeModel, PetSpeciesModel, PetModel)>>
       getPetDataById(String petId);
   Future<Either<Failure, List<PetModel>>> getAllPets();
-  Future<void> putDeviceToken(String deviceId, String token);
+  Future<void> putDeviceToken(
+      {required String deviceId,
+      required String token,
+      required String userId});
   Future<Either<Failure, List<MarkerModel>>> getAllMarker();
   Future<Either<Failure, MarkerModel>> getMarkerById(String markerId);
+  Future<Either<Failure, List<MerchandiseItemModel>>> getWishListItemOfUser(
+      {required String userId});
 }
 
 class FirebaseDataSourceImpl implements FirebaseDataSource {
@@ -85,6 +90,28 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       return Right(result["name"]);
     } on FirebaseException catch (e) {
       return Left(Failure(message: e.message, code: e.code));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<MerchandiseItemModel>>> getWishListItemOfUser(
+      {required String userId}) async {
+    try {
+      final wishListCollection = database.collection("wishListOfUser");
+      final result =
+          await wishListCollection.where("userId", isEqualTo: userId).get();
+      List<String> itemIdList =
+          result.docs.map((item) => item.get("itemId") as String).toList();
+      if (itemIdList.isEmpty) {
+        return Right([]);
+      } else {
+        final resultFromIdList = await Future.wait(
+            itemIdList.map((element) => getMerchandiseItemDataById(element)));
+        final result = resultFromIdList.map((item) => item.right).toList();
+        return Right(result);
+      }
+    } on FirebaseException catch (e) {
+      return Left(Failure(code: e.code, message: e.message));
     }
   }
 
@@ -160,14 +187,28 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
   }
 
   @override
-  Future<void> putDeviceToken(String deviceId, String token) async {
+  Future<void> putDeviceToken(
+      {required String deviceId,
+      required String userId,
+      required String token}) async {
     try {
       final devicesTokenCollection = database.collection('deviceTokens');
-      final result = await devicesTokenCollection.doc(deviceId).get();
-      if (result.data()?["token"] == token) {
-        return;
+      final result = await devicesTokenCollection
+          .where("deviceId", isEqualTo: deviceId)
+         
+          .get();
+      if (result.docs.isNotEmpty) {
+        if (result.docs.first.data()['token'] == token && result.docs.first.data()['userId'] == userId) {
+          return;
+        } else {
+          await devicesTokenCollection
+              .doc(result.docs.first.id)
+              .set({"token": token, "userId": userId, "deviceId": deviceId});
+        }
       } else {
-        await devicesTokenCollection.doc(deviceId).set({"token": token});
+        await devicesTokenCollection
+            .doc()
+            .set({"token": token, "userId": userId, "deviceId": deviceId});
       }
     } on FirebaseException catch (e) {
       e.toString();
