@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_pet_shop_app/core/config/route_name.dart';
 import 'package:flutter_pet_shop_app/data/datasource/firebase_data_source.dart';
@@ -24,17 +25,26 @@ class FCMService {
     importance: Importance.defaultImportance,
   );
 
-  Future<void> initNotifications() async {
-    await _firebaseMessaging.requestPermission();
-    final fCMToken = await _firebaseMessaging.getToken();
-    final deviceId = await _getDeviceId();
-    if (deviceId != null) {
-      await DeviceUsecase(
-              deviceRepositoryImpl: DeviceRepositoryImpl(
-                  firebaseDataSourceImpl: FirebaseDataSourceImpl()))
-          .putDeviceToken(deviceId, fCMToken!);
-      initPushNotification();
-      initLocalNotifications();
+  Future<void> clearDeviceToken() async {
+    await _firebaseMessaging.deleteToken();
+  }
+
+  Future<void> initNotifications(
+      {bool isAllowNotification = true, String userId = "guess"}) async {
+    if (isAllowNotification) {
+      await _firebaseMessaging.requestPermission();
+      final fCMToken = await _firebaseMessaging.getToken();
+      debugPrint(fCMToken);
+      final deviceId = await _getDeviceId();
+      if (deviceId != null) {
+        await DeviceUsecase(
+                deviceRepositoryImpl: DeviceRepositoryImpl(
+                    firebaseDataSourceImpl: FirebaseDataSourceImpl()))
+            .putDeviceToken(
+                deviceId: deviceId, userId: userId, token: fCMToken!);
+        initPushNotification();
+        initLocalNotifications();
+      }
     }
   }
 

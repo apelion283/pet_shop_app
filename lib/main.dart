@@ -51,7 +51,8 @@ void main() async {
 
   await Hive.initFlutter();
   await Hive.openBox('cartBox');
-  FCMService().initNotifications();
+  await Hive.openBox('settings');
+
   configLoading();
 
   runApp(EasyLocalization(
@@ -148,18 +149,24 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _currentIndex = ScreenInBottomBarOfMainScreen.home.index;
   final _cartBox = Hive.box('cartBox');
+  final _settingsBox = Hive.box('settings');
 
   @override
   void initState() {
     super.initState();
     CommonPageController.controller =
         PageController(initialPage: _currentIndex);
+    FCMService().initNotifications(
+        userId: context.read<AuthCubit>().state.user?.id ?? "guess",
+        isAllowNotification:
+            _settingsBox.get('isAllowNotification', defaultValue: true));
   }
 
   @override
   void dispose() {
     CommonPageController.controller.dispose();
     _cartBox.close();
+    _settingsBox.close();
     super.dispose();
   }
 
@@ -220,7 +227,7 @@ class _MainPageState extends State<MainPage> {
                         color: AppColor.white,
                       ),
                       activeIcon: Icon(
-                        Icons.home_outlined,
+                        Icons.home,
                         color: AppColor.black,
                       ),
                       title:
@@ -232,7 +239,7 @@ class _MainPageState extends State<MainPage> {
                         color: AppColor.white,
                       ),
                       activeIcon: Icon(
-                        Icons.location_on_outlined,
+                        Icons.location_on,
                         color: AppColor.black,
                       ),
                       title: Text(
@@ -247,7 +254,7 @@ class _MainPageState extends State<MainPage> {
                             color: AppColor.white,
                           )),
                       activeIcon: Icon(
-                        Icons.person_outline_rounded,
+                        Icons.person,
                         color: AppColor.black,
                       ),
                       title: Text('profile',

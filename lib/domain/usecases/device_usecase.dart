@@ -4,7 +4,11 @@ class DeviceUsecase {
   final DeviceRepositoryImpl deviceRepositoryImpl;
   const DeviceUsecase({required this.deviceRepositoryImpl});
 
-  Future<void> putDeviceToken(String deviceId, String token) async {
-    await deviceRepositoryImpl.putDeviceToken(deviceId, token);
+  Future<void> putDeviceToken(
+      {required String deviceId,
+      required String userId,
+      required String token}) async {
+    await deviceRepositoryImpl.putDeviceToken(
+        deviceId: deviceId, userId: userId, token: token);
   }
 }
