@@ -103,5 +103,10 @@
     "your_current_password": "Mật khẩu hiện tại",
     "update_information_successful": "Thông tin của bạn đã được cập nhật thành công!",
     "incorrect_password": "Vui lòng kiểm tra lại mật khẩu",
-    "change_password_successful": "Mật khẩu của bạn đã được cập nhật!"
+    "change_password_successful": "Mật khẩu của bạn đã được cập nhật!",
+    "wish_list": "Yêu thích",
+    "settings": "Cài đặt",
+    "your_wish_list": "Sản phẩm yêu thích",
+    "notification_settings":"Cài đặt thông báo",
+    "allow_notification": "Nhận thông báo"
 }

@@ -104,5 +104,10 @@ abstract class  LocaleKeys {
   static const update_information_successful = 'update_information_successful';
   static const incorrect_password = 'incorrect_password';
   static const change_password_successful = 'change_password_successful';
+  static const wish_list = 'wish_list';
+  static const settings = 'settings';
+  static const your_wish_list = 'your_wish_list';
+  static const notification_settings = 'notification_settings';
+  static const allow_notification = 'allow_notification';
 
 }

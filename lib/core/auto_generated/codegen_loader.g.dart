@@ -119,7 +119,12 @@ class CodegenLoader extends AssetLoader{
   "your_current_password": "Your current password",
   "update_information_successful": "You information was updated successfully!",
   "incorrect_password": "Please check you password again",
-  "change_password_successful": "Your password was updated successfully!"
+  "change_password_successful": "Your password was updated successfully!",
+  "wish_list": "Wishlist",
+  "settings": "Settings",
+  "your_wish_list": "Your Wishlist",
+  "notification_settings": "Notification Settings",
+  "allow_notification": "Allow receive notifications"
 };
 static const Map<String,dynamic> vi_VI = {
   "profile": "Hồ sơ",
@@ -226,7 +231,12 @@ static const Map<String,dynamic> vi_VI = {
   "your_current_password": "Mật khẩu hiện tại",
   "update_information_successful": "Thông tin của bạn đã được cập nhật thành công!",
   "incorrect_password": "Vui lòng kiểm tra lại mật khẩu",
-  "change_password_successful": "Mật khẩu của bạn đã được cập nhật!"
+  "change_password_successful": "Mật khẩu của bạn đã được cập nhật!",
+  "wish_list": "Yêu thích",
+  "settings": "Cài đặt",
+  "your_wish_list": "Sản phẩm yêu thích",
+  "notification_settings": "Cài đặt thông báo",
+  "allow_notification": "Nhận thông báo"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "vi_VI": vi_VI};
 }

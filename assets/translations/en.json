@@ -103,5 +103,10 @@
     "your_current_password": "Your current password",
     "update_information_successful": "You information was updated successfully!",
     "incorrect_password": "Please check you password again",
-    "change_password_successful": "Your password was updated successfully!"
+    "change_password_successful": "Your password was updated successfully!",
+    "wish_list": "Wishlist",
+    "settings": "Settings",
+    "your_wish_list": "Your Wishlist",
+    "notification_settings":"Notification Settings",
+    "allow_notification": "Allow receive notifications"
 }
