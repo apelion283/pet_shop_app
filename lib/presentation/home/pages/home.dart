@@ -15,6 +15,7 @@ import 'package:flutter_pet_shop_app/presentation/home/widgets/accessories_secti
 import 'package:flutter_pet_shop_app/presentation/home/widgets/foods_section.dart';
 import 'package:flutter_pet_shop_app/presentation/home/widgets/our_pets_section.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
+import 'package:flutter_pet_shop_app/presentation/wish_list/cubit/wish_list_cubit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -73,6 +74,8 @@ class _HomePageState extends State<HomePage>
                     backgroundColor: AppColor.green,
                     onRefresh: () async {
                       context.read<HomeCubit>().getInitData();
+                      context.read<WishListCubit>().getWishListOfUser(
+                          userId: context.read<AuthCubit>().state.user!.id);
                     },
                     child: Scaffold(
                       backgroundColor: AppColor.white,
