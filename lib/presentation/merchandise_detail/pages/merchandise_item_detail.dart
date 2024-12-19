@@ -23,6 +23,8 @@ import 'package:flutter_pet_shop_app/presentation/widgets/add_button.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/remove_button.dart';
+import 'package:flutter_pet_shop_app/presentation/wish_list/cubit/wish_list_cubit.dart';
+import 'package:flutter_pet_shop_app/presentation/wish_list/cubit/wish_list_state.dart';
 import 'package:share_plus/share_plus.dart';
 
 class MerchandiseItemDetailPage extends StatefulWidget {
@@ -154,6 +156,36 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                                             ));
                                 })),
                           ]),
+                      actions: [
+                        PopupMenuButton<int>(
+                          color: AppColor.green,
+                          surfaceTintColor: AppColor.black,
+                          iconColor: AppColor.black,
+                          onSelected: (item) => _isShimmer
+                              ? {}
+                              : (handleClick(item, state.item!.id!)),
+                          itemBuilder: (context) => [
+                            PopupMenuItem<int>(
+                              value: 0,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.share_outlined,
+                                    color: AppColor.black,
+                                  ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    'share',
+                                    style: TextStyle(color: AppColor.black),
+                                  ).tr()
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
                     ),
                     body: CustomScrollView(
                       slivers: <Widget>[
@@ -397,21 +429,102 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              IconButton(
-                                  style: IconButton.styleFrom(
-                                      backgroundColor: AppColor.green),
-                                  onPressed: _isShimmer
-                                      ? () {}
-                                      : () {
-                                          Share.share("let_check_this_product"
-                                              .tr(args: [
-                                            "${AppConfig.customUri}${RouteName.merchandiseDetail}?id=${state.item!.id}"
-                                          ]));
-                                        },
-                                  icon: Icon(
-                                    Icons.share_outlined,
-                                    color: AppColor.black,
-                                  )),
+                              _isShimmer
+                                  ? CustomShimmer(
+                                      child: IconButton(
+                                          style: IconButton.styleFrom(
+                                              backgroundColor: AppColor.green),
+                                          onPressed: () {},
+                                          icon: Icon(
+                                            Icons.share_outlined,
+                                            color: AppColor.black,
+                                          )))
+                                  : BlocBuilder<WishListCubit, WishListState>(
+                                      builder: (context, wishListState) {
+                                        bool isInWishList = context
+                                            .read<WishListCubit>()
+                                            .isItemInWishList(
+                                                itemId: state.item!.id!);
+                                        return IconButton(
+                                            onPressed: () {
+                                              if (context
+                                                      .read<AuthCubit>()
+                                                      .state
+                                                      .user !=
+                                                  null) {
+                                                if (isInWishList) {
+                                                  context
+                                                      .read<WishListCubit>()
+                                                      .removeItemFromWishList(
+                                                          userId: context
+                                                              .read<AuthCubit>()
+                                                              .state
+                                                              .user!
+                                                              .id,
+                                                          itemId:
+                                                              state.item!.id!);
+                                                  setState(() {});
+                                                  ScaffoldMessenger.of(context)
+                                                      .hideCurrentSnackBar();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                          notifySnackBar(
+                                                              message:
+                                                                  "item_removed_from_wish_list"
+                                                                      .tr(),
+                                                              onHideSnackBarButtonClick:
+                                                                  () {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .hideCurrentSnackBar();
+                                                              }));
+                                                } else {
+                                                  context
+                                                      .read<WishListCubit>()
+                                                      .addItemToWishList(
+                                                          userId: context
+                                                              .read<AuthCubit>()
+                                                              .state
+                                                              .user!
+                                                              .id,
+                                                          itemId:
+                                                              state.item!.id!,
+                                                          isMerchandiseItem:
+                                                              true);
+                                                  setState(() {});
+                                                  ScaffoldMessenger.of(context)
+                                                      .hideCurrentSnackBar();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                          notifySnackBar(
+                                                              message:
+                                                                  "item_added_to_wish_list"
+                                                                      .tr(),
+                                                              onHideSnackBarButtonClick:
+                                                                  () {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .hideCurrentSnackBar();
+                                                              }));
+                                                }
+                                              } else {
+                                                CommonHelper.showSignInDialog(
+                                                    context: context,
+                                                    item: state.item!);
+                                              }
+                                            },
+                                            style: IconButton.styleFrom(
+                                                backgroundColor:
+                                                    AppColor.green),
+                                            icon: Icon(
+                                              isInWishList
+                                                  ? Icons.favorite
+                                                  : Icons
+                                                      .favorite_border_outlined,
+                                              color: AppColor.black,
+                                            ));
+                                      },
+                                    ),
                               Expanded(
                                 child: BlocBuilder<AuthCubit, AuthState>(
                                   builder: (context, authState) {
@@ -529,5 +642,14 @@ class _MerchandiseItemDetailPageState extends State<MerchandiseItemDetailPage> {
             },
           )),
     );
+  }
+
+  handleClick(int item, String merchandiseId) {
+    switch (item) {
+      case 0:
+        Share.share("let_check_this_product".tr(args: [
+          "${AppConfig.customUri}${RouteName.merchandiseDetail}?id=$merchandiseId"
+        ]));
+    }
   }
 }

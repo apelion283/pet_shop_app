@@ -24,6 +24,8 @@ import 'package:flutter_pet_shop_app/presentation/pet/widgets/section_header.dar
 import 'package:flutter_pet_shop_app/presentation/widgets/color_box_from_color_hex.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
+import 'package:flutter_pet_shop_app/presentation/wish_list/cubit/wish_list_cubit.dart';
+import 'package:flutter_pet_shop_app/presentation/wish_list/cubit/wish_list_state.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -137,6 +139,36 @@ class _PetProfilePage extends State<PetProfilePage> {
                                               ));
                                   }))
                             ]),
+                        actions: [
+                          PopupMenuButton<int>(
+                            color: AppColor.green,
+                            surfaceTintColor: AppColor.black,
+                            iconColor: AppColor.black,
+                            onSelected: (item) => _isShimmer
+                                ? {}
+                                : (handleClick(item, state.pet!.id!)),
+                            itemBuilder: (context) => [
+                              PopupMenuItem<int>(
+                                value: 0,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.share_outlined,
+                                      color: AppColor.black,
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      'share',
+                                      style: TextStyle(color: AppColor.black),
+                                    ).tr()
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
                       ),
                       body: Column(
                         children: [
@@ -410,21 +442,102 @@ class _PetProfilePage extends State<PetProfilePage> {
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              IconButton(
-                                  style: IconButton.styleFrom(
-                                      backgroundColor: AppColor.green),
-                                  onPressed: _isShimmer
-                                      ? () {}
-                                      : () {
-                                          Share.share("let_check_this_cute_pet"
-                                              .tr(args: [
-                                            "${AppConfig.customUri}${RouteName.petProfile}?id=${state.pet!.id}"
-                                          ]));
-                                        },
-                                  icon: Icon(
-                                    Icons.share_outlined,
-                                    color: AppColor.black,
-                                  )),
+                              _isShimmer
+                                  ? CustomShimmer(
+                                      child: IconButton(
+                                          style: IconButton.styleFrom(
+                                              backgroundColor: AppColor.green),
+                                          onPressed: () {},
+                                          icon: Icon(
+                                            Icons.share_outlined,
+                                            color: AppColor.black,
+                                          )))
+                                  : BlocBuilder<WishListCubit, WishListState>(
+                                      builder: (context, wishListState) {
+                                        bool isInWishList = context
+                                            .read<WishListCubit>()
+                                            .isItemInWishList(
+                                                itemId: state.pet!.id!);
+                                        return IconButton(
+                                            onPressed: () {
+                                              if (context
+                                                      .read<AuthCubit>()
+                                                      .state
+                                                      .user !=
+                                                  null) {
+                                                if (isInWishList) {
+                                                  context
+                                                      .read<WishListCubit>()
+                                                      .removeItemFromWishList(
+                                                          userId: context
+                                                              .read<AuthCubit>()
+                                                              .state
+                                                              .user!
+                                                              .id,
+                                                          itemId:
+                                                              state.pet!.id!);
+                                                  setState(() {});
+                                                  ScaffoldMessenger.of(context)
+                                                      .hideCurrentSnackBar();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                          notifySnackBar(
+                                                              message:
+                                                                  "item_removed_from_wish_list"
+                                                                      .tr(),
+                                                              onHideSnackBarButtonClick:
+                                                                  () {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .hideCurrentSnackBar();
+                                                              }));
+                                                } else {
+                                                  context
+                                                      .read<WishListCubit>()
+                                                      .addItemToWishList(
+                                                          userId: context
+                                                              .read<AuthCubit>()
+                                                              .state
+                                                              .user!
+                                                              .id,
+                                                          itemId:
+                                                              state.pet!.id!,
+                                                          isMerchandiseItem:
+                                                              false);
+                                                  setState(() {});
+                                                  ScaffoldMessenger.of(context)
+                                                      .hideCurrentSnackBar();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                          notifySnackBar(
+                                                              message:
+                                                                  "item_added_to_wish_list"
+                                                                      .tr(),
+                                                              onHideSnackBarButtonClick:
+                                                                  () {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .hideCurrentSnackBar();
+                                                              }));
+                                                }
+                                              } else {
+                                                CommonHelper.showSignInDialog(
+                                                    context: context,
+                                                    item: state.pet!);
+                                              }
+                                            },
+                                            style: IconButton.styleFrom(
+                                                backgroundColor:
+                                                    AppColor.green),
+                                            icon: Icon(
+                                              isInWishList
+                                                  ? Icons.favorite
+                                                  : Icons
+                                                      .favorite_border_outlined,
+                                              color: AppColor.black,
+                                            ));
+                                      },
+                                    ),
                               Expanded(
                                 child: BlocBuilder<AuthCubit, AuthState>(
                                   builder: (context, authState) {
@@ -564,5 +677,14 @@ class _PetProfilePage extends State<PetProfilePage> {
         }
       }),
     );
+  }
+
+  handleClick(int item, String petId) {
+    switch (item) {
+      case 0:
+        Share.share("let_check_this_cute_pet".tr(
+            args: ["${AppConfig.customUri}${RouteName.petProfile}?id=$petId"]));
+        break;
+    }
   }
 }
