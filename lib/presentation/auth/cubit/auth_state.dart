@@ -1,9 +1,8 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/error/failure.dart';
 import 'package:flutter_pet_shop_app/domain/entities/user_entity.dart';
 
-class AuthState extends Equatable {
+class AuthState {
   final UserEntity? user;
   final AuthenticationState? authState;
   final Failure? error;
@@ -21,7 +20,4 @@ class AuthState extends Equatable {
       error: error,
     );
   }
-
-  @override
-  List<Object?> get props => [user, authState, error];
 }
