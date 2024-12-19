@@ -117,8 +117,8 @@ class FirebaseAuthServiceImpl implements FirebaseAuthService {
   Future<Either<Failure, void>> updateUserInformation(
       {required UserModel user}) async {
     try {
-      return Right(
-          await auth?.currentUser?.updateProfile(displayName: user.name));
+      return Right(await auth?.currentUser
+          ?.updateProfile(displayName: user.name, photoURL: user.avatarUrl));
     } on FirebaseAuthException catch (e) {
       return Left(Failure(code: e.code, message: e.message));
     }
