@@ -16,8 +16,8 @@ import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_state.dart';
 import 'package:flutter_pet_shop_app/presentation/explore/cubit/explore_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/explore/cubit/explore_state.dart';
 import 'package:flutter_pet_shop_app/presentation/explore/widgets/explore_item.dart';
-import 'package:flutter_pet_shop_app/presentation/widgets/custom_shimmer.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/notify_snack_bar.dart';
+import 'package:flutter_pet_shop_app/presentation/wish_list/cubit/wish_list_cubit.dart';
 import 'package:scrollable_list_tab_scroller/scrollable_list_tab_scroller.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -173,6 +173,8 @@ class _ExplorePageState extends State<ExplorePage> {
                         backgroundColor: AppColor.green,
                         onRefresh: () async {
                           context.read<ExploreCubit>().initData();
+                          context.read<WishListCubit>().getWishListOfUser(
+                              userId: context.read<AuthCubit>().state.user!.id);
                         },
                         child: ScrollableListTabScroller(
                           itemCount: data.length,
@@ -199,105 +201,69 @@ class _ExplorePageState extends State<ExplorePage> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20),
                                 ),
-                                _isShimmer
-                                    ? CustomShimmer(
-                                        child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8),
-                                            child: Row(
-                                              children:
-                                                  List.generate(2, (index) {
-                                                return Expanded(
-                                                    child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: AppColor.gray,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            16),
-                                                  ),
-                                                  margin: EdgeInsets.only(
-                                                      top: 8,
-                                                      left: 8,
-                                                      right: 8),
-                                                  height: 200,
-                                                ));
-                                              }),
-                                            )))
-                                    : Padding(
-                                        padding: EdgeInsets.all(16),
-                                        child: Column(
-                                          children: [
-                                            for (int i = 0;
-                                                i <
-                                                    data.values
-                                                        .elementAt(index)
-                                                        .length;
-                                                i += 2)
-                                              Row(children: [
-                                                Expanded(
-                                                    flex: 1,
-                                                    child: ExploreItem(
-                                                      widgetKey: _getKeyForItem(
+                                Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Column(
+                                    children: [
+                                      for (int i = 0;
+                                          i <
+                                              data.values
+                                                  .elementAt(index)
+                                                  .length;
+                                          i += 2)
+                                        Row(children: [
+                                          Expanded(
+                                              flex: 1,
+                                              child: ExploreItem(
+                                                isShimmer: _isShimmer,
+                                                widgetKey: _getKeyForItem(data
+                                                    .values
+                                                    .elementAt(index)[i]),
+                                                item: data.values
+                                                    .elementAt(index)[i],
+                                                onAddToCartButtonClick: () {
+                                                  addProduct(data.values
+                                                      .elementAt(index)[i]);
+                                                },
+                                                onItemClick: () {
+                                                  checkAndNavigateToItemDetailPage(
+                                                      data.values
+                                                          .elementAt(index)[i]);
+                                                },
+                                              )),
+                                          i + 1 <
+                                                  data.values
+                                                      .elementAt(index)
+                                                      .length
+                                              ? Expanded(
+                                                  flex: 1,
+                                                  child: ExploreItem(
+                                                    isShimmer: _isShimmer,
+                                                    widgetKey: _getKeyForItem(
+                                                        data.values.elementAt(
+                                                            index)[i + 1]),
+                                                    item: data.values.elementAt(
+                                                        index)[i + 1],
+                                                    onAddToCartButtonClick: () {
+                                                      addProduct(data.values
+                                                          .elementAt(
+                                                              index)[i + 1]);
+                                                    },
+                                                    onItemClick: () {
+                                                      checkAndNavigateToItemDetailPage(
                                                           data.values.elementAt(
-                                                              index)[i]),
-                                                      item: data.values
-                                                          .elementAt(index)[i],
-                                                      onAddToCartButtonClick:
-                                                          () {
-                                                        addProduct(data.values
-                                                            .elementAt(
-                                                                index)[i]);
-                                                      },
-                                                      onItemClick: () {
-                                                        checkAndNavigateToItemDetailPage(
-                                                            data
-                                                                .values
-                                                                .elementAt(
-                                                                    index)[i]);
-                                                      },
-                                                    )),
-                                                i + 1 <
-                                                        data.values
-                                                            .elementAt(index)
-                                                            .length
-                                                    ? Expanded(
-                                                        flex: 1,
-                                                        child: ExploreItem(
-                                                          widgetKey:
-                                                              _getKeyForItem(data
-                                                                  .values
-                                                                  .elementAt(
-                                                                      index)[i +
-                                                                  1]),
-                                                          item: data.values
-                                                              .elementAt(
-                                                                  index)[i + 1],
-                                                          onAddToCartButtonClick:
-                                                              () {
-                                                            addProduct(data
-                                                                    .values
-                                                                    .elementAt(
-                                                                        index)[
-                                                                i + 1]);
-                                                          },
-                                                          onItemClick: () {
-                                                            checkAndNavigateToItemDetailPage(
-                                                                data
-                                                                    .values
-                                                                    .elementAt(
-                                                                        index)[i +
-                                                                    1]);
-                                                          },
-                                                        ),
-                                                      )
-                                                    : Expanded(
-                                                        flex: 1,
-                                                        child: SizedBox(),
-                                                      )
-                                              ])
-                                          ],
-                                        ),
-                                      )
+                                                              index)[i + 1]);
+                                                    },
+                                                  ),
+                                                )
+                                              : Expanded(
+                                                  flex: 1,
+                                                  child: SizedBox(),
+                                                )
+                                        ])
+                                    ],
+                                  ),
+                                )
                               ],
                             );
                           },
