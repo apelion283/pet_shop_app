@@ -1,11 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pet_shop_app/core/config/app_config.dart';
 import 'package:flutter_pet_shop_app/core/resources/color_manager.dart';
 import 'package:flutter_pet_shop_app/domain/entities/user_entity.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_text_field.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/edit_avatar_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/password_text_field.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
 
@@ -83,6 +85,31 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
+                    CircleAvatar(
+                        radius: 50,
+                        backgroundImage: state.user?.avatarUrl == null
+                            ? NetworkImage(AppConfig.defaultAvatar)
+                            : NetworkImage(context
+                                .read<AuthCubit>()
+                                .state
+                                .user!
+                                .avatarUrl!)),
+                    Container(
+                      margin: const EdgeInsets.only(top: 8, bottom: 16),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) => EditAvatarDialog());
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.black),
+                        child: Text(
+                          "change_avatar",
+                          style: TextStyle(color: AppColor.green),
+                        ).tr(),
+                      ),
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -156,8 +183,9 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                                                   user: UserEntity(
                                                       id: state.user!.id,
                                                       email: state.user!.email,
-                                                      name: _nameController
-                                                          .text));
+                                                      name:
+                                                          _nameController.text),
+                                                  newAvatar: null);
                                           if (result) {
                                             ProgressHUD.showSuccess(
                                                 "update_information_successful"
