@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:either_dart/either.dart';
 import 'package:flutter_pet_shop_app/core/error/failure.dart';
 import 'package:flutter_pet_shop_app/data/datasource/firebase_auth_service.dart';
+import 'package:flutter_pet_shop_app/data/datasource/firebase_storage_service.dart';
 import 'package:flutter_pet_shop_app/data/models/user_model.dart';
 import 'package:flutter_pet_shop_app/domain/entities/user_entity.dart';
 
@@ -20,7 +23,8 @@ abstract class AuthRepository {
 
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuthService firebaseAuthService;
-  AuthRepositoryImpl(this.firebaseAuthService);
+  final FirebaseStorageService firebaseStorageService;
+  AuthRepositoryImpl(this.firebaseAuthService, this.firebaseStorageService);
 
   @override
   Future<Either<Failure, UserEntity>> getCurrentUserInformation() async {
@@ -91,8 +95,25 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, void>> updateUserInformation(
-      {required UserEntity user}) async {
-    return await firebaseAuthService.updateUserInformation(
-        user: UserModel(id: user.id, email: user.email, name: user.name));
+      {required UserEntity user, Uint8List? newAvatar}) async {
+    if (newAvatar != null) {
+      final result = await firebaseStorageService.uploadAndDeleteCurrentAvatar(
+          avatarPath: newAvatar,
+          currentAvatarUrl: user.avatarUrl,
+          userId: user.id);
+      if (result.isRight) {
+        return await firebaseAuthService.updateUserInformation(
+            user: UserModel(
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                avatarUrl: result.right));
+      } else {
+        return Left(result.left);
+      }
+    } else {
+      return await firebaseAuthService.updateUserInformation(
+          user: UserModel(id: user.id, email: user.email, name: user.name));
+    }
   }
 }

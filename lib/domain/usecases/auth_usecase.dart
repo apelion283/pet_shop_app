@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:either_dart/either.dart';
 import 'package:flutter_pet_shop_app/core/error/failure.dart';
 import 'package:flutter_pet_shop_app/data/repository/auth_repository.dart';
@@ -12,8 +14,9 @@ class AuthUsecase {
   }
 
   Future<Either<Failure, void>> updateUserInformation(
-      {required UserEntity user}) async {
-    return await authRepositoryImpl.updateUserInformation(user: user);
+      {required UserEntity user, required Uint8List? newAvatar}) async {
+    return await authRepositoryImpl.updateUserInformation(
+        user: user, newAvatar: newAvatar);
   }
 
   Future<Either<Failure, UserEntity>> signUp(
