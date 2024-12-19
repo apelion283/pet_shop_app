@@ -124,7 +124,21 @@ class CodegenLoader extends AssetLoader{
   "settings": "Settings",
   "your_wish_list": "Your Wishlist",
   "notification_settings": "Notification Settings",
-  "allow_notification": "Allow receive notifications"
+  "allow_notification": "Allow receive notifications",
+  "remove_item_from_wish_list": "Remove item from wish list?",
+  "item_will_be_removed_from_wish_list": "This item will be removed from your wishlist",
+  "item_added_to_wish_list": "Added item to wish list",
+  "item_removed_from_wish_list": "Removed item from wish list",
+  "confirm": "Confirm",
+  "edit_your_avatar": "Edit your avatar",
+  "take_photo": "Take a photo",
+  "or": "Or",
+  "upload_image": "Upload Image",
+  "discard_your_change": "Discard your change?",
+  "discard": "Discard",
+  "save_or_lost_change": "Save your changes or you will lost all your changes!",
+  "save_change": "Save Change",
+  "change_avatar": "Change Avatar"
 };
 static const Map<String,dynamic> vi_VI = {
   "profile": "Hồ sơ",
@@ -236,7 +250,21 @@ static const Map<String,dynamic> vi_VI = {
   "settings": "Cài đặt",
   "your_wish_list": "Sản phẩm yêu thích",
   "notification_settings": "Cài đặt thông báo",
-  "allow_notification": "Nhận thông báo"
+  "allow_notification": "Nhận thông báo",
+  "remove_item_from_wish_list": "Xóa sản phẩm khỏi danh sách yêu thích?",
+  "item_will_be_removed_from_wish_list": "Sản phẩm này sẽ bị xóa khỏi danh sách yêu thích của bạn",
+  "item_added_to_wish_list": "Đã thêm sản phẩm vào danh sách yêu thích",
+  "item_removed_from_wish_list": "Đã xóa sản phẩm khỏi danh sách yêu thích",
+  "confirm": "Xác nhận",
+  "edit_your_avatar": "Thay đổi ảnh đại diện",
+  "take_photo": "Chụp ảnh",
+  "or": "Hoặc",
+  "upload_image": "Tải ảnh lên",
+  "discard_your_change": "Bỏ qua thay đổi",
+  "discard": "Bỏ qua",
+  "save_or_lost_change": "Nếu không lưu, bạn sẽ mất toàn bộ thay đổi!",
+  "save_change": "Lưu Thay Đổi",
+  "change_avatar": "Thay Đổi Ảnh"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": en, "vi_VI": vi_VI};
 }

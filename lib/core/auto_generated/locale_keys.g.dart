@@ -109,5 +109,19 @@ abstract class  LocaleKeys {
   static const your_wish_list = 'your_wish_list';
   static const notification_settings = 'notification_settings';
   static const allow_notification = 'allow_notification';
+  static const remove_item_from_wish_list = 'remove_item_from_wish_list';
+  static const item_will_be_removed_from_wish_list = 'item_will_be_removed_from_wish_list';
+  static const item_added_to_wish_list = 'item_added_to_wish_list';
+  static const item_removed_from_wish_list = 'item_removed_from_wish_list';
+  static const confirm = 'confirm';
+  static const edit_your_avatar = 'edit_your_avatar';
+  static const take_photo = 'take_photo';
+  static const or = 'or';
+  static const upload_image = 'upload_image';
+  static const discard_your_change = 'discard_your_change';
+  static const discard = 'discard';
+  static const save_or_lost_change = 'save_or_lost_change';
+  static const save_change = 'save_change';
+  static const change_avatar = 'change_avatar';
 
 }
