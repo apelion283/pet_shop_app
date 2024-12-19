@@ -10,6 +10,7 @@ import 'package:flutter_pet_shop_app/data/models/marker_model.dart';
 import 'package:flutter_pet_shop_app/data/models/merchandise_item_model.dart';
 import 'package:flutter_pet_shop_app/data/models/pet_model.dart';
 import 'package:flutter_pet_shop_app/data/models/pet_species_model.dart';
+import 'package:flutter_pet_shop_app/data/models/wish_list_item_type_model.dart';
 
 abstract class FirebaseDataSource {
   FirebaseFirestore get database;
@@ -30,8 +31,14 @@ abstract class FirebaseDataSource {
       required String userId});
   Future<Either<Failure, List<MarkerModel>>> getAllMarker();
   Future<Either<Failure, MarkerModel>> getMarkerById(String markerId);
-  Future<Either<Failure, List<MerchandiseItemModel>>> getWishListItemOfUser(
+  Future<Either<Failure, List<Object>>> getWishListItemOfUser(
       {required String userId});
+  Future<Failure?> addItemToWishList(
+      {required String itemId, required String userId, required ItemType type});
+  Future<Failure?> removeItemFromWishList({
+    required String itemId,
+    required String userId,
+  });
 }
 
 class FirebaseDataSourceImpl implements FirebaseDataSource {
@@ -94,21 +101,34 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
   }
 
   @override
-  Future<Either<Failure, List<MerchandiseItemModel>>> getWishListItemOfUser(
+  Future<Either<Failure, List<Object>>> getWishListItemOfUser(
       {required String userId}) async {
     try {
       final wishListCollection = database.collection("wishListOfUser");
       final result =
           await wishListCollection.where("userId", isEqualTo: userId).get();
-      List<String> itemIdList =
-          result.docs.map((item) => item.get("itemId") as String).toList();
-      if (itemIdList.isEmpty) {
+      List<WishListItemModel> wishListOfUser = result.docs
+          .map((item) => WishListItemModel.fromFirestore(snapshot: item))
+          .toList();
+      if (wishListOfUser.isEmpty) {
         return Right([]);
       } else {
-        final resultFromIdList = await Future.wait(
-            itemIdList.map((element) => getMerchandiseItemDataById(element)));
-        final result = resultFromIdList.map((item) => item.right).toList();
-        return Right(result);
+        final List<Either<Failure, Object>> resultFromWishListOfUser =
+            await Future.wait(wishListOfUser.map((element) async {
+          if (element.type == ItemType.merchandiseItem) {
+            return await getMerchandiseItemDataById(element.itemId);
+          } else {
+            final petResult = await getPetDataById(element.itemId);
+            return petResult.fold((l) => Left(l), (r) => Right(r.$3));
+          }
+        }));
+
+        final successfulResults = resultFromWishListOfUser
+            .where((either) => either.isRight)
+            .map((either) => either.fold((l) => null, (r) => r))
+            .whereType<Object>()
+            .toList();
+        return Right(successfulResults);
       }
     } on FirebaseException catch (e) {
       return Left(Failure(code: e.code, message: e.message));
@@ -195,10 +215,10 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       final devicesTokenCollection = database.collection('deviceTokens');
       final result = await devicesTokenCollection
           .where("deviceId", isEqualTo: deviceId)
-         
           .get();
       if (result.docs.isNotEmpty) {
-        if (result.docs.first.data()['token'] == token && result.docs.first.data()['userId'] == userId) {
+        if (result.docs.first.data()['token'] == token &&
+            result.docs.first.data()['userId'] == userId) {
           return;
         } else {
           await devicesTokenCollection
@@ -236,6 +256,40 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
       return Right(MarkerModel.fromFirestore(snapshot: result, options: null));
     } on FirebaseException catch (e) {
       return Left(Failure(message: e.message, code: e.code));
+    }
+  }
+
+  @override
+  Future<Failure?> addItemToWishList(
+      {required String itemId,
+      required String userId,
+      required ItemType type}) async {
+    try {
+      final wishListCollection = database.collection("wishListOfUser");
+      await wishListCollection.doc().set(
+          WishListItemModel(id: "", itemId: itemId, type: type, userId: userId)
+              .toFirestore());
+      return null;
+    } on FirebaseException catch (e) {
+      return Failure(code: e.code, message: e.message);
+    }
+  }
+
+  @override
+  Future<Failure?> removeItemFromWishList({
+    required String itemId,
+    required String userId,
+  }) async {
+    try {
+      final wishListCollection = database.collection("wishListOfUser");
+      final queryResults = await wishListCollection
+          .where("itemId", isEqualTo: itemId)
+          .where("userId", isEqualTo: userId)
+          .get();
+      await wishListCollection.doc(queryResults.docs.first.id).delete();
+      return null;
+    } on FirebaseException catch (e) {
+      return Failure(code: e.code, message: e.message);
     }
   }
 }
