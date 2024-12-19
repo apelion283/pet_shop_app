@@ -108,5 +108,19 @@
     "settings": "Settings",
     "your_wish_list": "Your Wishlist",
     "notification_settings":"Notification Settings",
-    "allow_notification": "Allow receive notifications"
+    "allow_notification": "Allow receive notifications",
+    "remove_item_from_wish_list": "Remove item from wish list?",
+    "item_will_be_removed_from_wish_list": "This item will be removed from your wishlist",
+    "item_added_to_wish_list": "Added item to wish list",
+    "item_removed_from_wish_list": "Removed item from wish list",
+    "confirm": "Confirm",
+    "edit_your_avatar": "Edit your avatar",
+    "take_photo": "Take a photo",
+    "or": "Or",
+    "upload_image": "Upload Image",
+    "discard_your_change": "Discard your change?",
+    "discard": "Discard",
+    "save_or_lost_change": "Save your changes or you will lost all your changes!",
+    "save_change": "Save Change",
+    "change_avatar": "Change Avatar"
 }

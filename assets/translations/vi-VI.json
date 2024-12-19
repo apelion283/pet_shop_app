@@ -108,5 +108,19 @@
     "settings": "Cài đặt",
     "your_wish_list": "Sản phẩm yêu thích",
     "notification_settings":"Cài đặt thông báo",
-    "allow_notification": "Nhận thông báo"
+    "allow_notification": "Nhận thông báo",
+    "remove_item_from_wish_list": "Xóa sản phẩm khỏi danh sách yêu thích?",
+    "item_will_be_removed_from_wish_list": "Sản phẩm này sẽ bị xóa khỏi danh sách yêu thích của bạn",
+    "item_added_to_wish_list": "Đã thêm sản phẩm vào danh sách yêu thích",
+    "item_removed_from_wish_list": "Đã xóa sản phẩm khỏi danh sách yêu thích",
+    "confirm": "Xác nhận",
+    "edit_your_avatar": "Thay đổi ảnh đại diện",
+    "take_photo": "Chụp ảnh",
+    "or": "Hoặc",
+    "upload_image": "Tải ảnh lên",
+    "discard_your_change": "Bỏ qua thay đổi",
+    "discard": "Bỏ qua",
+    "save_or_lost_change": "Nếu không lưu, bạn sẽ mất toàn bộ thay đổi!",
+    "save_change": "Lưu Thay Đổi",
+    "change_avatar": "Thay Đổi Ảnh"
 }
