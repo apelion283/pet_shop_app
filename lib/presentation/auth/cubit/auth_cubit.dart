@@ -1,7 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter_pet_shop_app/core/enum/auth_state_enum.dart';
 import 'package:flutter_pet_shop_app/core/error/failure.dart';
 import 'package:flutter_pet_shop_app/data/datasource/firebase_auth_service.dart';
+import 'package:flutter_pet_shop_app/data/datasource/firebase_storage_service.dart';
 import 'package:flutter_pet_shop_app/data/repository/auth_repository.dart';
 import 'package:flutter_pet_shop_app/domain/entities/user_entity.dart';
 import 'package:flutter_pet_shop_app/domain/usecases/auth_usecase.dart';
@@ -11,8 +14,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthState());
 
-  final _authUsecase =
-      AuthUsecase(AuthRepositoryImpl(FirebaseAuthServiceImpl()));
+  final _authUsecase = AuthUsecase(AuthRepositoryImpl(
+      FirebaseAuthServiceImpl(), FirebaseStorageServiceImpl()));
 
   Future<void> getCurrentUserInformation() async {
     try {
@@ -29,8 +32,10 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<bool> updateUserInformation({required UserEntity user}) async {
-    final result = await _authUsecase.updateUserInformation(user: user);
+  Future<bool> updateUserInformation(
+      {required UserEntity user, required Uint8List? newAvatar}) async {
+    final result = await _authUsecase.updateUserInformation(
+        user: user, newAvatar: newAvatar);
     if (result.isLeft) {
       emit(state.copyWith(user: state.user, error: result.left));
       return false;
