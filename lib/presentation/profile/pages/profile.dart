@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pet_shop_app/core/config/app_config.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_pet_shop_app/fcm_service.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_pet_shop_app/presentation/auth/cubit/auth_state.dart';
 import 'package:flutter_pet_shop_app/presentation/cart/cubit/cart_cubit.dart';
+import 'package:flutter_pet_shop_app/presentation/widgets/edit_avatar_dialog.dart';
 import 'package:flutter_pet_shop_app/presentation/profile/widgets/profile_card.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_alert_dialog.dart';
 
@@ -37,19 +39,58 @@ class ProfilePage extends StatelessWidget {
                 child: Column(
                   children: [
                     Row(children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(
-                            "https://avatars.githubusercontent.com/u/112379980?v=4"),
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return EditAvatarDialog();
+                              });
+                        },
+                        child: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 30,
+                              backgroundImage: state.user != null
+                                  ? state.user?.avatarUrl != null
+                                      ? NetworkImage(
+                                          state.user?.avatarUrl ?? "")
+                                      : NetworkImage(AppConfig.defaultAvatar)
+                                  : NetworkImage(AppConfig.defaultAvatar),
+                            ),
+                            Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                      color: AppColor.black.withOpacity(0.7),
+                                      shape: BoxShape.circle),
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: AppColor.green,
+                                    size: 15,
+                                  ),
+                                ))
+                          ],
+                        ),
                       ),
                       SizedBox(
                         width: 16,
                       ),
-                      Text(
-                        'greeting',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w500),
-                      ).tr(args: [state.user?.name ?? "guess".tr()]),
+                      Column(
+                        children: [
+                          Text(
+                            'greeting',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
+                          ).tr(args: [state.user?.name ?? "guess".tr()]),
+                          Text(
+                            state.user!.email,
+                            style: TextStyle(color: AppColor.gray),
+                          )
+                        ],
+                      )
                     ]),
                     SizedBox(height: 16),
                     ProfileCard(
