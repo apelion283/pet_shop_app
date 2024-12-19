@@ -30,6 +30,7 @@ import 'package:flutter_pet_shop_app/presentation/markers/pages/markers.dart';
 import 'package:flutter_pet_shop_app/presentation/profile/pages/profile.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/custom_salomon_bottom_nav_bar.dart';
 import 'package:flutter_pet_shop_app/presentation/widgets/progress_hud.dart';
+import 'package:flutter_pet_shop_app/presentation/wish_list/cubit/wish_list_cubit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -114,24 +115,29 @@ class _MyAppState extends State<MyApp> {
         create: (context) => AuthCubit()..getCurrentUserInformation(),
         child: BlocProvider(
           create: (context) => CartCubit()..loadDataFromLocal(),
-          child: MaterialApp(
-            title: "Pet Shop",
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              fontFamily: 'Fredoka',
-              primarySwatch: Colors.blue,
+          child: BlocProvider(
+            create: (context) => WishListCubit()
+              ..getWishListOfUser(
+                  userId: context.read<AuthCubit>().state.user?.id),
+            child: MaterialApp(
+              title: "Pet Shop",
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                fontFamily: 'Fredoka',
+                primarySwatch: Colors.blue,
+              ),
+              builder: EasyLoading.init(),
+              home: MainPage(),
+              navigatorKey: navigatorKey,
+              navigatorObservers: <NavigatorObserver>[
+                AnalyticsService().getAnalyticsObserver()
+              ],
+              routes: Routes.routes,
+              initialRoute: "/",
             ),
-            builder: EasyLoading.init(),
-            home: MainPage(),
-            navigatorKey: navigatorKey,
-            navigatorObservers: <NavigatorObserver>[
-              AnalyticsService().getAnalyticsObserver()
-            ],
-            routes: Routes.routes,
-            initialRoute: "/",
           ),
         ));
   }
