@@ -6,4 +6,6 @@ class AppConfig {
   static final double mainBottomNavigationBarHeight = 50;
   static final String customUri = "apelion://s.petshop.com";
   static final int maxBadgeQuantity = 99;
+  static final String defaultAvatar =
+      "https://avatars.githubusercontent.com/u/112379980?v=4";
 }
