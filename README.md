@@ -115,13 +115,13 @@ Project Link: [https://github.com/apelion283/pet_shop_app](https://github.com/ap
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/apelion283/tour_booking.svg?style=for-the-badge
-[contributors-url]: https://github.com/apelion283/tour_booking/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/apelion283/tour_booking.svg?style=for-the-badge
-[forks-url]: https://github.com/apelion283/tour_booking/forks
-[stars-shield]: https://img.shields.io/github/stars/apelion283/tour_booking.svg?style=for-the-badge
-[stars-url]: https://github.com/apelion283/tour_booking/stargazers
-[issues-shield]: https://img.shields.io/github/issues/apelion283/tour_booking.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/apelion283/pet_shop_app.svg?style=for-the-badge
+[contributors-url]: https://github.com/apelion283/pet_shop_app/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/apelion283/pet_shop_app.svg?style=for-the-badge
+[forks-url]: https://github.com/apelion283/pet_shop_app/forks
+[stars-shield]: https://img.shields.io/github/stars/apelion283/pet_shop_app.svg?style=for-the-badge
+[stars-url]: https://github.com/apelion283/pet_shop_app/stargazers
+[issues-shield]: https://img.shields.io/github/issues/apelion283/pet_shop_app.svg?style=for-the-badge
 [issues-url]: https://github.com/apelion283/tour_booking/issues
 [gmail-shield]: https://img.shields.io/badge/Gmail%20-%20white?style=for-the-badge&logo=gmail&labelColor=%23f9bc08&color=%230175C2
 [gmail-url]: mailto:nhat.nd283@gmail.com
