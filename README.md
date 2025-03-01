@@ -68,6 +68,7 @@ Built with Flutter, Bloc-Cubit, Hive, and Firebase, the app ensures high perform
 <!-- SYSTEM ARCHITECTURE -->
 
 <h2 id="system-architecture">🏛️ System Architecture</h2>
+
 ![image](https://github.com/user-attachments/assets/93f96974-5859-4ff9-9b11-b96ce3494f30)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -75,9 +76,12 @@ Built with Flutter, Bloc-Cubit, Hive, and Firebase, the app ensures high perform
 <!-- SCREENSHOT -->
 
 <h2 id="screenshot">🖼️ Screenshot</h2>
+
 ### Splash screen
+
 ![Screenshot_20250228-164200](https://github.com/user-attachments/assets/63efd989-ce01-4023-891d-005f9b68ff3b)
 ### Main Screens
+
 ![Screenshot_20250228-164741](https://github.com/user-attachments/assets/6c33d45d-7a36-4460-9913-38947126ad2b)
 ![Screenshot_20250228-164920](https://github.com/user-attachments/assets/8dd9747e-13a7-4056-9b38-0267c63928d6)
 ![Screenshot_20250228-164927](https://github.com/user-attachments/assets/d4363e0c-f657-483b-a1fe-9e6bad05646f)
