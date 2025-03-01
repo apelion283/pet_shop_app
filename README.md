@@ -33,7 +33,6 @@
       </ul>
     </li>
     <li><a href="#system-architecture">System Architecture</a></li>
-    <li><a href="#database-schema">Database Schema</a></li>
     <li><a href="#screenshot">Screenshot</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
@@ -43,7 +42,9 @@
 
 ## 📌About The Project
 
-This is my thesis project that I worked on while studying at HCMC Open University. This Android application was built with Kotlin and Jetpack Compose for native performance.
+Pet Shop is a user-friendly e-commerce app for pet lovers, offering seamless browsing, purchasing, and management of pet products, accessories, and food. It features secure authentication, real-time notifications, wishlist, store locator, and a smooth checkout process.
+
+Built with Flutter, Bloc-Cubit, Hive, and Firebase, the app ensures high performance, security, and scalability with a Clean Architecture approach. It supports multi-language detection, optimizing the shopping experience for a global audience.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -66,19 +67,14 @@ This is my thesis project that I worked on while studying at HCMC Open Universit
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 <!-- SYSTEM ARCHITECTURE -->
 
-## 🏛️System Architecture
+<h2 id="system-architecture">🏛️ System Architecture</h2>
 ![image](https://github.com/user-attachments/assets/93f96974-5859-4ff9-9b11-b96ce3494f30)
-
-<!-- DATABASE SCHEMA -->
-
-## 📊Database Schema
-
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- SCREENSHOT -->
 
-## 🖼️Screenshot
+<h2 id="screenshot">🖼️ Screenshot</h2>
 ### Splash screen
 ![Screenshot_20250228-164200](https://github.com/user-attachments/assets/63efd989-ce01-4023-891d-005f9b68ff3b)
 ### Main Screens
