@@ -13,7 +13,7 @@
   <h3 align="center">Pet Shop</h3>
   <p align="center">
     <br />
-    <a href="https://github.com/apelion283/pet_shop_app"><strong>Explore the docs »</strong></a>
+    <a href="https://deepwiki.com/apelion283/pet_shop_app"><strong>Explore the docs »</strong></a>
     <br />
     <a href="https://github.com/apelion283/pet_shop_app/issues">Report Bug</a>
     ·
